@@ -10,6 +10,19 @@ export interface ILoginResponse {
     data: T;
   }
 
+  export interface IEventType {
+    id?: number;               // Primary key, optional as it's auto-generated
+    eventTypeName: string;     // Name of the event type
+  }
+  
+  export interface IEvent {
+    id?: number;               // Primary key, optional since it's auto-generated
+    userId: number;            // Foreign key referencing the user associated with the event
+    eventName: string;         // Name of the event
+    eventTypeId: number;       // Foreign key referencing the type of the event
+  }
+    
+
   export interface IRole {
     createdAt: string;
     description: string;
