@@ -1,0 +1,23 @@
+<style >
+    .container {
+        display: flex;
+        flex-direction: row;
+    }
+</style>
+<div class="container">
+    <canvas class="main-three" #mainThreeCv width="20px"></canvas>
+    <div *ngIf="isLoading">Loading...</div>
+    <div *ngIf="!isLoading">
+        <app-ui3d
+        (AdditionAction)="addComponent($event)"
+        [images]="images"
+        [modelMetadata]="modelMetadata"
+        ></app-ui3d>
+    </div>
+    <!-- @else {    
+        <app-ui3d
+        (AdditionAction)="addComponent($event)"
+        [modelMetadata]="modelMetadata"
+        ></app-ui3d>
+    } -->
+</div>
