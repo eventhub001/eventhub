@@ -5,7 +5,7 @@ export interface ILoginResponse {
     accessToken: string;
     expiresIn: number
   }
-  
+
   export interface IResponse<T> {
     data: T;
   }
@@ -21,7 +21,25 @@ export interface ILoginResponse {
     eventName: string;         // Name of the event
     eventType: IEventType;       // Foreign key referencing the type of the event
   }
-    
+  export interface ITask{
+    id?:number;
+    taskName?: string;
+    description?: string;
+    creationDate?: string;
+    updateDate?: string;
+    dueDate?: string;
+    priority?: string;
+    event?: IEvent
+  }
+
+
+  export interface ITaskProgress{
+    id?:number;
+    task?: ITask;
+    status?: string;
+    changeDate?: string;
+  }
+
 
   export interface IRole {
     createdAt: string;
@@ -39,7 +57,7 @@ export interface ILoginResponse {
     totalElements?: number;
     totalPages?:number;
   }
-  
+
   export interface IUser {
     id?: number;
     name?: string;
@@ -52,22 +70,22 @@ export interface ILoginResponse {
     authorities?: IAuthority[];
     role?: IRole
   }
-  
+
   export interface IAuthority {
     authority: string;
   }
-  
+
   export interface IFeedBackMessage {
     type?: IFeedbackStatus;
     message?: string;
   }
-  
+
   export enum IFeedbackStatus {
     success = "SUCCESS",
     error = "ERROR",
     default = ''
   }
-  
+
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",
@@ -82,7 +100,7 @@ export interface AssetModel {
     posy: number;
     posz: number;
     width: number;
-    height: number; 
+    height: number;
 }
 
 export interface AssetTexture {
