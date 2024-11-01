@@ -13,18 +13,18 @@ export class EventsService extends BaseService<IEvent> {
   get events$() {
     return this.eventListSignal;
   }
-  public search: ISearch = { 
+  public search: ISearch = {
     page: 1,
     size: 5
   }
   public totalItems: any = [];
-  private authService: AuthService = inject(AuthService);
   private alertService: AlertService = inject(AlertService);
 
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size }).subscribe({
       next: (response: any) => {
         this.search = { ...this.search, ...response.meta };
+        console.log('response', response.data);
         this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
         this.eventListSignal.set(response.data);
       },

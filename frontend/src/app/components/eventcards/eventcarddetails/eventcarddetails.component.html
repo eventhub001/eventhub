@@ -1,0 +1,23 @@
+<div *ngIf="event">
+    <h3>{{ event.eventName }}</h3>  
+    <div *ngIf="!isEditing">
+      <button mat-button color="accent" (click)="toggleEdit()">Edit Event</button>
+      <button mat-button color="warn" (click)="deleteEvent()">Delete Event</button>
+    </div>
+  
+    <div *ngIf="isEditing">
+=
+      <label>
+        Name:
+        <textarea [(ngModel)]="event.eventName"></textarea>
+      </label>
+      <mat-card-actions>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="saveEvent(event)">Save</button>
+      </mat-card-actions>
+         <mat-card-actions>
+        <button mat-button (click)="toggleEdit()">Cancel</button>
+         </mat-card-actions>
+       </mat-card-actions>
+    </div>
+  </div>

@@ -7,8 +7,8 @@ import { IRoleType } from './interfaces';
 import { AuthGuard } from './guards/auth.guard';
 import { GuestGuard } from './guards/guest.guard';
 import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
-import { TestComponent } from './test/test.component';
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
+import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
 
 export const routes: Routes = [
   {
@@ -39,10 +39,25 @@ export const routes: Routes = [
     component: AppLayoutComponent,
     canActivate: [AuthGuard],
     children: [
+      
       {
         path: 'app',
         redirectTo: 'users',
         pathMatch: 'full',
+      },
+      {
+      path: "events",
+      component: EventmanagerComponent,
+      canActivate: [AuthGuard],
+      data: {
+        authorities: [
+          IRoleType.admin,
+          IRoleType.superAdmin,
+          IRoleType.user
+          ],
+          name: 'Events',
+          showInSidebar: true
+        }
       },
       {
         path: 'dashboard',

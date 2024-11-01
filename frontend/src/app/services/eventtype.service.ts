@@ -48,7 +48,7 @@ export class EventTypesService extends BaseService<IEventType> {
   }
 
   update(eventType: IEventType) {
-    this.editCustomSource(`${eventType.id}`, eventType).subscribe({
+    this.editCustomSource(`${eventType.eventTypeId}`, eventType).subscribe({
       next: (response: any) => {
         this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
         this.getAll();
@@ -61,7 +61,7 @@ export class EventTypesService extends BaseService<IEventType> {
   }
 
   delete(eventType: IEventType) {
-    this.delCustomSource(`${eventType.id}`).subscribe({
+    this.delCustomSource(`${eventType.eventTypeId}`).subscribe({
       next: (response: any) => {
         this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
         this.getAll();

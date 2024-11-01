@@ -1,0 +1,16 @@
+.event-input {
+    font-size: 20px; // Match the font size of mat-card-title
+    font-weight: 500; // Semi-bold text
+    color: rgba(0, 0, 0, 0.87); // Default text color for mat-card-title
+    padding: 8px; // Inner spacing
+    border: 1px solid #ccc; // Border styling
+    border-radius: 4px; // Rounded corners
+    margin-right: 8px; // Spacing between inputs
+    width: 100%; // Make inputs take full width
+    box-shadow: none; // Remove any shadow
+  }
+  
+  .event-input::placeholder {
+    color: rgba(0, 0, 0, 0.38); // Placeholder color
+    opacity: 1; // Make sure placeholder is visible
+  }

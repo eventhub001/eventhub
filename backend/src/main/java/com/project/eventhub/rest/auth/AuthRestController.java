@@ -2,15 +2,19 @@ package com.project.eventhub.rest.auth;
 
 import com.project.eventhub.logic.entity.auth.AuthenticationService;
 import com.project.eventhub.logic.entity.auth.JwtService;
+import com.project.eventhub.logic.entity.auth.SecurityConfiguration;
 import com.project.eventhub.logic.entity.rol.Role;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
 import com.project.eventhub.logic.entity.rol.RoleRepository;
 import com.project.eventhub.logic.entity.user.LoginResponse;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +48,7 @@ public class AuthRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody User user) {
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody User user, HttpSession httpSession) {
         User authenticatedUser = authenticationService.authenticate(user);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -54,6 +58,7 @@ public class AuthRestController {
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
 
         Optional<User> foundedUser = userRepository.findByEmail(user.getEmail());
+
 
         foundedUser.ifPresent(loginResponse::setAuthUser);
 
@@ -76,6 +81,22 @@ public class AuthRestController {
         user.setRole(optionalRole.get());
         User savedUser = userRepository.save(user);
         return ResponseEntity.ok(savedUser);
+    }
+
+    public Long getCurrentUserId() {
+        User user = getAuthenticatedUser();
+        return user != null ? user.getId() : null;
+    }
+
+    // Method to get the full authenticated user object if needed
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            return (User) authentication.getPrincipal(); // Assuming principal is User entity
+        }
+
+        return null;
     }
 
 }
