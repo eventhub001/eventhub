@@ -1,12 +1,16 @@
 import { Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import { EventsService } from '../../../services/event.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ITask } from '../../../interfaces';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+  ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss'
 })
@@ -18,13 +22,15 @@ export class TaskFormComponent {
     this.eventsService.getAll();
   }
 
-  categories = computed(() => this.eventsService.events$());
+  events = computed(() => this.eventsService.events$());
 
   @Input() taskForm!: FormGroup;
   @Output() callSaveMethod: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() callUpdateMethod: EventEmitter<ITask> = new EventEmitter<ITask>();
 
+
   callSave() {
+
     let selectedEventId: number = this.taskForm.controls['event'].value;
 
     let task: ITask = {
@@ -32,6 +38,7 @@ export class TaskFormComponent {
       description: this.taskForm.controls['description'].value,
       dueDate: this.taskForm.controls['dueDate'].value,
       priority: this.taskForm.controls['priority'].value,
+      event:  { eventId: selectedEventId }
     }
 
 
@@ -45,5 +52,13 @@ export class TaskFormComponent {
      this.callSaveMethod.emit(task);
     }
   }
+
+
+  priorities = [
+    { id: 1, name: 'Alta' },
+    { id: 2, name: 'Media' },
+    { id: 3, name: 'Baja' }
+  ];
+
 
 }

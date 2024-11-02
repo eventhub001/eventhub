@@ -58,7 +58,7 @@ callEdition(task: ITask) {
   this.taskForm.controls['description'].setValue(task.description ? task.description : '');
   this.taskForm.controls['dueDate'].setValue(task.dueDate ? JSON.stringify(task.dueDate) : '');
   this.taskForm.controls['priority'].setValue(task.priority ? task.priority : '');
-  this.taskForm.controls['event'].setValue(task.event ? JSON.stringify(task.event) : '');
+  this.taskForm.controls['event'].setValue(task.event ? JSON.stringify(task.event.eventId) : '');
   this.modalService.displayModal('md', this.addTaskModal);
 }
 

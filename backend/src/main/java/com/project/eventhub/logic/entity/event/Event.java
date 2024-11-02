@@ -1,4 +1,5 @@
 package com.project.eventhub.logic.entity.event;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.eventhub.logic.entity.eventtype.EventType;
 import jakarta.persistence.*;
 
@@ -9,6 +10,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
+
     private Long eventId;
 
     @Column(name = "user_id")

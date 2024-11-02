@@ -1,5 +1,6 @@
 package com.project.eventhub.logic.entity.task;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.eventhub.logic.entity.event.Event;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

@@ -12,14 +12,14 @@ export interface ILoginResponse {
 
   export interface IEventType {
     eventTypeId?: number;               // Primary key, optional as it's auto-generated
-    eventTypeName: string;     // Name of the event type
+    eventTypeName?: string;     // Name of the event type
   }
 
   export interface IEvent {
-    id?: number;               // Primary key, optional since it's auto-generated
-    userId: number;            // Foreign key referencing the user associated with the event
-    eventName: string;         // Name of the event
-    eventType: IEventType;       // Foreign key referencing the type of the event
+    eventId?: number;               // Primary key, optional since it's auto-generated
+    userId?: number;            // Foreign key referencing the user associated with the event
+    eventName?: string;         // Name of the event
+    eventType?: IEventType;       // Foreign key referencing the type of the event
   }
   export interface ITask{
     id?:number;

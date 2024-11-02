@@ -38,13 +38,13 @@ export class EventcardsComponent {
   closeEventDetails() {
     this.selectedEvent = null; // Close event details
   }
-  
+
   confirmEdit() {
     //this.editEvent = true; // Set edit mode
   }
 
   editMode(event: IEvent) {
-    this.eventForm.controls["id"].setValue(event.id);
+    this.eventForm.controls["id"].setValue(event.eventId);
     this.eventForm.controls["eventName"].setValue(event.eventName);
     this.eventForm.controls["eventTypeName"].setValue(this.selectedEvent?.eventType);
     this.editEvent = !this.editEvent; // Toggle edit mode

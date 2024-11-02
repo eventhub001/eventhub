@@ -29,9 +29,9 @@ export class EventsFormComponent {
       userId: this.authService.getUser()?.id!
     };
     if (this.eventForm.controls['id'].value) {
-      event.id = this.eventForm.controls['id'].value;
+      event.eventId = this.eventForm.controls['id'].value;
     }
-    if (event.id) {
+    if (event.eventId) {
       this.callUpdateEvent.emit(event);
     } else {
       this.callSaveEvent.emit(event);

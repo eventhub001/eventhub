@@ -61,7 +61,7 @@ export class EventsService extends BaseService<IEvent> {
   }
 
   update(event: IEvent) {
-    this.editCustomSource(`${event.id}`, event).subscribe({
+    this.editCustomSource(`${event.eventId}`, event).subscribe({
       next: (response: any) => {
         this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
         this.getAllByUser();
@@ -74,7 +74,7 @@ export class EventsService extends BaseService<IEvent> {
   }
 
   delete(event: IEvent) {
-    this.delCustomSource(`${event.id}`).subscribe({
+    this.delCustomSource(`${event.eventId}`).subscribe({
       next: (response: any) => {
         this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
         this.getAllByUser();

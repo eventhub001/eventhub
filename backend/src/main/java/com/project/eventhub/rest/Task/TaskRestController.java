@@ -2,6 +2,7 @@ package com.project.eventhub.rest.Task;
 
 import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.event.EventRepository;
+import com.project.eventhub.logic.entity.rol.RoleRepository;
 import com.project.eventhub.logic.entity.task.Task;
 import com.project.eventhub.logic.entity.task.TaskRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
@@ -28,12 +29,16 @@ public class TaskRestController {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @PostMapping
     public Task addTask(@RequestBody Task task) {
         Event event = eventRepository.findById(task.getEvent().getEventId())
                 .orElseThrow(() -> new RuntimeException("Event not found"));
         task.setEvent(event);
         return taskRepository.save(task);
+
     }
 
 
