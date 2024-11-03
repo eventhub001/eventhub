@@ -27,6 +27,13 @@
   'opsz' 24
 }
 
+.icon-layout {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  align-self: flex-end;
+}
+
 .event-input {
     font-size: 20px; // Match the font size of mat-card-title
     font-weight: 500; // Semi-bold text

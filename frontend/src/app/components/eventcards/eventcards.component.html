@@ -1,34 +1,66 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=edit" />
+<h2 class="mb-0">Eventos</h2>
+<div *ngIf="!createEvent">
+    <div class="toolbar-top-right">
+      <div class="right-toolbar">
+        <mat-card-actions>
+          <button mat-button color="accent">
+            <img src="../../../assets/img/add.png" class="clickable icon-layout" (click)="createMode()" />
+          </button>
+        </mat-card-actions>
+      </div>
+    </div>
+</div>
+<div *ngIf="createEvent">
+  <app-card-events-form [eventTypes]="eventTypeService.eventTypes$()" [eventForm]="eventForm" (callSaveEvent)="save($event)" [createEvent]="true" (closeView)="closeCreateMode()"></app-card-events-form>
+</div>
 <div class="card-container">
     <mat-card *ngFor="let event of events" class="card">
-      
-      <div *ngIf="!editEvent" class="toolbar-top-right">
-        <mat-card-header >
-            <div mat-card-avatar class="card-avatar"></div>
-                <div *ngIf="!editEvent" class="right-toolbar">
-                    <mat-card-title>{{ event.eventName }}</mat-card-title> <!-- Assuming 'title' is a property -->
-                    <mat-card-subtitle>{{ event.eventType.eventTypeName }}</mat-card-subtitle> <!-- Format date as needed -->
-            </div>
+      <div *ngIf="editEventId !== event.eventId" class="toolbar-top-right m-4">
+        <mat-card-header class=>
+              <div *ngIf="editEventId !== event.eventId" class="right-toolbar">
+                <mat-card-title>{{ event.eventName }}</mat-card-title> 
+                <mat-card-subtitle>{{ event.eventType.eventTypeName }}</mat-card-subtitle> 
+                <mat-card-content>
+                  <p>Descripción: {{ event.eventDescription }}</p> <!-- Assuming 'description' is a property -->
+                  <p *ngIf="event.eventStartDate">Fecha del evento: {{  asDate(event.eventStartDate.toString()) }}</p>
+                  <p *ngIf="event.eventStartDate">Hora de inicio del evento: {{  asTime(event.eventStartDate.toString()) }}</p>
+                  <p *ngIf="event.eventEndDate">Hora de finalización del evento: {{  asTime(event.eventEndDate.toString()) }}</p>
+                </mat-card-content>
+              </div>
           </mat-card-header>
           <div class="right-toolbar">
-            <span class="material-symbols-outlined right-toolbar clickable" (click)="editMode(event)">edit</span>
+            <img src="../../../assets/img/edit.png" class="clickable icon-layout" (click)="editMode(event)" />
+            <img src="../../../assets/img/trash.png" class="clickable icon-layout" (click)="deleteMode(event)" />
           </div>
       </div>
-      <div *ngIf="editEvent" class="toolbar-top-right">
-        <app-card-events-form [eventTypes]="eventTypeService.eventTypes$()" [eventForm]="eventForm"></app-card-events-form>
+      <div *ngIf="editEventId === event.eventId" class="toolbar-top-right">
+        <app-card-events-form
+        [eventTypes]="eventTypeService.eventTypes$()"
+        [eventForm]="eventForm"
+        [eventStartDate]="event.eventStartDate"
+        [eventEndDate]="event.eventEndDate"
+        (callUpdateEvent)="update($event)" ></app-card-events-form>
+        <div class="right-toolbar m-3">
+          <img src="../../../assets/img/close.png" class="clickable icon-layout" (click)="closeEditMode()" />
+        </div>
       </div>
-
-      <mat-card-content>
-        <p>{{ event.eventType.eventTypeName }}</p> <!-- Assuming 'description' is a property -->
-      </mat-card-content>
-  
       <mat-card-actions>
         <mat-card-actions>
-        <button mat-button color="primary" (click)="showEventDetails(event)">Más</button>
+        <button mat-button color="primary" (click)="showEventDetails(event)">Gestionar tareas</button>
         </mat-card-actions>
-        <button mat-button color="accent">Edit Event</button>
+        <button mat-button color="accent" >Buscar recursos</button>
       </mat-card-actions>
       <!-- Show event details if selected -->
-    <app-eventcarddetails *ngIf="selectedEvent" [event]="event" (close)="closeEventDetails()"></app-eventcarddetails>
-    </mat-card>
+    <app-eventcarddetails *ngIf="selectedEvent" [event]="event" (close)="closeEventDetails()" ></app-eventcarddetails>
+  </mat-card>
+  <ng-template #addProductsModal>
+    <app-modal
+      [hideFooter]="true"
+    >
+      <div>
+        <app-event-confirmation-modal [eventParam]="selectedEvent" (confirmed)="deleteEvent($event)" (canceled)="cancelDelete()"></app-event-confirmation-modal>
+      </div>
+    </app-modal>
+  </ng-template>
+    
   </div>

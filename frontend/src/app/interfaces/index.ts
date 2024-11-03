@@ -16,10 +16,13 @@ export interface ILoginResponse {
   }
 
   export interface IEvent {
-    id?: number;               // Primary key, optional since it's auto-generated
+    eventId?: number;               // Primary key, optional since it's auto-generated
     userId: number;            // Foreign key referencing the user associated with the event
     eventName: string;         // Name of the event
-    eventType: IEventType;       // Foreign key referencing the type of the event
+    eventType: IEventType;
+    eventDescription?: string;
+    eventStartDate: string;
+    eventEndDate: string;     // Foreign key referencing the type of the event
   }
     
 
@@ -82,7 +85,7 @@ export interface AssetModel {
     posy: number;
     posz: number;
     width: number;
-    height: number; 
+    height: number;
 }
 
 export interface AssetTexture {

@@ -16,5 +16,4 @@ export class AlertService {
       duration: 3000
     });
   }
-
 }

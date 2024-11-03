@@ -24,7 +24,7 @@ export class EventcarddetailsComponent {
 
   deleteEvent() {
     // Implement delete logic here
-    console.log('Event deleted:', this.event?.id); // Example logic
+    console.log('Event deleted:', this.event?.eventId); // Example logic
   }
 
   saveEvent(updatedEvent: IEvent) {

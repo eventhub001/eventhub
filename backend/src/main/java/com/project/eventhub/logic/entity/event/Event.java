@@ -2,6 +2,8 @@ package com.project.eventhub.logic.entity.event;
 import com.project.eventhub.logic.entity.eventtype.EventType;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "event")
 public class Event {
@@ -19,6 +21,12 @@ public class Event {
 
     @Column(name = "event_description")
     private String eventDescription;
+
+    @Column(name = "event_start_date")
+    private LocalDateTime eventStartDate;
+
+    @Column(name = "event_end_date")
+    private LocalDateTime eventEndDate;
 
     @ManyToOne
     @JoinColumn(name = "event_type_id", nullable = false)
@@ -62,5 +70,21 @@ public class Event {
 
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
+    }
+
+    public LocalDateTime getEventStartDate() {
+        return eventStartDate;
+    }
+
+    public void setEventStartDate(LocalDateTime eventStartDate) {
+        this.eventStartDate = eventStartDate;
+    }
+
+    public LocalDateTime getEventEndDate() {
+        return eventEndDate;
+    }
+
+    public void setEventEndDate(LocalDateTime eventEndDate) {
+        this.eventEndDate = eventEndDate;
     }
 }
