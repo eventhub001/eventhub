@@ -10,6 +10,9 @@ import { ModalComponent } from '../../components/modal/modal.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { TaskFormComponent } from '../../components/task/task-form/task-form.component';
 import { EventsService } from '../../services/event.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-task',
@@ -20,7 +23,10 @@ import { EventsService } from '../../services/event.service';
     PaginationComponent,
     ModalComponent,
     LoaderComponent,
-    TaskFormComponent
+    TaskFormComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatPaginatorModule
   ],
   templateUrl: './task.component.html',
   styleUrl: './task.component.scss'

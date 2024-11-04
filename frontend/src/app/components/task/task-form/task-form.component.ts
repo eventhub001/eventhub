@@ -4,12 +4,13 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ITask } from '../../../interfaces';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
   selector: 'app-task-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule,
+    CommonModule
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss'
@@ -66,5 +67,6 @@ export class TaskFormComponent {
     { id: 2, name: 'Completado' },
     { id: 3, name: 'Pendiente' }
   ];
+
 
 }
