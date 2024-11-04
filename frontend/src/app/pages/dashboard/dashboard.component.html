@@ -1,2 +1,9 @@
-<p>dashboard works!</p>
-<full-calendar [options]="calendarOptions"></full-calendar>
+<div class="ten mb-0">
+    <h1>Calendario</h1>
+  </div>
+<app-calendario-eventos
+    [events]="eventService.events$()"
+    [tasks]="taskService.task$()"
+    [tasksProgress]="taskProgressService.taskProgress$()"
+
+></app-calendario-eventos>

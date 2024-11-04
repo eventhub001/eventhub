@@ -10,26 +10,55 @@ export interface ILoginResponse {
     data: T;
   }
 
+  export interface ICalendarEvent {
+    title: string;                     // Required: The text that will appear on an event
+    start: Date | string;              // Required: The event's start date/time
+    end: Date | string;                // Required: The event's end date/time
+    
+    id?: string | number;              // Optional: Unique identifier for the event
+    groupId?: string | number;         // Optional: Group identifier for linking events
+    allDay?: boolean;                  // Optional: Specifies if the event is all-day
+    daysOfWeek?: number[];             // Optional: Days of the week for recurring events
+    startTime?: string;                // Optional: Start time for recurring events (HH:mm:ss format)
+    endTime?: string;                  // Optional: End time for recurring events (HH:mm:ss format)
+    startRecur?: Date | string;        // Optional: Start date for recurring events
+    endRecur?: Date | string;          // Optional: End date for recurring events
+    url?: string;                      // Optional: URL to visit on event click
+    interactive?: boolean;             // Optional: Tabbable event (default true if URL present)
+    className?: string | string[];     // Optional: CSS classes for styling
+    editable?: boolean;                // Optional: If the event can be edited
+    startEditable?: boolean;           // Optional: Editable start time
+    durationEditable?: boolean;        // Optional: Editable duration
+    resourceEditable?: boolean;        // Optional: Editable resources
+    resourceId?: string;               // Optional: ID of associated resource
+    resourceIds?: string[];            // Optional: Array of associated resource IDs
+    display?: 'auto' | 'block' | 'list-item' | 'background' | 'inverse-background' | 'none';  // Optional display mode
+    overlap?: boolean;                 // Optional: Allows overlap with other events
+    constraint?: string | object;      // Optional: Event constraint (groupId, businessHours, or object)
+    color?: string;                    // Optional: Background and border color
+    backgroundColor?: string;          // Optional: Background color
+    borderColor?: string;              // Optional: Border color
+    textColor?: string;                // Optional: Text color
+    rrule?: string;                    // Optional: RRule for recurrence
+    duration?: string;                 // Optional: Event duration (for recurrence)
+    extendedProps?: { [key: string]: any };  // Optional: Additional properties
+  
+    // Any other properties can be added dynamically
+    [key: string]: any;
+  }
+
   export interface IEventType {
     eventTypeId?: number;               // Primary key, optional as it's auto-generated
     eventTypeName?: string;     // Name of the event type
   }
-
-  export interface IEvent {
-    id?: number;               // Primary key, optional since it's auto-generated
-    userId: number;            // Foreign key referencing the user associated with the event
-    eventName: string;         // Name of the event
-    eventType: IEventType;       // Foreign key referencing the type of the event
-  }
-
   export interface IEvent {
     eventId?: number;               // Primary key, optional since it's auto-generated
-    userId: number;            // Foreign key referencing the user associated with the event
-    eventName: string;         // Name of the event
-    eventType: IEventType;
+    userId?: number;            // Foreign key referencing the user associated with the event
+    eventName?: string;         // Name of the event
+    eventType?: IEventType;
     eventDescription?: string;
-    eventStartDate: string;
-    eventEndDate: string;     // Foreign key referencing the type of the event
+    eventStartDate?: string;
+    eventEndDate?: string;     // Foreign key referencing the type of the event
   }
   export interface ITask{
     id?:number;
