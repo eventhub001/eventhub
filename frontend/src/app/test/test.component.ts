@@ -149,15 +149,6 @@ export class TestComponent {
 
     this.defaultChair = chair;
 
-    const table = await Chair.createFromModel(
-      token!,
-      11,
-      {width: 1.2711153278258065, height:2.3832655070864464, depth: 1.0580182533765168},
-      {x: 0, y: 0, z: 0},
-      this.http,
-      {front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(0, 0, 1), top: new THREE.Vector3(0, 1, 0)}
-    );
-
     DebuggingUtils.showLights(floor.content);
 
     this.scene.add(this.grid.model);

@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
       baseUrlInterceptor,
       accessTokenInterceptor,
       handleErrorsInterceptor
-    ])), provideAnimationsAsync()
+    ])), provideAnimationsAsync(), provideAnimationsAsync()
     //handleErrorsInterceptor
   ]
 };

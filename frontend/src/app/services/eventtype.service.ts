@@ -24,6 +24,7 @@ export class EventTypesService extends BaseService<IEventType> {
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size }).subscribe({
       next: (response: any) => {
+        console.log(response.data);
         this.search = { ...this.search, ...response.meta };
         this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
         this.eventTypeListSignal.set(response.data);

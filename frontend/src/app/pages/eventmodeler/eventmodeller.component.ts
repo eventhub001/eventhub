@@ -20,9 +20,6 @@ export class EventModellerComponent {
 
   constructor() {
     this.modelService.getAll();
-    // Use the signal directly
-    // this.modelMetadata = this.modelService.models$();
-    // this.loadModelData();
   }
 
 
