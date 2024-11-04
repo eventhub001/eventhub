@@ -36,6 +36,7 @@ export class TaskComponent {
     id: [''],
     taskName: ['', Validators.required],
     description: ['', Validators.required],
+    status: ['', Validators.required],
     dueDate: ['', Validators.required],
     priority: ['', Validators.required],
     event: ['', Validators.required],
@@ -56,14 +57,21 @@ callEdition(task: ITask) {
   this.taskForm.controls['id'].setValue(task.id ? JSON.stringify(task.id)  : '');
   this.taskForm.controls['taskName'].setValue(task.taskName ? task.taskName : '');
   this.taskForm.controls['description'].setValue(task.description ? task.description : '');
-  this.taskForm.controls['dueDate'].setValue(task.dueDate ? JSON.stringify(task.dueDate) : '');
+  this.taskForm.controls['status'].setValue(task.status ? task.status : '');
+  this.taskForm.controls['dueDate'].setValue(task.dueDate ?  new Date(task.dueDate).toISOString().substring(0, 10) : '');
   this.taskForm.controls['priority'].setValue(task.priority ? task.priority : '');
   this.taskForm.controls['event'].setValue(task.event ? JSON.stringify(task.event.eventId) : '');
   this.modalService.displayModal('md', this.addTaskModal);
 }
 
 updateTask(task: ITask) {
-
+console.log(task)
+if (task.dueDate) {
+  const dueDate = new Date(task.dueDate);
+ // Ajustar la fecha a UTC antes de guardar teniendo en cuenta la zona horaria GMT-6
+ const adjustedDate = new Date(dueDate.getTime() + (6 * 60 * 60 * 1000)); // Añadir 6 horas
+ task.dueDate = adjustedDate;
+}
   this.taskService.update(task);
   this.modalService.closeAll();
 }

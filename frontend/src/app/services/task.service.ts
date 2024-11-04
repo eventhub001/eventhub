@@ -42,7 +42,7 @@ export class TaskService extends BaseService<ITask> {
   save(task: ITask) {
     this.add(task).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', "La tarea ha sido creada exitosamente", 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
@@ -55,7 +55,7 @@ export class TaskService extends BaseService<ITask> {
   update(task: ITask) {
     this.editCustomSource(`${task.id}`, task).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', "La Tarea ha sido actualizada exitosamente", 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
@@ -68,7 +68,7 @@ export class TaskService extends BaseService<ITask> {
   delete(task: ITask) {
     this.delCustomSource(`${task.id}`).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', "La tarea ha sido eliminada exitosamente", 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {

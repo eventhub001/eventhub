@@ -1,0 +1,43 @@
+
+
+table {
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+/* Estilos para los progresos  */
+.completado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.en-progreso {
+  background-color: #fff3cd;
+  color: #F29849;
+}
+
+.pendiente {
+  background-color: #f8d7da;
+  color: #D94625;
+}
+
+
+/* Estilos para las prioridades */
+.alta {
+  background-color: #f8d7da;
+  color: #D94625;
+}
+
+.media {
+  background-color: #fff3cd;
+  color: #F29849;
+}
+
+.baja {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+ .expirado{
+   background-color: red;
+ }

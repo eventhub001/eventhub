@@ -1,12 +1,12 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
-import {ITask } from '../../../interfaces';
-import { formatDate } from '@angular/common';
+import {ITask} from '../../../interfaces';
+import { CommonModule, formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
@@ -17,9 +17,13 @@ export class TaskListComponent {
   @Output() callDeleteAction: EventEmitter<ITask> = new EventEmitter<ITask>();
   public authService: AuthService = inject(AuthService);
 
-  formatDate(dateString: string): string {
-    return formatDate(dateString, 'MM-dd-yyyy', 'en-US');
-  }
+  public todayDate: Date;
+
+  constructor() {
+    // Asigna la fecha de hoy formateada a la variable todayDate
+    this.todayDate = new Date();  }
+
+
 
 
 }

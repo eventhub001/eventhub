@@ -36,8 +36,9 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.scss"
-            ],
+              "src/styles.scss",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/material.scss"
+              ],
             "scripts": []
           },
           "configurations": {
@@ -99,7 +100,8 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/material.scss"
             ],
             "scripts": []
           }

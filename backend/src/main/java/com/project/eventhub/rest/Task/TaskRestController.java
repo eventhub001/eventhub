@@ -71,7 +71,7 @@ public class TaskRestController {
                     Optional.ofNullable(task.getTaskName()).ifPresent(existingTask::setTaskName);
                     Optional.ofNullable(task.getDescription()).ifPresent(existingTask::setDescription);
                     Optional.ofNullable(task.getPriority()).ifPresent(existingTask::setPriority);
-
+                    Optional.ofNullable(task.getStatus()).ifPresent(existingTask::setStatus);
                     Optional.ofNullable(task.getDueDate()).ifPresent(existingTask::setDueDate);
 
                     Event event = eventRepository.findById(task.getEvent().getEventId())

@@ -27,20 +27,11 @@ export interface ILoginResponse {
     description?: string;
     creationDate?: string;
     updateDate?: string;
-    dueDate?: string;
+    dueDate?: Date;
     priority?: string;
+    status?: string;
     event?: IEvent
   }
-
-
-  export interface ITaskProgress{
-    id?:number;
-    task?: ITask;
-    status?: string;
-    changeDate?: string;
-  }
-
-
   export interface IRole {
     createdAt: string;
     description: string;
