@@ -21,7 +21,7 @@
         <mat-card-header class=>
               <div *ngIf="editEventId !== event.eventId" class="right-toolbar">
                 <mat-card-title>{{ event.eventName }}</mat-card-title> 
-                <mat-card-subtitle>{{ event.eventType.eventTypeName }}</mat-card-subtitle> 
+                <mat-card-subtitle>{{ event.eventType!.eventTypeName }}</mat-card-subtitle> 
                 <mat-card-content>
                   <p>Descripción: {{ event.eventDescription }}</p> <!-- Assuming 'description' is a property -->
                   <p *ngIf="event.eventStartDate">Fecha del evento: {{  asDate(event.eventStartDate.toString()) }}</p>
@@ -39,8 +39,8 @@
         <app-card-events-form
         [eventTypes]="eventTypeService.eventTypes$()"
         [eventForm]="eventForm"
-        [eventStartDate]="event.eventStartDate"
-        [eventEndDate]="event.eventEndDate"
+        [eventStartDate]="event.eventStartDate!"
+        [eventEndDate]="event.eventEndDate!"
         (callUpdateEvent)="update($event)" ></app-card-events-form>
         <div class="right-toolbar m-3">
           <img src="../../../assets/img/close.png" class="clickable icon-layout" (click)="closeEditMode()" />

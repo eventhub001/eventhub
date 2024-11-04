@@ -55,7 +55,6 @@ export class EventsFormComponent {
   }
 
   ngOnChanges() {
-
     if (this.eventForm && this.eventStartDate) {
       this.dateTimeForm.controls['dateInput'].setValue(this.eventStartDate);
 
