@@ -9,6 +9,8 @@ import { GuestGuard } from './guards/guest.guard';
 import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
 import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
+import { TaskProgressComponent } from './pages/task-progress/task-progress.component';
+import { TaskComponent } from './pages/task/task.component';
 
 export const routes: Routes = [
   {
@@ -39,7 +41,7 @@ export const routes: Routes = [
     component: AppLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      
+
       {
         path: 'app',
         redirectTo: 'users',
@@ -62,16 +64,42 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
-        data: { 
+        data: {
           authorities: [
-            IRoleType.admin, 
+            IRoleType.admin,
             IRoleType.superAdmin,
             IRoleType.user
           ],
           name: 'Dashboard',
           showInSidebar: true
         }
-      }
+      },
+      {
+        path: 'task',
+        component: TaskComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Task',
+          showInSidebar: true
+        }
+      },
+      {
+        path: 'taskprogress',
+        component: TaskProgressComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Task Progress',
+          showInSidebar: true
+        }
+      },
     ],
   },
 ];
