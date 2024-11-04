@@ -9,6 +9,10 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { ModalComponent } from '../../components/modal/modal.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { TaskFormComponent } from '../../components/task/task-form/task-form.component';
+import { EventsService } from '../../services/event.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-task',
@@ -19,7 +23,10 @@ import { TaskFormComponent } from '../../components/task/task-form/task-form.com
     PaginationComponent,
     ModalComponent,
     LoaderComponent,
-    TaskFormComponent
+    TaskFormComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatPaginatorModule
   ],
   templateUrl: './task.component.html',
   styleUrl: './task.component.scss'
@@ -29,6 +36,7 @@ export class TaskComponent {
   public taskService: TaskService = inject(TaskService);
   public modalService: ModalService = inject(ModalService);
   public authService: AuthService = inject(AuthService);
+  public eventService: EventsService = inject(EventsService);
   @ViewChild('addTaskModal') public addTaskModal: any;
   public fb: FormBuilder = inject(FormBuilder);
 
@@ -36,6 +44,7 @@ export class TaskComponent {
     id: [''],
     taskName: ['', Validators.required],
     description: ['', Validators.required],
+    status: ['', Validators.required],
     dueDate: ['', Validators.required],
     priority: ['', Validators.required],
     event: ['', Validators.required],
@@ -43,7 +52,12 @@ export class TaskComponent {
 
 constructor() {
   this.taskService.search.page = 1;
-  this.taskService.getAll();
+  const eventId = this.eventService.getEventId();
+  if (eventId !== null) {
+    this.taskService.getAllByEventId(eventId);
+  } else {
+    console.error('Event ID is null');
+  }
 }
 
 saveTask(task: ITask) {
@@ -56,14 +70,21 @@ callEdition(task: ITask) {
   this.taskForm.controls['id'].setValue(task.id ? JSON.stringify(task.id)  : '');
   this.taskForm.controls['taskName'].setValue(task.taskName ? task.taskName : '');
   this.taskForm.controls['description'].setValue(task.description ? task.description : '');
-  this.taskForm.controls['dueDate'].setValue(task.dueDate ? JSON.stringify(task.dueDate) : '');
+  this.taskForm.controls['status'].setValue(task.status ? task.status : '');
+  this.taskForm.controls['dueDate'].setValue(task.dueDate ?  new Date(task.dueDate).toISOString().substring(0, 10) : '');
   this.taskForm.controls['priority'].setValue(task.priority ? task.priority : '');
   this.taskForm.controls['event'].setValue(task.event ? JSON.stringify(task.event.eventId) : '');
   this.modalService.displayModal('md', this.addTaskModal);
 }
 
 updateTask(task: ITask) {
-
+console.log(task)
+if (task.dueDate) {
+  const dueDate = new Date(task.dueDate);
+ // Ajustar la fecha a UTC antes de guardar teniendo en cuenta la zona horaria GMT-6
+ const adjustedDate = new Date(dueDate.getTime() + (6 * 60 * 60 * 1000)); // Añadir 6 horas
+ task.dueDate = adjustedDate;
+}
   this.taskService.update(task);
   this.modalService.closeAll();
 }

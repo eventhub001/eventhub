@@ -60,16 +60,19 @@ export interface ILoginResponse {
     eventStartDate?: string;
     eventEndDate?: string;     // Foreign key referencing the type of the event
   }
+
   export interface ITask{
     id?:number;
     taskName?: string;
     description?: string;
     creationDate?: string;
     updateDate?: string;
-    dueDate?: string;
+    dueDate?: Date;
     priority?: string;
+    status?: string;
     event?: IEvent
   }
+
 
   export interface ITaskProgress{
     id?:number;
@@ -77,6 +80,7 @@ export interface ILoginResponse {
     status?: string;
     changeDate?: string;
   }
+
 
   export interface IRole {
     createdAt: string;

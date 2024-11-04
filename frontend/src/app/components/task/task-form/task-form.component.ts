@@ -4,12 +4,13 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ITask } from '../../../interfaces';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
   selector: 'app-task-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule,
+    CommonModule
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss'
@@ -36,6 +37,7 @@ export class TaskFormComponent {
     let task: ITask = {
       taskName: this.taskForm.controls['taskName'].value,
       description: this.taskForm.controls['description'].value,
+      status: this.taskForm.controls['status'].value,
       dueDate: this.taskForm.controls['dueDate'].value,
       priority: this.taskForm.controls['priority'].value,
       event:  { eventId: selectedEventId }
@@ -58,6 +60,12 @@ export class TaskFormComponent {
     { id: 1, name: 'Alta' },
     { id: 2, name: 'Media' },
     { id: 3, name: 'Baja' }
+  ];
+
+  status = [
+    { id: 1, name: 'En Progreso' },
+    { id: 2, name: 'Completado' },
+    { id: 3, name: 'Pendiente' }
   ];
 
 

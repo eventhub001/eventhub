@@ -9,8 +9,8 @@ import { GuestGuard } from './guards/guest.guard';
 import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
 import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
-import { TaskProgressComponent } from './pages/task-progress/task-progress.component';
 import { TaskComponent } from './pages/task/task.component';
+import { SchedulerComponent } from './pages/calendar/scheduler/scheduler.component';
 
 export const routes: Routes = [
   {
@@ -84,19 +84,19 @@ export const routes: Routes = [
             IRoleType.user
           ],
           name: 'Task',
-          showInSidebar: true
+          showInSidebar: false
         }
       },
       {
-        path: 'taskprogress',
-        component: TaskProgressComponent,
+        path: 'calendar',
+        component: SchedulerComponent,
         data: {
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
             IRoleType.user
           ],
-          name: 'Task Progress',
+          name: 'Calendar',
           showInSidebar: true
         }
       },

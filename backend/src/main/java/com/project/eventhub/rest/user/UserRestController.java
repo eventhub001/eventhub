@@ -1,5 +1,8 @@
 package com.project.eventhub.rest.user;
 
+import com.project.eventhub.logic.entity.rol.Role;
+import com.project.eventhub.logic.entity.rol.RoleEnum;
+import com.project.eventhub.logic.entity.rol.RoleRepository;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
@@ -18,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -27,6 +31,9 @@ public class UserRestController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
@@ -56,6 +63,11 @@ public class UserRestController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public User addUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+        if (optionalRole.isEmpty()) {
+            return null;
+        }
+        user.setRole(optionalRole.get());
         return UserRepository.save(user);
     }
 

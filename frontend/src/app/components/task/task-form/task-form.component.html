@@ -3,28 +3,28 @@
     <h2 class="mb-0">Add Task</h2>
   </div>
   <div class="mb-2">
-    <label class="mb-1" for="name">Task Name*</label>
+    <label class="mb-1" for="name">Nombre de Tarea*</label>
     <input id="taskName" formControlName="taskName" type="text" class="form-control">
     @if (taskForm.controls['taskName'].invalid && (taskForm.controls['taskName'].dirty || taskForm.controls['taskName'].touched)) {
       <p class="text-danger my-1">Task Name is required</p>
     }
   </div>
   <div class="mb-2">
-    <label class="mb-1" for="description">Description*</label>
+    <label class="mb-1" for="description">Descripción*</label>
     <input id="description" formControlName="description" type="text" class="form-control">
     @if (taskForm.controls['description'].invalid && (taskForm.controls['description'].dirty || taskForm.controls['description'].touched)) {
       <p class="text-danger my-1">Description is required</p>
     }
   </div>
   <div class="mb-2">
-    <label class="mb-1" for="dueDate">Due Date*</label>
+    <label class="mb-1" for="dueDate">Fecha de Vencimiento*</label>
     <input id="dueDate"  min="1" formControlName="dueDate" type="date" class="form-control">
     @if (taskForm.controls['dueDate'].invalid && (taskForm.controls['dueDate'].dirty || taskForm.controls['dueDate'].touched)) {
       <p class="text-danger my-1">Due Date is required</p>
     }
   </div>
   <div class="mb-2">
-    <label class="mb-1" for="priority">Priority*</label>
+    <label class="mb-1" for="priority">Prioridad*</label>
     <select id="priority" formControlName="priority" class="form-select">
       @for (priority of priorities; track priority.id) {
         <option [value]="priority.name">{{ priority.name}}</option>
@@ -35,7 +35,18 @@
     }
   </div>
   <div class="mb-2">
-    <label class="mb-1" for="event">Event*</label>
+    <label class="mb-1" for="status">Progreso*</label>
+    <select id="status" formControlName="status" class="form-select">
+      @for (status of status; track status.id) {
+        <option [value]="status.name">{{ status.name}}</option>
+      }
+    </select>
+    @if (taskForm.controls['priority'].invalid && (taskForm.controls['priority'].dirty || taskForm.controls['priority'].touched)) {
+      <p class="text-danger my-1">Priority is required</p>
+    }
+  </div>
+  <div class="mb-2">
+    <label class="mb-1" for="event">Evento*</label>
     <select id="event" formControlName="event" class="form-select">
       @for (event of events(); track event.eventId) {
         <option [value]="event.eventId">{{event.eventName}}</option>
