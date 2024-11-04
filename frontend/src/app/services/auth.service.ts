@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { IAuthority, ILoginResponse, IResponse, IRoleType, IUser } from '../interfaces';
+import { IAuthority, IEvent, ILoginResponse, IResponse, IRoleType, IUser } from '../interfaces';
 import { Observable, firstValueFrom, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -10,6 +10,7 @@ export class AuthService {
   private accessToken!: string;
   private expiresIn! : number;
   private user: IUser = {email: '', authorities: []};
+  private event: IEvent = {};
   private http: HttpClient = inject(HttpClient);
 
   constructor() {
@@ -37,6 +38,10 @@ export class AuthService {
 
   public getUser(): IUser | undefined {
     return this.user;
+  }
+
+  public getEvent(): IEvent | undefined {
+    return this.event;
   }
 
   public getAccessToken(): string | null {
@@ -84,7 +89,7 @@ export class AuthService {
       if(route.data && route.data.authorities) {
         if (this.hasAnyRole(route.data.authorities)) {
           permittedRoutes.unshift(route);
-        } 
+        }
       }
     }
     return permittedRoutes;

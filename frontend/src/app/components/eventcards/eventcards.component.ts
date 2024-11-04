@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { EventDeleteConfirmationComponent } from './delete-event-confirmation/delete-event-confirmation.component';
 import { ModalComponent } from '../modal/modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-eventcards',
@@ -43,7 +44,7 @@ export class EventcardsComponent {
   selectedEvent: IEvent | null = null;
   showDeleteModal: boolean = false;
 
-  constructor() {
+  constructor(private router: Router) {
     this.eventTypeService.getAll();
   }
 
@@ -54,6 +55,14 @@ export class EventcardsComponent {
 
   showEventDetails(event: IEvent) {
     this.selectedEvent = event; // Set the selected event to show details
+  }
+
+
+
+  navigateToTasks(eventId: number) {
+    this.eventService.setEventId(eventId);
+    this.router.navigate(['app/task']);
+    console.log(eventId);
   }
 
   closeEditMode() {
@@ -81,7 +90,7 @@ export class EventcardsComponent {
     this.eventForm.controls["id"].setValue(event.eventId);
     this.eventForm.controls["eventName"].setValue(event.eventName);
     console.log(this);
-    this.eventForm.controls["eventType"].setValue(event?.eventType.eventTypeId ? JSON.stringify(event?.eventType.eventTypeId) : '');
+    this.eventForm.controls["eventType"].setValue(event?.eventType?.eventTypeId ? JSON.stringify(event?.eventType.eventTypeId) : '');
     this.eventForm.controls["eventDescription"].setValue(event?.eventDescription);
     this.editEventId = event.eventId!; // Toggle edit mode
     this.createEvent = false; // Close create mode
@@ -102,7 +111,7 @@ export class EventcardsComponent {
     console.log("cancel delete");
     this.showDeleteModal = false;
   }
-  
+
   deleteEvent(event: IEvent) {
     console.log("delete event");
     console.log(event);
@@ -122,5 +131,5 @@ export class EventcardsComponent {
   asDate(arg0: string) {
     return new DatePipe('en-US').transform(arg0, 'MM/dd/yyyy');
   }
-  
+
 }

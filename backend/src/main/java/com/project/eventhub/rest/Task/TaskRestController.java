@@ -63,6 +63,36 @@ public class TaskRestController {
 
 
 
+    @GetMapping("/event/{eventId}/tasks")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getAllTaskbyEvent(
+            @PathVariable Long eventId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+        Optional<Event> foundEvent= eventRepository.findById(eventId);
+        if(foundEvent.isPresent()) {
+
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<Task> taskPage = taskRepository.getTaskByEvent_EventId(eventId, pageable);
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(taskPage.getTotalPages());
+        meta.setTotalElements(taskPage.getTotalElements());
+        meta.setPageNumber(taskPage.getNumber() + 1);
+        meta.setPageSize(taskPage.getSize());
+
+        return new GlobalResponseHandler().handleResponse("Task retrieved successfully",
+                taskPage.getContent(), HttpStatus.OK, meta);
+
+        } else {
+            return new GlobalResponseHandler().handleResponse("Event Id " + eventId + " not found"  ,
+                    HttpStatus.NOT_FOUND, request);
+        }
+    }
+
+
+
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole( 'SUPER_ADMIN')")
     public Task updateTask(@PathVariable Integer id, @RequestBody Task task) {

@@ -9,6 +9,7 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { ModalComponent } from '../../components/modal/modal.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { TaskFormComponent } from '../../components/task/task-form/task-form.component';
+import { EventsService } from '../../services/event.service';
 
 @Component({
   selector: 'app-task',
@@ -29,6 +30,7 @@ export class TaskComponent {
   public taskService: TaskService = inject(TaskService);
   public modalService: ModalService = inject(ModalService);
   public authService: AuthService = inject(AuthService);
+  public eventService: EventsService = inject(EventsService);
   @ViewChild('addTaskModal') public addTaskModal: any;
   public fb: FormBuilder = inject(FormBuilder);
 
@@ -44,7 +46,12 @@ export class TaskComponent {
 
 constructor() {
   this.taskService.search.page = 1;
-  this.taskService.getAll();
+  const eventId = this.eventService.getEventId();
+  if (eventId !== null) {
+    this.taskService.getAllByEventId(eventId);
+  } else {
+    console.error('Event ID is null');
+  }
 }
 
 saveTask(task: ITask) {

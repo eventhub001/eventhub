@@ -84,7 +84,7 @@ export const routes: Routes = [
             IRoleType.user
           ],
           name: 'Task',
-          showInSidebar: true
+          showInSidebar: false
         }
       },
       {

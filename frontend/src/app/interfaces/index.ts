@@ -5,26 +5,37 @@ export interface ILoginResponse {
     accessToken: string;
     expiresIn: number
   }
-  
+
   export interface IResponse<T> {
     data: T;
   }
 
   export interface IEventType {
     eventTypeId?: number;               // Primary key, optional as it's auto-generated
-    eventTypeName: string;     // Name of the event type
+    eventTypeName?: string;     // Name of the event type
   }
 
   export interface IEvent {
     eventId?: number;               // Primary key, optional since it's auto-generated
-    userId: number;            // Foreign key referencing the user associated with the event
-    eventName: string;         // Name of the event
-    eventType: IEventType;
+    userId?: number;            // Foreign key referencing the user associated with the event
+    eventName?: string;         // Name of the event
+    eventType?: IEventType;
     eventDescription?: string;
-    eventStartDate: string;
-    eventEndDate: string;     // Foreign key referencing the type of the event
+    eventStartDate?: string;
+    eventEndDate?: string;     // Foreign key referencing the type of the event
   }
-    
+
+  export interface ITask{
+    id?:number;
+    taskName?: string;
+    description?: string;
+    creationDate?: string;
+    updateDate?: string;
+    dueDate?: Date;
+    priority?: string;
+    status?: string;
+    event?: IEvent
+  }
 
   export interface IRole {
     createdAt: string;
@@ -42,7 +53,7 @@ export interface ILoginResponse {
     totalElements?: number;
     totalPages?:number;
   }
-  
+
   export interface IUser {
     id?: number;
     name?: string;
@@ -55,22 +66,22 @@ export interface ILoginResponse {
     authorities?: IAuthority[];
     role?: IRole
   }
-  
+
   export interface IAuthority {
     authority: string;
   }
-  
+
   export interface IFeedBackMessage {
     type?: IFeedbackStatus;
     message?: string;
   }
-  
+
   export enum IFeedbackStatus {
     success = "SUCCESS",
     error = "ERROR",
     default = ''
   }
-  
+
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",

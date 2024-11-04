@@ -32,6 +32,14 @@ export class EventsService extends BaseService<IEvent> {
       }
     });
   }
+  private eventId: number | null = null;
+
+  setEventId(id: number) {
+    this.eventId = id;
+  }
+  getEventId(): number | null {
+    return this.eventId;
+  }
 
   getAllByUser() {
     this.findAllWithParamsAndCustomSource(`events`, { page: this.search.page, size: this.search.size }).subscribe({
