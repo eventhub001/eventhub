@@ -30,7 +30,43 @@ export interface ILoginResponse {
     senderId?: number;
     content?: string;
     timestamp?: string;
+
   }
+
+  export interface IVendor{
+    id?: number;
+    name?: string;
+    description?: string;
+    location?: string;
+    rating?: number;
+    user?: IUser;
+    vendorCategory?: IVendorCategory;
+  }
+
+
+
+  export interface IVendorService{
+    id?: number;
+    service_name?: string;
+    description?: string;
+    price?: number;
+    isAvailable?: boolean;
+    vendor?: IVendor;
+  }
+
+
+
+  export interface IVendorCategory{
+    id?: number;
+    category_name?: string;
+    description?: string;
+
+
+
+  }
+
+
+
 
   export interface ITask{
     id?:number;

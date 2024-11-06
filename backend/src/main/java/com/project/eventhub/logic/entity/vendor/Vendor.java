@@ -75,4 +75,12 @@ public class Vendor {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public VendorCategory getVendorCategory() {
+        return vendorCategory;
+    }
+
+    public void setVendorCategory(VendorCategory vendorCategory) {
+        this.vendorCategory = vendorCategory;
+    }
 }
