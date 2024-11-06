@@ -2,6 +2,7 @@ package com.project.eventhub.logic.entity.vendor;
 
 
 import com.project.eventhub.logic.entity.user.User;
+import com.project.eventhub.logic.entity.VendorCategory.VendorCategory;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,11 +16,15 @@ public class Vendor {
     private String name;
     private String description;
     private String location;
-    private String rating;
+    private Double rating;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private VendorCategory vendorCategory;
 
     public Vendor() {}
 
@@ -55,11 +60,11 @@ public class Vendor {
         this.location = location;
     }
 
-    public String getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

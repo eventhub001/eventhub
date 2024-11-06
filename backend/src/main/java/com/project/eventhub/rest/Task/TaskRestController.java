@@ -94,7 +94,6 @@ public class TaskRestController {
 
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole( 'SUPER_ADMIN')")
     public Task updateTask(@PathVariable Integer id, @RequestBody Task task) {
         return taskRepository.findById(id)
                 .map(existingTask -> {
@@ -119,7 +118,6 @@ public class TaskRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public void deleteTask(@PathVariable Integer id) {
         taskRepository.deleteById(id);
     }

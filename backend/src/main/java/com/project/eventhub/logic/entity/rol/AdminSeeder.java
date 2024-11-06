@@ -30,6 +30,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         this.createSuperAdministrator();
+        this.createRegularUsers();
     }
 
     private void createSuperAdministrator() {
@@ -54,5 +55,31 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
         user.setRole(optionalRole.get());
 
         userRepository.save(user);
+    }
+
+
+    private void createRegularUsers() {
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+        if (optionalRole.isEmpty()) {
+            return;
+        }
+
+        for (int i = 1; i <= 10; i++) {
+            String email = "regularUser" + i + "@gmail.com";
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+
+            if (optionalUser.isPresent()) {
+                continue;
+            }
+
+            User regularUser = new User();
+            regularUser.setName("Regular" + i);
+            regularUser.setLastname("User" + i);
+            regularUser.setEmail(email);
+            regularUser.setPassword(passwordEncoder.encode("regularuser123"));
+            regularUser.setRole(optionalRole.get());
+
+            userRepository.save(regularUser);
+        }
     }
 }

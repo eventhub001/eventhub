@@ -1,13 +1,12 @@
-package com.project.eventhub.logic.entity.service;
+package com.project.eventhub.logic.entity.VendorService;
 
 
-import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.vendor.Vendor;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "vendor_service")
-public class vendor_service {
+public class Vendor_service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,7 +21,7 @@ private boolean isAvailable;
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
-        public vendor_service() {}
+        public Vendor_service() {}
 
     public Integer getId() {
         return id;

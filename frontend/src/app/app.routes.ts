@@ -50,11 +50,8 @@ export const routes: Routes = [
       {
       path: "events",
       component: EventmanagerComponent,
-      canActivate: [AuthGuard],
       data: {
         authorities: [
-          IRoleType.admin,
-          IRoleType.superAdmin,
           IRoleType.user
           ],
           name: 'Events',

@@ -44,7 +44,6 @@ public class EventRestController {
     @Autowired
     private UserRepository userRepository;
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllEvents(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
@@ -88,7 +87,6 @@ public class EventRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public Event addEvent(@RequestBody Event event) {
         return eventRepository.save(event);
     }
@@ -114,7 +112,6 @@ public class EventRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public void deleteEvent(@PathVariable Long id) {
         eventRepository.deleteById(id);
     }
