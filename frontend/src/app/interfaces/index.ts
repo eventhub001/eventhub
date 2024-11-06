@@ -25,6 +25,13 @@ export interface ILoginResponse {
     eventEndDate?: string;     // Foreign key referencing the type of the event
   }
 
+  export interface IChat{
+    id?: number;
+    senderId?: number;
+    content?: string;
+    timestamp?: string;
+  }
+
   export interface ITask{
     id?:number;
     taskName?: string;

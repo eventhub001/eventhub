@@ -100,6 +100,7 @@ export const routes: Routes = [
           showInSidebar: true
         }
       },
+
     ],
   },
 ];
