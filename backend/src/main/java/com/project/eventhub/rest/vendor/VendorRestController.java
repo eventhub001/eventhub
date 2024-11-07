@@ -1,6 +1,10 @@
 package com.project.eventhub.rest.vendor;
 
 
+import com.project.eventhub.logic.entity.VendorService.VendorServiceRepository;
+import com.project.eventhub.logic.entity.VendorService.Vendor_service;
+import com.project.eventhub.logic.entity.event.Event;
+import com.project.eventhub.logic.entity.task.Task;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.entity.vendor.Vendor;
@@ -17,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +35,9 @@ public class VendorRestController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VendorServiceRepository vendorServiceRepository;
 
     @PostMapping
     @PreAuthorize("hasAnyRole( 'SUPER_ADMIN')")
@@ -58,6 +67,40 @@ public class VendorRestController {
         return new GlobalResponseHandler().handleResponse("Vendors retrieved successfully",
                 vendorPage.getContent(), HttpStatus.OK, meta);
     }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getVendorbyUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+        Optional<User> foundUser = userRepository.findById(userId);
+        if (foundUser.isPresent()) {
+
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<Vendor> vendorPage = vendorRepository.getVendorByUserId(userId, pageable);
+            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+            meta.setTotalPages(vendorPage.getTotalPages());
+            meta.setTotalElements(vendorPage.getTotalElements());
+            meta.setPageNumber(vendorPage.getNumber() + 1);
+            meta.setPageSize(vendorPage.getSize());
+
+            List<Vendor_service> allServices = new ArrayList<>();
+            for (Vendor vendor : vendorPage.getContent()) {
+                List<Vendor_service> services = vendorServiceRepository.findByVendorId(vendor.getId());
+                allServices.addAll(services);
+            }
+
+            return new GlobalResponseHandler().handleResponse("Vendor services retrieved successfully",
+                    allServices, HttpStatus.OK, meta);
+
+        } else {
+            return new GlobalResponseHandler().handleResponse("User Id " + userId + " not found",
+                    HttpStatus.NOT_FOUND, request);
+        }
+    }
+
 
 
     @PutMapping("/{id}")

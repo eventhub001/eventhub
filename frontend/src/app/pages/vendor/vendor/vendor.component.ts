@@ -1,9 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { VendorService } from '../../../services/vendor.service';
-import { ModalService } from '../../../services/modal.service';
-import { AuthService } from '../../../services/auth.service';
-import { FormBuilder, Validators } from '@angular/forms';
-import { IVendor } from '../../../interfaces';
 import { VendorListComponent } from '../../../components/vendor/vendor-list/vendor-list/vendor-list.component';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +12,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { IVendor } from '../../../interfaces';
 @Component({
   selector: 'app-vendor',
   standalone: true,
@@ -38,6 +35,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 })
 export class VendorComponent {
   public vendorService: VendorService = inject(VendorService);
+  public vendors: IVendor[] = [];
   // public modalService: ModalService = inject(ModalService);
   // public authService: AuthService = inject(AuthService);
   // @ViewChild('addVendorModal') public addVendorModal: any;
@@ -54,7 +52,40 @@ export class VendorComponent {
 
 constructor() {
   this.vendorService.search.page = 1;
-  this.vendorService.getAll();
+  this.getVendors();
+}
+
+ngOnInit(): void {
+  this.loadFromLocalStorage();
+
+}
+
+getVendors(): void {
+  this.vendorService.getAll().subscribe({
+    next: (vendors: IVendor[]) => {
+      console.log('Vendors fetched:', vendors); // Verifica los datos obtenidos
+      this.vendors = vendors;
+      this.saveToLocalStorage();
+    },
+    error: (err: any) => {
+      console.error('Error fetching vendors', err);
+    }
+  });
+}
+
+private saveToLocalStorage(): void {
+  localStorage.setItem('vendors', JSON.stringify(this.vendors));
+}
+
+private loadFromLocalStorage(): void {
+  const vendorsData = localStorage.getItem('vendors');
+  if (vendorsData) {
+    this.vendors = JSON.parse(vendorsData);
+  }
+}
+
+onPaginationChange(): void {
+  this.getVendors();
 }
 
 // saveVendor(vendor: IVendor) {

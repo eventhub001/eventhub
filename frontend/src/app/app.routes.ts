@@ -12,6 +12,7 @@ import { EventmanagerComponent } from './pages/eventmanager/eventmanager.compone
 import { TaskComponent } from './pages/task/task.component';
 import { SchedulerComponent } from './pages/calendar/scheduler/scheduler.component';
 import { VendorComponent } from './pages/vendor/vendor/vendor.component';
+import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
 
 export const routes: Routes = [
   {
@@ -53,7 +54,8 @@ export const routes: Routes = [
       component: EventmanagerComponent,
       data: {
         authorities: [
-          IRoleType.user
+          IRoleType.user,
+          IRoleType.superAdmin,
           ],
           name: 'Events',
           showInSidebar: true
@@ -111,7 +113,19 @@ export const routes: Routes = [
           showInSidebar: true
         }
       },
-
+      {
+        path: 'details',
+        component: VendorDetailsComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Detalles del Proveedor',
+          showInSidebar: false
+        }
+      },
     ],
   },
 ];

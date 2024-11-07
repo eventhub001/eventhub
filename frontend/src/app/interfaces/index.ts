@@ -50,7 +50,7 @@ export interface ILoginResponse {
     service_name?: string;
     description?: string;
     price?: number;
-    isAvailable?: boolean;
+    available?: boolean;
     vendor?: IVendor;
   }
 
