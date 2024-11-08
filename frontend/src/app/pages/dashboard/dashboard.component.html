@@ -4,6 +4,10 @@
 <app-calendario-eventos
     [events]="eventService.events$()"
     [tasks]="taskService.task$()"
-    [tasksProgress]="taskProgressService.taskProgress$()"
+    (saveEvent)="saveEvent($event)"
+    (showEventDetails)="showEventDetails($event)"
 
 ></app-calendario-eventos>
+<div *ngIf="eventSelected"></div>
+<app-event-card-details [event]="eventSelected" >
+</app-event-card-details>

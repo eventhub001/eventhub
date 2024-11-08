@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CalendarOptions, EventSourceInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -28,39 +28,45 @@ export class CalendarioEventosComponent {
       minute: '2-digit',
       meridiem: 'short'
     },
-    eventClick: function(info) {
+    navLinks: false,
+    moreLinkClick: 'popover',
+    eventClick: (info) => {
       console.log(info.event.title);
-    }
+      if (info.event.extendedProps['type'] === 'Event') {
+        this.showEventDetails.emit(this.calendarEventBuilder.parseToEvent(info.event as ICalendarEvent));
+      }
+    },
+    eventDrop: (info) => {
+      if (info.event.extendedProps['type'] === 'Event') {
+        this.saveEvent.emit(this.calendarEventBuilder.parseToEvent(info.event as ICalendarEvent));
+      }
+    },
   };
 
   @Input() events: IEvent[] = [];
   @Input() tasks: ITask[] = [];
   @Input() tasksProgress: ITaskProgress[] = [];
+  @Output() saveEvent: EventEmitter<IEvent> = new EventEmitter<IEvent>();
+  @Output() showEventDetails: EventEmitter<IEvent> = new EventEmitter<IEvent>();
   calendarEvents: ICalendarEvent[] = [];
-  calendaEventBuilder: EventCalendarBuilder = new EventCalendarBuilder;
+  calendarEventBuilder: EventCalendarBuilder = new EventCalendarBuilder;
 
   constructor() {
     this.addEvent = this.addEvent.bind(this);
-    this.addEvent({
-      title: 'Bodas de Emilio y Emilia',
-      allDay: false,
-      start: '2024-11-04T09:00Z',
-      end: '2024-11-04T10:00Z',
-      editable: true,
-      startEditable: true,
-      durationEditable: true,
-    })
   }
 
   ngOnChanges() {
     if (this.events.length > 0) {
-      this.calendaEventBuilder.parseEvents(this.events);
-    }
-    if (this.tasksProgress.length > 0) {
-      this.calendaEventBuilder.parseTasks(this.tasksProgress);
+      this.calendarEventBuilder.parseEvents(this.events);
     }
 
-    this.calendarEvents = this.calendaEventBuilder.build();
+    if (this.tasks.length > 0) {
+      console.log('tasks');
+      console.log(this.tasks);
+      this.calendarEventBuilder.parseTasks(this.tasks);
+    }
+
+    this.calendarEvents = this.calendarEventBuilder.build();
     this.calendarOptions.events = this.calendarEvents as EventSourceInput;
   }
   

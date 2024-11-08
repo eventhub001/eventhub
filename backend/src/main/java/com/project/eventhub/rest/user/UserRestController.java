@@ -98,8 +98,9 @@ public class UserRestController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         UserRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")

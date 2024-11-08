@@ -10,7 +10,6 @@ import { AccessDeniedComponent } from './pages/access-denied/access-denied.compo
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
 import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
 import { TaskComponent } from './pages/task/task.component';
-import { SchedulerComponent } from './pages/calendar/scheduler/scheduler.component';
 
 export const routes: Routes = [
   {
@@ -85,19 +84,6 @@ export const routes: Routes = [
           ],
           name: 'Task',
           showInSidebar: false
-        }
-      },
-      {
-        path: 'calendar',
-        component: SchedulerComponent,
-        data: {
-          authorities: [
-            IRoleType.admin,
-            IRoleType.superAdmin,
-            IRoleType.user
-          ],
-          name: 'Calendar',
-          showInSidebar: true
         }
       },
     ],

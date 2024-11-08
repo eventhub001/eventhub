@@ -21,7 +21,6 @@
           [service]="taskService"
           [customCall]="true"
           (callCustomPaginationMethod)="taskService.getAllByEventId(this.eventService.getEventId() ?? 0)"
-
         />
       }
     </div>
@@ -37,7 +36,9 @@
     <div>
       <app-task-form
         [taskForm]="taskForm"
+        [taskTemplates]="taskTemplateService.taskTemplates$()"
         (callSaveMethod)="saveTask($event)"
+        (callSaveTaskTemplate)="saveEventTaskTemplate($event)"
         (callUpdateMethod)="updateTask($event)"
       />
     </div>

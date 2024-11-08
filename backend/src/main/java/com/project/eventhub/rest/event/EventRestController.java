@@ -5,7 +5,9 @@ import com.project.eventhub.logic.entity.auth.JwtService;
 import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.event.EventRepository;
 import com.project.eventhub.logic.entity.event.EventTypeRepository;
+import com.project.eventhub.logic.entity.eventform.EventFormRepository;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
+import com.project.eventhub.logic.entity.task.TaskRepository;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
@@ -42,9 +44,15 @@ public class EventRestController {
     private EventTypeRepository eventTypeRepository;
 
     @Autowired
+    private EventFormRepository eventFormRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
+
+    @Autowired
     private UserRepository userRepository;
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllEvents(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
@@ -88,7 +96,7 @@ public class EventRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public Event addEvent(@RequestBody Event event) {
         return eventRepository.save(event);
     }
@@ -115,7 +123,10 @@ public class EventRestController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public void deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
+        eventFormRepository.deleteEventFormByEvent_EventId(id);
+        taskRepository.deleteTaskByEvent_EventId(id);
         eventRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

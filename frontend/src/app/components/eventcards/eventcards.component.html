@@ -1,7 +1,7 @@
 <div class="ten mb-0">
   <h1>Gestión de eventos</h1>
 </div>
-<div *ngIf="!createEvent">
+<div [hidden]="createEvent">
     <div class="toolbar-top-right">
       <div class="right-toolbar">
         <mat-card-actions>
@@ -12,8 +12,15 @@
       </div>
     </div>
 </div>
-<div *ngIf="createEvent">
-  <app-card-events-form [eventTypes]="eventTypeService.eventTypes$()" [eventForm]="eventForm" (callSaveEvent)="save($event)" [createEvent]="true" (closeView)="closeCreateMode()"></app-card-events-form>
+<div [hidden]="!createEvent">
+  <app-card-events-form 
+  [eventTypes]="eventTypeService.eventTypes$()"
+  [eventFormQuestion]="eventFormQuestionService.eventFormQuestions$()"
+  [eventForm]="eventForm"
+  (callSaveEvent)="save($event)"
+  [createEvent]="true"
+  (closeView)="closeCreateMode()"
+  ></app-card-events-form>
 </div>
 <div class="card-container">
     <mat-card *ngFor="let event of events" class="card">
@@ -35,8 +42,8 @@
             <img src="../../../assets/img/trash.png" class="clickable icon-layout" (click)="deleteMode(event)" />
           </div>
       </div>
-      <div *ngIf="editEventId === event.eventId" class="toolbar-top-right">
-        <app-card-events-form
+      <div [hidden]="editEventId !== event.eventId" class="toolbar-top-right">
+        <app-card-events-form #eventFormComponent
         [eventTypes]="eventTypeService.eventTypes$()"
         [eventForm]="eventForm"
         [eventStartDate]="event.eventStartDate || null"
@@ -53,12 +60,10 @@
         <button mat-button color="accent" >Buscar recursos</button>
       </mat-card-actions>
       <!-- Show event details if selected -->
-    <app-eventcarddetails *ngIf="selectedEvent" [event]="event" (close)="closeEventDetails()" ></app-eventcarddetails>
   </mat-card>
   <ng-template #addProductsModal>
     <app-modal
-      [hideFooter]="true"
-    >
+      [hideFooter]="true">
       <div>
         <app-event-confirmation-modal [eventParam]="selectedEvent" (confirmed)="deleteEvent($event)" (canceled)="cancelDelete()"></app-event-confirmation-modal>
       </div>

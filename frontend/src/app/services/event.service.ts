@@ -56,8 +56,9 @@ export class EventsService extends BaseService<IEvent> {
 
   save(event: IEvent) {
     this.add(event).subscribe({
+
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('Éxito al guardar el evento', response.message, 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
@@ -65,6 +66,10 @@ export class EventsService extends BaseService<IEvent> {
         console.error('error', err);
       }
     });
+  }
+
+  saveAsSubscribe(event: IEvent) {
+    return this.add(event);
   }
 
   update(event: IEvent) {
@@ -83,8 +88,9 @@ export class EventsService extends BaseService<IEvent> {
   delete(event: IEvent) {
     this.delCustomSource(`${event.eventId}`).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
-        this.getAllByUser();
+        console.log('response', response);
+        this.alertService.displayAlert('Exito al borra el evento', "Se ha borrado el evento", 'center', 'top', ['success-snackbar']);
+        this.getAll();
       },
       error: (err: any) => {
         this.alertService.displayAlert('error', 'An error occurred deleting the event', 'center', 'top', ['error-snackbar']);

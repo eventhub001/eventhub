@@ -90,6 +90,7 @@ export interface ILoginResponse {
     updatedAt: string;
   }
 
+
   export interface ISearch {
     page?: number;
     size?: number;
@@ -174,3 +175,29 @@ export interface Asset {
 
     clone: () => Asset;
 }
+
+export interface IEventForm {
+  taskFormId?: number; // Optional because it might be undefined for new forms
+  event: IEvent; // Assuming User entity has a numeric ID
+  question: IEventFormQuestion;
+  answer?: string; // Optional as it's nullable in your entity
+}
+
+export interface ITaskTemplate {
+  taskTemplateId?: number; // Optional for new entries
+  taskTemplateName: string;
+  taskTemplateDescription: string;
+}
+
+export interface IEventTaskTemplate {
+  taskTemplateId?: number; // Optional if created before DB save
+  taskTemplate: ITaskTemplate; // Links to the TaskTemplate interface
+  event: IEvent; // Numeric ID for User association
+}
+
+export interface IEventFormQuestion {
+  id: number;
+  question: string;
+  nnControlName: string;
+}
+
