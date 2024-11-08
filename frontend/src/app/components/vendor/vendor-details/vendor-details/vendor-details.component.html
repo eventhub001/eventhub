@@ -1,42 +1,19 @@
-
-
   <h5 *ngIf="vendor">Servicios de {{vendor.name}}</h5>
-
-  <!-- <mat-card *ngIf="vendor">
-
-    <mat-card-header>
-
-      <mat-card-title>{{ vendor.name}}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p><strong>Nombre:</strong> {{ vendor.user?.name }}</p>
-      <p><strong>Descripción:</strong> {{ vendor.description }}</p>
-      <p><strong>Ubicación:</strong> {{ vendor.location }}</p>
-      <p><strong>Rating:</strong> {{ vendor.rating }}</p>
-
-    </mat-card-content>
-  </mat-card> -->
-
-  <div *ngFor="let item of servicios; let i = index">
-    <mat-card [ngClass]="{'disponible': item.available, 'no-disponible': !item.available}">
-      <mat-card-header >
-        <mat-card-title>{{ item.service_name }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content >
-        <p><strong>Descripción:</strong> {{ item.description }}</p>
-        <p><strong>Precio:</strong> ${{ item.price }}</p>
-        <p>{{ item.available ? 'Disponible' : 'No hay disponibilidad' }}</p>
-      </mat-card-content>
-
-    </mat-card>
-
-  </div>
-
-  <div class="chat-container">
-
-      <app-chat/>
-
-  </div>
+      <div *ngFor="let item of servicios; let i = index">
+        <mat-card [ngClass]="{'disponible': item.available, 'no-disponible': !item.available}">
+          <mat-card-header >
+            <mat-card-title>{{ item.service_name }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content >
+            <p><strong>Descripción:</strong> {{item.description}}</p>
+            <p><strong>Precio:</strong> ${{item.price }}</p>
+            <p>{{ item.available ?'Disponible' : 'No hay disponibilidad'}}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="chat-container">
+          <app-chat/>
+      </div>
 
 
 

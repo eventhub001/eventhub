@@ -10,9 +10,9 @@ import { AccessDeniedComponent } from './pages/access-denied/access-denied.compo
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
 import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
 import { TaskComponent } from './pages/task/task.component';
-import { SchedulerComponent } from './pages/calendar/scheduler/scheduler.component';
 import { VendorComponent } from './pages/vendor/vendor/vendor.component';
 import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
+import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
 
 export const routes: Routes = [
   {
@@ -88,19 +88,6 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'calendar',
-        component: SchedulerComponent,
-        data: {
-          authorities: [
-            IRoleType.admin,
-            IRoleType.superAdmin,
-            IRoleType.user
-          ],
-          name: 'Calendar',
-          showInSidebar: true
-        }
-      },
-      {
         path: 'vendor',
         component: VendorComponent,
         data: {
@@ -123,6 +110,19 @@ export const routes: Routes = [
             IRoleType.user
           ],
           name: 'Detalles del Proveedor',
+          showInSidebar: false
+        }
+      },
+      {
+        path: 'chat',
+        component: ChatpageComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Chat',
           showInSidebar: false
         }
       },

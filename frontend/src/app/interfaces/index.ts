@@ -27,9 +27,9 @@ export interface ILoginResponse {
 
   export interface IChat{
     id?: number;
-    senderId?: number;
-    content?: string;
-    timestamp?: string;
+    userId?: IUser;
+    message?: string;
+    // timestamp?: string;
 
   }
 

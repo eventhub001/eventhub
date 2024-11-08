@@ -39,12 +39,10 @@ export class VendorDetails1Component {
     if (userId !== null) {
       this.service.getVendorByUserId(userId).subscribe({
         next: (vendorService : IVendorService[]) => {
-          console.log('Vendors fetched:', vendorService); // Verifica los datos obtenidos
           if (vendorService.length > 0) {
-            this.servicios = vendorService; // Asigna el primer vendorService encontrado
+            this.servicios = vendorService;
             this.vendor = vendorService[0].vendor;
             this.saveToLocalStorage();
-            console.log('Services:', this.vendorService); // Verifica los servicios
           }
         },
         error: (err: any) => {
