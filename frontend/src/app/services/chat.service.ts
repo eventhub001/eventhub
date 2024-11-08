@@ -32,11 +32,9 @@ export class ChatService  {
    joinChatRoom(roomId: string): void {
     this.stompClient.connect({}, () => {
       this.stompClient.subscribe(`/topic/${roomId}`, (message: any) => {
-        console.log('Raw message from server:', message); // Agrega este registro para depurar
-
+        console.log('Raw message from server:', message);
         const messageContent = JSON.parse(message.body);
-        console.log('Parsed message content:', messageContent); // Agrega este registro para depurar
-
+        console.log('Parsed message content:', messageContent);
         const currentMessage = this.messageSubject.getValue();
         currentMessage.push(messageContent);
         this.messageSubject.next(currentMessage);

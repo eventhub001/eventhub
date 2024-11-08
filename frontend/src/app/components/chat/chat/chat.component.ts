@@ -78,10 +78,10 @@ export class ChatComponent {
   }
 
   listenMessages() {
-    this.chatService.getMessages().subscribe((messages: IChat[]) => {
-      this.messageList = messages.map((item: IUser) => ({
+    this.chatService.getMessages().subscribe((messages: any) => {
+      this.messageList = messages.map((item: any) => ({
         ...item,
-        message_side: item.id != this.userId ? 'sender' : 'receiver'
+        message_side: item.user.id != this.userId ? 'receiver' : 'sender'
       }));
     });
   }

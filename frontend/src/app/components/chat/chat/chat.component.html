@@ -7,14 +7,14 @@
     </div>
     <div class="title">
       <!-- <img src="/src/assets/icons/whatsapp-512.webp" width="25px" height="25px"> -->
-      WhatsApp
+      EventHub Chat
     </div>
   </div>
   <ul class="messages">
     <li class="message right" *ngFor="let message of messageList"
       [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"
     >
-      <div class="avatar"></div>
+      <div class="">{{message.user.name}}</div>
       <div class="text_wrapper">
         <div class="text"> {{message.message}}</div>
       </div>

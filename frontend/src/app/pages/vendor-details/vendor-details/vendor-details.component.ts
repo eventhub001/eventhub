@@ -7,12 +7,13 @@ import { IVendor, IVendorService } from '../../../interfaces';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { ChatComponent } from "../../../components/chat/chat/chat.component";
 
 
 @Component({
   selector: 'app-vendor-details',
   standalone: true,
-  imports: [LoaderComponent, VendorDetailsComponent, VendorDetails1Component, MatCardModule, MatButtonModule, CommonModule],
+  imports: [LoaderComponent, VendorDetailsComponent, VendorDetails1Component, MatCardModule, MatButtonModule, CommonModule, ChatComponent],
   templateUrl: './vendor-details.component.html',
   styleUrl: './vendor-details.component.scss'
 })
