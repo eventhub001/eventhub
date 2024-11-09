@@ -20,17 +20,4 @@ export class DateTimeCustomPickerComponent {
 
   @Input() dateTimeForm!: FormGroup;
   @Output() isValidInput: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-  ngOnChanges() {
-    if (this.dateTimeForm) console.log(this.dateTimeForm.controls['dateInput'].value);
-  }
-
-  emitIsValidInput() {
-    if (!this.dateTimeForm.invalid) {
-      console.log('date: ', this.dateTimeForm.controls['dateInput'].value);
-      console.log('start time: ', this.dateTimeForm.controls['startTime'].value);
-      console.log('end time: ', this.dateTimeForm.controls['endTime'].value);
-    }
-    this.isValidInput.emit(this.dateTimeForm.invalid);
-  }
 }

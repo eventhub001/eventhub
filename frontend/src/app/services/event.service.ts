@@ -23,6 +23,7 @@ export class EventsService extends BaseService<IEvent> {
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size }).subscribe({
       next: (response: any) => {
+        console.log(this.search);
         this.search = { ...this.search, ...response.meta };
         this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
         this.eventListSignal.set(response.data);
@@ -97,5 +98,18 @@ export class EventsService extends BaseService<IEvent> {
         console.error('error', err);
       }
     });
+  }
+
+  searchByTerm(query: string) {
+    this.findAllWithParamsAndCustomSource(`search`, { page: this.search.page, size: this.search.size, search: query }).subscribe({
+      next: (response: any) => {
+        this.search = { ...this.search, ...response.meta };
+        this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
+        this.eventListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    })
   }
 }

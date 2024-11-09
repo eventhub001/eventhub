@@ -6,11 +6,12 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import { ICalendarEvent, IEvent, ITask, ITaskProgress } from '../../interfaces';
 import { EventCalendarBuilder } from './event-calendar.builder';
+import { EventcarddetailsComponent } from "../eventcards/eventcarddetails/eventcarddetails.component";
 
 @Component({
   selector: 'app-calendario-eventos',
   standalone: true,
-  imports: [FullCalendarModule],
+  imports: [FullCalendarModule, EventcarddetailsComponent],
   templateUrl: './calendario-eventos.component.html',
   styleUrl: './calendario-eventos.component.scss'
 })
@@ -57,17 +58,18 @@ export class CalendarioEventosComponent {
 
   ngOnChanges() {
     if (this.events.length > 0) {
+      console.log('events: ', this.events);
       this.calendarEventBuilder.parseEvents(this.events);
     }
 
     if (this.tasks.length > 0) {
-      console.log('tasks');
-      console.log(this.tasks);
+      this.tasks = this.tasks.filter(task => task.dueDate !== null);
       this.calendarEventBuilder.parseTasks(this.tasks);
     }
 
     this.calendarEvents = this.calendarEventBuilder.build();
     this.calendarOptions.events = this.calendarEvents as EventSourceInput;
+
   }
   
 

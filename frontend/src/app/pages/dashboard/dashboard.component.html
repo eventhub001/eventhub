@@ -8,6 +8,11 @@
     (showEventDetails)="showEventDetails($event)"
 
 ></app-calendario-eventos>
-<div *ngIf="eventSelected"></div>
-<app-event-card-details [event]="eventSelected" >
-</app-event-card-details>
+<ng-template #addProductsModal>
+  <app-modal
+    [hideFooter]="true">
+    <div>
+      <app-event-card-details [event]="eventSelected" ></app-event-card-details>
+    </div>
+  </app-modal>
+</ng-template>

@@ -65,7 +65,7 @@
     <label class="mb-1" for="event">Evento*</label>
     <select id="event" formControlName="event" class="form-select">
       @for (event of events(); track event.eventId) {
-        <option [value]="event.eventId">{{event.eventName}}</option>
+        <option [value]="event.eventId" selected="event.eventId == selectedEventId">{{event.eventName}}</option>
       }
     </select>
     @if (taskForm.controls['event'].invalid && (taskForm.controls['event'].dirty || taskForm.controls['event'].touched)) {

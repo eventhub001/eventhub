@@ -1,3 +1,4 @@
+import { DatePipe } from "@angular/common";
 import { ICalendarEvent, IEvent, ITask, ITaskProgress } from "../../interfaces";
 
 export class EventCalendarBuilder {
@@ -44,12 +45,23 @@ export class EventCalendarBuilder {
         })));
     }
 
+    asTime(arg0: string): string {
+        const date = new Date(arg0);
+        const hours = date.getHours().toString().padStart(2, '0'); // Format hours to 2 digits
+        const minutes = date.getMinutes().toString().padStart(2, '0'); // Format minutes to 2 digits
+        return `${hours}:${minutes}`;
+      }
+    
+    asDate(arg0: string) {
+        return new DatePipe('en-US').transform(arg0, 'yyyy-MM-dd');
+    }
+
     parseToEvent(event: ICalendarEvent) {
         const eventObj: IEvent = {
             eventId: Number(event.id),
             eventName: event.title,
-            eventStartDate: event.start as string,
-            eventEndDate: event.end as string,
+            eventStartDate: this.asDate(event.start as string) + "T" + this.asTime(event.start as string),
+            eventEndDate: this.asDate(event.end as string) + "T" + this.asTime(event.end as string),
             eventDescription: event.extendedProps?.["eventDescription"],
             eventType: {
                 eventTypeId: event.extendedProps?.["eventTypeId"],

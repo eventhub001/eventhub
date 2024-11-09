@@ -30,10 +30,20 @@ export class TaskFormComponent {
     this.eventsService.getAll();
   }
 
-  events = computed(() => this.eventsService.events$());
+  events = computed(() => {
+    const events = this.eventsService.events$();
+
+    console.log("events in task form component", this.selectedEventId);
+    console.log("events in task form component", events);
+
+    let eventsFiltered = events.filter(event => event.eventId === Number(this.selectedEventId));
+    console.log("filtered events in task form component", eventsFiltered);
+    return eventsFiltered
+  });
 
   @Input() taskForm!: FormGroup;
   @Input() taskTemplates: ITaskTemplate[] = [];
+  @Input() selectedEventId: number | null = null;
 
   @Output() callSaveMethod: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() callUpdateMethod: EventEmitter<ITask> = new EventEmitter<ITask>();

@@ -122,11 +122,55 @@ public class EventRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         eventFormRepository.deleteEventFormByEvent_EventId(id);
         taskRepository.deleteTaskByEvent_EventId(id);
         eventRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<?> searchByName(
+            @RequestParam String search,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) throws AuthenticationException {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Event> eventsPage;
+
+        // Extract token and user info
+        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
+        String userName = jwtService.extractUsername(token);
+        Optional<User> user = userRepository.findByEmail(userName);
+
+        if (user.isPresent()) {
+            RoleEnum role = user.get().getRole().getName();
+
+            if (role == RoleEnum.SUPER_ADMIN) {
+                eventsPage = eventRepository.findByNameContaining(search, pageable);
+            } else {
+                eventsPage = eventRepository.findByUserIdAndNameContaining(user.get().getId(), search, pageable);
+            }
+        } else {
+            throw new AuthenticationException("User not found. Please make sure to validate the token.");
+        }
+
+        // Meta data for pagination
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(eventsPage.getTotalPages());
+        meta.setTotalElements(eventsPage.getTotalElements());
+        meta.setPageNumber(eventsPage.getNumber() + 1);
+        meta.setPageSize(eventsPage.getSize());
+
+        return new GlobalResponseHandler().handleResponse(
+                "Events retrieved successfully",
+                eventsPage.getContent(),
+                HttpStatus.OK,
+                meta
+        );
     }
 }

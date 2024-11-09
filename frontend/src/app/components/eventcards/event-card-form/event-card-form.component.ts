@@ -51,7 +51,7 @@ export class EventsFormComponent {
     planInput: [''],
     actividadesEvento: [''],
     publicoMeta: [''],
-    tecnologiaInput: [''],	
+    lugarDeEventoInput: [''],
     presupuestoInput: ['']
   })
 

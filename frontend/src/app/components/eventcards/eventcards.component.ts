@@ -21,12 +21,13 @@ import { formatForCosineModelCompute } from './ml-model-transformation';
 import { TaskTemplateService } from '../../services/tasktemplate.service';
 import { EventTaskTemplateService } from '../../services/eventtasktemplate.service';
 import { TaskService } from '../../services/task.service';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-eventcards',
   standalone: true,
   imports: [MatCardModule, MatButtonModule, DatePipe, CommonModule, EventcarddetailsComponent,
-    FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent,
+    FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent,MatPaginatorModule,
     ModalComponent],
   templateUrl: './eventcards.component.html',
   styleUrl: './eventcards.component.scss'
@@ -76,6 +77,7 @@ export class EventcardsComponent {
   });
   selectedEvent: IEvent | null = null;
   showDeleteModal: boolean = false;
+  searchTerm: string = '';
 
   constructor(private router: Router) {
     this.eventTypeService.getAll();
@@ -92,6 +94,7 @@ export class EventcardsComponent {
   }
 
   navigateToTasks(eventId: number) {
+    this.eventService.search.pageSize = 1000;
     this.eventService.setEventId(eventId);
     this.router.navigate(['app/task']);
   }
@@ -219,5 +222,10 @@ export class EventcardsComponent {
       event.event = eventSaved;
       this.eventFormservice.save(event);
     })
+  }
+
+  filterEventByTerm(term: string) {
+    this.eventService.search.page = 1;
+    this.eventService.searchByTerm(term);
   }
 }

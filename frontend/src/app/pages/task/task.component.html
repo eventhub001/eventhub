@@ -13,6 +13,7 @@
       <app-task-list
         (callModalAction)="callEdition($event)"
         (callDeleteAction)="taskService.delete($event)"
+        [eventIdSelected]="eventService.getEventId()"
         [tasks]="taskService.task$()"
       />
       @if(taskService.task$().length) {
@@ -36,6 +37,7 @@
     <div>
       <app-task-form
         [taskForm]="taskForm"
+        [selectedEventId]="eventService.getEventId()"
         [taskTemplates]="taskTemplateService.taskTemplates$()"
         (callSaveMethod)="saveTask($event)"
         (callSaveTaskTemplate)="saveEventTaskTemplate($event)"

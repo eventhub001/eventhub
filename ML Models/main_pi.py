@@ -59,8 +59,9 @@ def compute():
 
     model.cosine_similarity()
 
-    result = model.get_top_n(5)
+    result = model.get_top_n(6)
     frequency_templates = get_templates(result)
+    frequency_templates = frequency_templates[frequency_templates["count"] >= 0.7]
     frequency_templates_json = frequency_templates.to_dict(orient="records")
 
     result_json = result.to_dict(orient="records")
@@ -83,13 +84,12 @@ def get_templates(events: list):
     total_events = len(events["event_id"])
     event_tasks = event_task_templates[event_task_templates["event_id"].isin(events["event_id"].astype(int))]
 
-    print(event_tasks)
     event_task = event_tasks[["event_id", "task_template_id"]]
     # update
     event_task = event_task.drop_duplicates(subset=['event_id', 'task_template_id'])
     frequency = event_task['task_template_id'].value_counts().sort_values(ascending=False)
     # get top 10
-    return (frequency / total_events).reset_index().iloc[0:10]
+    return (frequency / total_events).reset_index()
 
 # Run the Flask app
 if __name__ == "__main__":

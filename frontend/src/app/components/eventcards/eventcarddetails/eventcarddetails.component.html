@@ -1,8 +1,7 @@
 <div *ngIf="event" style="position: sticky;">
-    <h3>{{ event.eventName }}</h3>
+    <h3>{{event.eventId}} - {{ event.eventName }}</h3>
       <mat-card-header >
-          <mat-card-title>{{ event.eventName }}</mat-card-title>
-          <mat-card-subtitle>{{ event.eventType?.eventTypeName }}</mat-card-subtitle>
+          <mat-card-title>{{ event.eventType?.eventTypeName }}</mat-card-title>
           <mat-card-content>
             <p>Descripción: {{ event.eventDescription }}</p> <!-- Assuming 'description' is a property -->
             <p *ngIf="event.eventStartDate">Fecha del evento: {{  asDate(event.eventStartDate.toString()) }}</p>
@@ -10,4 +9,5 @@
             <p *ngIf="event.eventEndDate">Hora de finalización del evento: {{  asTime(event.eventEndDate.toString()) }}</p>
           </mat-card-content>
     </mat-card-header>
+    <!-- <btton class="btn btn-primary" (click)="navigateToEvent(event.eventId)">Gestionar tareas</btton> -->
   </div>

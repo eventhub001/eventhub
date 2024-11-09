@@ -59,7 +59,7 @@ export class TaskComponent {
 constructor() {
   this.taskTemplateService.getAll();
   this.eventFormService.getAll();
-  this.taskService.search.page = 1;
+  this.eventService.search.size = 1000;
   const eventId = this.eventService.getEventId();
   if (eventId !== null) {
     this.taskService.getAllByEventId(eventId);
