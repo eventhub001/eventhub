@@ -6,6 +6,7 @@ import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.event.EventRepository;
 import com.project.eventhub.logic.entity.event.EventTypeRepository;
 import com.project.eventhub.logic.entity.eventform.EventFormRepository;
+import com.project.eventhub.logic.entity.formtemplatetask.EventTaskTemplateRepository;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
 import com.project.eventhub.logic.entity.task.TaskRepository;
 import com.project.eventhub.logic.entity.user.User;
@@ -45,6 +46,9 @@ public class EventRestController {
 
     @Autowired
     private EventFormRepository eventFormRepository;
+
+    @Autowired
+    EventTaskTemplateRepository eventTaskTemplateRepository;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -126,6 +130,7 @@ public class EventRestController {
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         eventFormRepository.deleteEventFormByEvent_EventId(id);
         taskRepository.deleteTaskByEvent_EventId(id);
+        eventTaskTemplateRepository.deleteEventTaskTemplateByEvent_EventId(id);
         eventRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

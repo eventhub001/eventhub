@@ -32,14 +32,15 @@ export class EventCalendarBuilder {
     parseTasks(tasks: ITask[]) {
         this.calendarEvents = this.calendarEvents.concat(tasks.map(task => ({
             title: task.taskName || 'No Title', // Default title if none provided
-            start: this.getDateOnly(task.dueDate?.toString() as string),
-            end: this.getDateOnly(this.addOneDayToDate(task.dueDate?.toString() as string)),
+            start: task.dueDate ? this.getDateOnly(task.dueDate?.toString() as string) : '',
+            end: task.dueDate ? this.getDateOnly(this.addOneDayToDate(task.dueDate?.toString() as string)) : '',
             id: task.id,
             extendedProps: {
                 type: "Task",
                 taskPriority: task.priority,
                 taskStatus: task.status,
-                taskDescription: task.description
+                taskDescription: task.description,
+                taskEventId: task.event?.eventId
             },
             ...this.settings
         })));
@@ -76,7 +77,11 @@ export class EventCalendarBuilder {
         const taskObj: ITask = {
             id: Number(event.id),
             taskName: event.title,
-            dueDate: event.start as Date
+            description: event.extendedProps?.["taskDescription"],
+            priority: event.extendedProps?.["taskPriority"],
+            status: event.extendedProps?.["taskStatus"],
+            event: {eventId: event.extendedProps?.["taskEventId"]},
+            dueDate: new Date(this.asDate(event.start as string) + "T" + this.asTime(event.start as string)),
         }
 
         return taskObj;

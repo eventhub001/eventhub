@@ -1,0 +1,13 @@
+<div *ngIf="task" style="position: sticky;">
+    <h3>{{task.id}} - {{ task.taskName }}</h3>
+    <mat-card-header>
+      <mat-card-title>{{ task.priority }}</mat-card-title>
+      <mat-card-content>
+        <p>Descripción: {{ task.description }}</p>
+        <p *ngIf="task.creationDate">Fecha de creación: {{ asDate(task.creationDate) }}</p>
+        <p *ngIf="task.updateDate">Última actualización: {{ asDate(task.updateDate) }}</p>
+        <p *ngIf="task.dueDate">Fecha límite: {{ asDate(task.dueDate) }}</p>
+        <p *ngIf="task.status">Estado: {{ task.status }}</p>
+      </mat-card-content>
+    </mat-card-header>
+  </div>

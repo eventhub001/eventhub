@@ -184,16 +184,12 @@ export class EventcardsComponent {
 
     this.machineLearningService.computeEventForm({new_user_answers: answer_collection}).subscribe({
       next: (response: any) => {
-        console.log("input form:")
-        console.log(answer_collection);
-        console.log("output form:")
+        console.log(response);
         const task_list = response.data["frequency_analysis"];
         task_list.forEach((task: any) => {
-          console.log(task);
           const tasksTemplates = this.taskTemplateService.taskTemplates$();
           const taskTemplateToSave: ITaskTemplate = tasksTemplates.find(t => t.taskTemplateId === Number(task["task_template_id"]))!;
           console.log("tasks loading...")  
-          console.log(tasksTemplates);
           const eventTaskTemplate: IEventTaskTemplate = {
             taskTemplate: taskTemplateToSave,
             event: {eventId: eventSaved.eventId}

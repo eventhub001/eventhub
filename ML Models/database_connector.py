@@ -90,14 +90,7 @@ if __name__ == "__main__":
     )
 
     db.connect()
-    
-    # column_names = db.fetch_data("SHOW COLUMNS FROM task")
-    # Fetch data from an existing table
-    # query = "SELECT task_name FROM task"  # Make sure this table exists
-    # results = parse_to_df(db.fetch_data(query))
-
     eventform = select_table("event_form")
-    print(eventform)
         
     result = eventform.groupby('user_id').apply(
         lambda x: ', '.join(f"Pregunta: {row['question']} {row['answer']}..." for _, row in x.iterrows())
@@ -105,9 +98,5 @@ if __name__ == "__main__":
 
     print(result)
 
-
-    # if results:
-    #     for row in results:
-    #         print(row)  # Process each row as needed
 
     db.close()

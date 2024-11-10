@@ -40,7 +40,7 @@ export class TaskFormAIComponent {
         'Buffet', 'Carpa', 'Centros de mesa', 'Coctelería', 'DJ', 'Flores', 'Fotomatón',
         'Fotografía playa', 'Fotógrafos', 'Guardarropa', 'Iluminación', 'Iluminación escénica',
         'Instrumentos', 'Interpretación', 'Invitaciones', 'Lista invitados', 'Marketing',
-        'Material promo', 'Mesas', 'Música en vivo', 'Mantelería', 'Parlantes', 'Pastel bodas',
+        'Material promo', 'Mesas', 'Música en vivo', 'Mantelería', 'Pantalla', 'Parlantes', 'Pastel bodas',
         'Permisos', 'Presentador', 'Premios', 'Redes sociales', 'Seguridad', 'Sillas', 'Sonido',
         'Sonido profesional', 'Sorteos', 'Streaming', 'Wi-Fi', 'Transporte', 'Trofeos', 'Video bodas',
         'Zona juegos', 'Zona VIP'

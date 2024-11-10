@@ -59,7 +59,7 @@ export class EventsService extends BaseService<IEvent> {
     this.add(event).subscribe({
 
       next: (response: any) => {
-        this.alertService.displayAlert('Éxito al guardar el evento', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', 'evento guardado correctamente', 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
@@ -76,7 +76,7 @@ export class EventsService extends BaseService<IEvent> {
   update(event: IEvent) {
     this.editCustomSource(`${event.eventId}`, event).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', 'Evento actualizado correctamente', 'center', 'top', ['success-snackbar']);
         this.getAllByUser();
       },
       error: (err: any) => {
@@ -90,7 +90,7 @@ export class EventsService extends BaseService<IEvent> {
     this.delCustomSource(`${event.eventId}`).subscribe({
       next: (response: any) => {
         console.log('response', response);
-        this.alertService.displayAlert('Exito al borra el evento', "Se ha borrado el evento", 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('Éxito al borra el evento', "Se ha borrado el evento", 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {

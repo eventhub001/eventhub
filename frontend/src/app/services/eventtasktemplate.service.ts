@@ -30,11 +30,11 @@ import { AlertService } from './alert.service';
     save(userTaskTemplate: IEventTaskTemplate) {
       this.add(userTaskTemplate).subscribe({
         next: (response: any) => {
-          this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+          this.alertService.displayAlert('Exito guardando datos de la plantilla relacionada al evento', response.message, 'center', 'top', ['success-snackbar']);
           this.getAll();
         },
         error: (err: any) => {
-          this.alertService.displayAlert('error', 'An error occurred adding the user task template', 'center', 'top', ['error-snackbar']);
+          this.alertService.displayAlert('Error guardando datos de la plantilla relacionada al evento', 'An error occurred adding the user task template', 'center', 'top', ['error-snackbar']);
           console.error('error', err);
         }
       });

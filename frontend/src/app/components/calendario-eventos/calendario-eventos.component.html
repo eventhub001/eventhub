@@ -1,1 +1,15 @@
-<full-calendar [options]="calendarOptions"></full-calendar>
+<!-- Filters for Event Type -->
+<div class="filters">
+    <mat-form-field>
+      <mat-label>Tipo de Evento</mat-label>
+      <mat-select [(value)]="selectedEventType" (selectionChange)="applyFilters()">
+        <mat-option value="">Mostrar Todos</mat-option>
+        <mat-option value="event">Eventos</mat-option>
+        <mat-option value="task">Tareas</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  <!-- FullCalendar -->
+  <full-calendar [options]="calendarOptions"></full-calendar>
+  
