@@ -1,16 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IEvent, IEventType } from '../../../interfaces';
+import { IEvent, IEventForm, IEventFormQuestion, IEventType } from '../../../interfaces';
 import { AuthService } from '../../../services/auth.service';
 import { EventDeleteConfirmationComponent } from "../delete-event-confirmation/delete-event-confirmation.component";
 import { NgbDatepicker, NgbDatepickerModule, NgbInputDatepicker, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import {  DateTimeCustomPickerComponent } from "../../material-custom/datetime-custom-picker/datetime-custom-picker.component";
+import { TaskFormAIComponent } from "../../task/task-form-AI/task-formai.component";
 
 @Component({
   selector: 'app-card-events-form',
@@ -20,7 +17,8 @@ import {  DateTimeCustomPickerComponent } from "../../material-custom/datetime-c
     ReactiveFormsModule,
     CommonModule,
     EventDeleteConfirmationComponent,
-    FormsModule, DateTimeCustomPickerComponent
+    FormsModule, DateTimeCustomPickerComponent,
+    TaskFormAIComponent
 ],
   templateUrl: './event-card-form.component.html',
   styleUrls: ['./event-card-form.component.scss'],
@@ -32,21 +30,35 @@ export class EventsFormComponent {
   @Input() createEvent: boolean;
   @Input() eventStartDate: string | null | Date = null;
   @Input() eventEndDate: string | null | Date = null;
-  @Output() callSaveEvent: EventEmitter<IEvent> = new EventEmitter<IEvent>();
-  @Output() callUpdateEvent: EventEmitter<IEvent> = new EventEmitter<IEvent>();
   @Input() eventTypes: IEventType[] = [];
+  @Input() isCreation: boolean = false;
+  @Input() eventFormQuestion: IEventFormQuestion[] = [];
+
+  @Output() callSaveEvent: EventEmitter<{event:IEvent, formresults: IEventForm[]}> = new EventEmitter<{event:IEvent, formresults: IEventForm[]}>();
+  @Output() callUpdateEvent: EventEmitter<IEvent> = new EventEmitter<IEvent>();
   @Output() closeView: EventEmitter<void> = new EventEmitter<void>();
   @Output() authService: AuthService = inject(AuthService);
-  @Input() isCreation: boolean = false;
+  @Output() callSaveTaskAI: EventEmitter<IEventForm[]> = new EventEmitter<IEventForm[]>();
   dateTimeForm: FormGroup = this.fb.group({
       dateInput: ['', Validators.required],
       startTime: ['11:00', Validators.required],
       endTime: ['', Validators.required]
     });
+  taskAIForm: FormGroup = this.fb.group({
+    eventResourceInput: [''],
+    rangoPersonasInput: [''],
+    estiloEvento: [''],
+    planInput: [''],
+    actividadesEvento: [''],
+    publicoMeta: [''],
+    lugarDeEventoInput: [''],
+    presupuestoInput: ['']
+  })
 
   constructor() {
     this.createEvent = false;
   }
+
 
   toHHmm(date: Date): string {
     const hours = date.getHours().toString().padStart(2, '0');
@@ -55,13 +67,13 @@ export class EventsFormComponent {
   }
 
   ngOnChanges() {
-
     if (this.eventForm && this.eventStartDate) {
       this.dateTimeForm.controls['dateInput'].setValue(this.eventStartDate);
 
       this.dateTimeForm.controls['startTime'].setValue(this.toHHmm(new Date(this.eventStartDate)));
       this.dateTimeForm.controls['endTime'].setValue(this.toHHmm(new Date(this.eventEndDate!)));
     }
+
   }
 
   isDateTimeValid(isValid: boolean) {
@@ -122,13 +134,71 @@ export class EventsFormComponent {
     if (event.eventId) {
       this.callUpdateEvent.emit(event);
     } else {
-      this.callSaveEvent.emit(event);
+      this.callSaveEvent.emit({
+        event: event,
+        formresults:this.generateTaskAI(event)
+      });
     }
 
     this.closeView.emit();
   }
 
+  sampleMethod() {
+    console.log("sample method called");
+  }
+   
   closeViewEmitter() {
     this.closeView.emit();
+  }
+
+  generateTaskAI(event: IEvent) {
+    console.log("event form questions desappear?", this.taskAIForm.controls["presupuestoInput"].value);
+    const eventFormResults: IEventForm[] = this.eventFormQuestion.filter((eventFormQuestion: IEventFormQuestion) => {
+      try {
+        const value = this.taskAIForm.controls[eventFormQuestion.nnControlName].value;
+        return value !== null && value !== ""; // Filtra los valores nulos o vacíos
+      } catch (e) {
+        console.log(e);
+        console.log(eventFormQuestion.nnControlName);
+        return false; // Si hay un error, ignora este item en el resultado final
+      }
+    }).map((eventFormQuestion: IEventFormQuestion) => {
+      try {
+        this.taskAIForm.controls[eventFormQuestion.nnControlName].value;
+      } catch (e) {
+        console.log(e);
+        console.log(eventFormQuestion.nnControlName);
+        throw new Error('Control not found');
+      }
+      const question: IEventFormQuestion = this.eventFormQuestion.find((question: IEventFormQuestion) => question.id === eventFormQuestion.id)!;
+
+      if (!question) {
+        throw new Error('Question not found');
+      }
+
+      const controlValueType = typeof this.taskAIForm.controls[eventFormQuestion.nnControlName].value;
+      console.log("control value type: ", controlValueType, "control value: ", this.taskAIForm.controls[eventFormQuestion.nnControlName].value);
+      if (controlValueType === "string") {
+        return {
+          question: question,
+          answer: this.taskAIForm.controls[eventFormQuestion.nnControlName].value as string,
+          event: event
+        } as IEventForm
+      }
+      else {
+        return {
+          question: question,
+          answer:  (this.taskAIForm.controls[eventFormQuestion.nnControlName].value as string[]).join(", "),
+          event: event
+        } as IEventForm 
+      }
+    })
+
+    return eventFormResults;
+    //this.callSaveTaskAI.emit(eventFormResults);
+  }
+
+  listAsString(list: string[]) {
+    return list.join(", ");
   }
 }

@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { IEvent } from '../../../interfaces';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-eventcarddetails',
+  selector: 'app-event-card-details',
   standalone: true,
   imports: [CommonModule, FormsModule, MatButtonModule, MatCardModule],
   templateUrl: './eventcarddetails.component.html',
@@ -22,14 +22,14 @@ export class EventcarddetailsComponent {
     this.isEditing = !this.isEditing; // Toggle edit mode
   }
 
-  deleteEvent() {
-    // Implement delete logic here
-    console.log('Event deleted:', this.event?.eventId); // Example logic
+  asTime(arg0: string): string {
+    const date = new Date(arg0);
+    const hours = date.getHours().toString().padStart(2, '0'); // Format hours to 2 digits
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Format minutes to 2 digits
+    return `${hours}:${minutes}`;
   }
 
-  saveEvent(updatedEvent: IEvent) {
-    // Implement save logic here
-    console.log('Event saved:', updatedEvent);
-    this.toggleEdit(); // Close edit mode after saving
+  asDate(arg0: string) {
+    return new DatePipe('en-US').transform(arg0, 'MM/dd/yyyy');
   }
 }

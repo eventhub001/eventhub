@@ -57,7 +57,7 @@ export const routes: Routes = [
           IRoleType.user,
           IRoleType.superAdmin,
           ],
-          name: 'Events',
+          name: 'Eventos',
           showInSidebar: true
         }
       },
@@ -70,7 +70,7 @@ export const routes: Routes = [
             IRoleType.superAdmin,
             IRoleType.user
           ],
-          name: 'Dashboard',
+          name: 'Calendario',
           showInSidebar: true
         }
       },

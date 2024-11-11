@@ -2,19 +2,35 @@
   <div>
     <h2 class="mb-0">Add Task</h2>
   </div>
+  
+  <div class="mb-2">
+    <label class="mb-1" for="name">Selecciona desde una plantilla predeterminada*</label>
+    <input type="text" class="form-control mb-2" id="search"
+    [(ngModel)]="searchTerm"
+    (input)="filterTemplates()" placeholder="Buscar plantilla presiona enter para mostrar los resultados" [ngModelOptions]="{standalone: true}" (keyup.enter)="openSelect()"/>
+    <select id="templates" class="form-select" (change)="fillWithTemplate($event)" >
+      <option value="-1" >Selecciona una plantilla predeterminada</option>
+      @for (template of filteredTaskTemplates; track template.taskTemplateId) {
+        <option [value]="template.taskTemplateId" >{{ template.taskTemplateName}}</option>
+      }
+    </select>
+  </div>
   <div class="mb-2">
     <label class="mb-1" for="name">Nombre de Tarea*</label>
     <input id="taskName" formControlName="taskName" type="text" class="form-control">
     @if (taskForm.controls['taskName'].invalid && (taskForm.controls['taskName'].dirty || taskForm.controls['taskName'].touched)) {
-      <p class="text-danger my-1">Task Name is required</p>
+      <p class="text-danger my-1">El nombre de la tarea es requerido</p>
     }
   </div>
   <div class="mb-2">
     <label class="mb-1" for="description">Descripción*</label>
-    <input id="description" formControlName="description" type="text" class="form-control">
+    <textarea id="description" formControlName="description" type="text" class="form-control"></textarea>
     @if (taskForm.controls['description'].invalid && (taskForm.controls['description'].dirty || taskForm.controls['description'].touched)) {
-      <p class="text-danger my-1">Description is required</p>
+      <p class="text-danger my-1">La descripción es requerida</p>
     }
+    <div class="mb-4 mt-2">
+      <button class="btn btn-secondary" (click)="callSave(true)" [disabled]="taskForm.controls['event'].invalid">Generar tareas en base a descripción</button>
+    </div>
   </div>
   <div class="mb-2">
     <label class="mb-1" for="dueDate">Fecha de Vencimiento*</label>
@@ -49,7 +65,7 @@
     <label class="mb-1" for="event">Evento*</label>
     <select id="event" formControlName="event" class="form-select">
       @for (event of events(); track event.eventId) {
-        <option [value]="event.eventId">{{event.eventName}}</option>
+        <option [value]="event.eventId" selected="event.eventId == selectedEventId">{{event.eventName}}</option>
       }
     </select>
     @if (taskForm.controls['event'].invalid && (taskForm.controls['event'].dirty || taskForm.controls['event'].touched)) {
@@ -57,6 +73,6 @@
     }
   </div>
   <div class="d-flex justify-content-end">
-    <button (click)="callSave()" [disabled]="taskForm.invalid" class="btn btn-primary" type="button">Save</button>
+    <button (click)="callSave(false)" [disabled]="taskForm.invalid" class="btn btn-primary" type="button">Save</button>
   </div>
 </form>

@@ -14,8 +14,8 @@ public class Vendor_service {
 
 private String service_name;
 private String description;
-private double price;
-private boolean isAvailable;
+private Double price;
+private Boolean isAvailable;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)

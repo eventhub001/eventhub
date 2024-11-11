@@ -1,2 +1,4 @@
 frontend/.angular
 frontend/node_modules/
+ML Models/.env
+ML Models/__pycache__
