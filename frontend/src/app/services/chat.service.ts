@@ -24,11 +24,6 @@ export class ChatService  {
     this.stompClient = Stomp.over(socket);
    }
 
-
-
-
-
-
    joinChatRoom(roomId: string): void {
     this.stompClient.connect({}, () => {
       this.stompClient.subscribe(`/topic/${roomId}`, (message: any) => {

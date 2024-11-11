@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Size } from '../test/3dobjects';
+import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
 
 export interface ILoginResponse {
     accessToken: string;
