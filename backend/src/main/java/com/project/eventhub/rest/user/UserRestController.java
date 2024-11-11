@@ -19,7 +19,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +39,7 @@ public class UserRestController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ResponseEntity<?> getAllUsers(
             @RequestParam(defaultValue = "0") int page, // Número de página, por defecto 0
             @RequestParam(defaultValue = "10") int size, // Tamaño de página, por defecto 10
@@ -57,7 +60,6 @@ public class UserRestController {
                 meta
         );
     }
-
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -97,10 +99,8 @@ public class UserRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable Long id) {
         UserRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")
