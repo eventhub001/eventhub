@@ -1,0 +1,22 @@
+<form [formGroup]="taskForm" class="row">
+  <div>
+    <h2 class="mb-0">Describe tu evento</h2>
+  </div>
+
+  <div *ngFor="let question of eventFormQuestion" class="mb-2">
+    <label class="m-4" [for]="question.id">{{ question.question }}</label>
+    <mat-form-field>
+      <mat-label>{{ question.question }}</mat-label>
+      <div *ngIf="!isOneSelectionOnly(question.nnControlName)">
+        <mat-select formControlName="{{question.nnControlName}}" [multiple]="true">
+          <mat-option *ngFor="let option of getOptionsForQuestion(question.id)" [value]="option">{{ option }}</mat-option>
+        </mat-select>
+      </div>
+      <div *ngIf="isOneSelectionOnly(question.nnControlName)">
+        <mat-select formControlName="{{question.nnControlName}}">
+          <mat-option *ngFor="let option of getOptionsForQuestion(question.id)" [value]="option">{{ option }}</mat-option>
+        </mat-select>
+      </div>
+    </mat-form-field>
+  </div>
+</form>

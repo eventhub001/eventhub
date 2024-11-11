@@ -9,8 +9,10 @@ import { GuestGuard } from './guards/guest.guard';
 import { AccessDeniedComponent } from './pages/access-denied/access-denied.component';
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
 import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
-import { TaskProgressComponent } from './pages/task-progress/task-progress.component';
 import { TaskComponent } from './pages/task/task.component';
+import { VendorComponent } from './pages/vendor/vendor/vendor.component';
+import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
+import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
 
 export const routes: Routes = [
   {
@@ -50,14 +52,12 @@ export const routes: Routes = [
       {
       path: "events",
       component: EventmanagerComponent,
-      canActivate: [AuthGuard],
       data: {
         authorities: [
-          IRoleType.admin,
+          IRoleType.user,
           IRoleType.superAdmin,
-          IRoleType.user
           ],
-          name: 'Events',
+          name: 'Eventos',
           showInSidebar: true
         }
       },
@@ -70,7 +70,7 @@ export const routes: Routes = [
             IRoleType.superAdmin,
             IRoleType.user
           ],
-          name: 'Dashboard',
+          name: 'Calendario',
           showInSidebar: true
         }
       },
@@ -84,20 +84,46 @@ export const routes: Routes = [
             IRoleType.user
           ],
           name: 'Task',
-          showInSidebar: true
+          showInSidebar: false
         }
       },
       {
-        path: 'taskprogress',
-        component: TaskProgressComponent,
+        path: 'vendor',
+        component: VendorComponent,
         data: {
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
             IRoleType.user
           ],
-          name: 'Task Progress',
+          name: 'Proveedores',
           showInSidebar: true
+        }
+      },
+      {
+        path: 'details',
+        component: VendorDetailsComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Detalles del Proveedor',
+          showInSidebar: false
+        }
+      },
+      {
+        path: 'chat',
+        component: ChatpageComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Chat',
+          showInSidebar: false
         }
       },
     ],

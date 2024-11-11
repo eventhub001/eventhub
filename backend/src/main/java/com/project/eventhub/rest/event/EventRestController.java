@@ -5,7 +5,10 @@ import com.project.eventhub.logic.entity.auth.JwtService;
 import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.event.EventRepository;
 import com.project.eventhub.logic.entity.event.EventTypeRepository;
+import com.project.eventhub.logic.entity.eventform.EventFormRepository;
+import com.project.eventhub.logic.entity.formtemplatetask.EventTaskTemplateRepository;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
+import com.project.eventhub.logic.entity.task.TaskRepository;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
@@ -42,9 +45,18 @@ public class EventRestController {
     private EventTypeRepository eventTypeRepository;
 
     @Autowired
+    private EventFormRepository eventFormRepository;
+
+    @Autowired
+    EventTaskTemplateRepository eventTaskTemplateRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
+
+    @Autowired
     private UserRepository userRepository;
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllEvents(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
@@ -88,7 +100,7 @@ public class EventRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public Event addEvent(@RequestBody Event event) {
         return eventRepository.save(event);
     }
@@ -114,8 +126,56 @@ public class EventRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public void deleteEvent(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
+        eventFormRepository.deleteEventFormByEvent_EventId(id);
+        taskRepository.deleteTaskByEvent_EventId(id);
+        eventTaskTemplateRepository.deleteEventTaskTemplateByEvent_EventId(id);
         eventRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<?> searchByName(
+            @RequestParam String search,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) throws AuthenticationException {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Event> eventsPage;
+
+        // Extract token and user info
+        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
+        String userName = jwtService.extractUsername(token);
+        Optional<User> user = userRepository.findByEmail(userName);
+
+        if (user.isPresent()) {
+            RoleEnum role = user.get().getRole().getName();
+
+            if (role == RoleEnum.SUPER_ADMIN) {
+                eventsPage = eventRepository.findByNameContaining(search, pageable);
+            } else {
+                eventsPage = eventRepository.findByUserIdAndNameContaining(user.get().getId(), search, pageable);
+            }
+        } else {
+            throw new AuthenticationException("User not found. Please make sure to validate the token.");
+        }
+
+        // Meta data for pagination
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(eventsPage.getTotalPages());
+        meta.setTotalElements(eventsPage.getTotalElements());
+        meta.setPageNumber(eventsPage.getNumber() + 1);
+        meta.setPageSize(eventsPage.getSize());
+
+        return new GlobalResponseHandler().handleResponse(
+                "Events retrieved successfully",
+                eventsPage.getContent(),
+                HttpStatus.OK,
+                meta
+        );
     }
 }

@@ -22,12 +22,12 @@ public class EventTypeRestController {
     private EventTypeRepository eventTypeRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllEventTypes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page-1, size);
         Page<EventType> eventTypesPage = eventTypeRepository.findAll(pageable);
 
         Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
@@ -45,7 +45,7 @@ public class EventTypeRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public EventType addEventType(@RequestBody EventType eventType) {
         return eventTypeRepository.save(eventType);
     }

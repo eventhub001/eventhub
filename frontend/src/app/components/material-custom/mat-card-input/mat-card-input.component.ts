@@ -9,4 +9,7 @@ import { NgModel } from '@angular/forms';
 export class MatCardInputComponent {
   @Input() title: string = '';
   @Input() placeHolder: string = '';
+
+  constructor() {
+   }
 }

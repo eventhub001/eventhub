@@ -23,8 +23,8 @@ export class EventsService extends BaseService<IEvent> {
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size }).subscribe({
       next: (response: any) => {
+        console.log(this.search);
         this.search = { ...this.search, ...response.meta };
-        console.log('response', response.data);
         this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
         this.eventListSignal.set(response.data);
       },
@@ -32,6 +32,14 @@ export class EventsService extends BaseService<IEvent> {
         console.error('error', err);
       }
     });
+  }
+  private eventId: number | null = null;
+
+  setEventId(id: number) {
+    this.eventId = id;
+  }
+  getEventId(): number | null {
+    return this.eventId;
   }
 
   getAllByUser() {
@@ -49,9 +57,10 @@ export class EventsService extends BaseService<IEvent> {
 
   save(event: IEvent) {
     this.add(event).subscribe({
+
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
-        this.getAllByUser();
+        this.alertService.displayAlert('success', 'evento guardado correctamente', 'center', 'top', ['success-snackbar']);
+        this.getAll();
       },
       error: (err: any) => {
         this.alertService.displayAlert('error', 'An error occurred adding the event', 'center', 'top', ['error-snackbar']);
@@ -60,10 +69,14 @@ export class EventsService extends BaseService<IEvent> {
     });
   }
 
+  saveAsSubscribe(event: IEvent) {
+    return this.add(event);
+  }
+
   update(event: IEvent) {
     this.editCustomSource(`${event.eventId}`, event).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', 'Evento actualizado correctamente', 'center', 'top', ['success-snackbar']);
         this.getAllByUser();
       },
       error: (err: any) => {
@@ -76,13 +89,27 @@ export class EventsService extends BaseService<IEvent> {
   delete(event: IEvent) {
     this.delCustomSource(`${event.eventId}`).subscribe({
       next: (response: any) => {
-        this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
-        this.getAllByUser();
+        console.log('response', response);
+        this.alertService.displayAlert('Éxito al borra el evento', "Se ha borrado el evento", 'center', 'top', ['success-snackbar']);
+        this.getAll();
       },
       error: (err: any) => {
         this.alertService.displayAlert('error', 'An error occurred deleting the event', 'center', 'top', ['error-snackbar']);
         console.error('error', err);
       }
     });
+  }
+
+  searchByTerm(query: string) {
+    this.findAllWithParamsAndCustomSource(`search`, { page: this.search.page, size: this.search.size, search: query }).subscribe({
+      next: (response: any) => {
+        this.search = { ...this.search, ...response.meta };
+        this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
+        this.eventListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    })
   }
 }

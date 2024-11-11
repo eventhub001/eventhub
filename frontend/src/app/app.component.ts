@@ -1,7 +1,8 @@
 import { AfterContentInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core'
-import { TestComponent } from './test/test.component'
+import { TestComponent } from './components/evenmodeller3d/test.component'
 import { RouterOutlet } from '@angular/router'
 import { CommonModule } from '@angular/common'
+
 
 @Component({
     selector: 'app-root',

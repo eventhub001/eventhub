@@ -13,12 +13,21 @@ export class UserService extends BaseService<IUser> {
   get users$() {
     return this.userListSignal;
   }
-  public search: ISearch = { 
+  public search: ISearch = {
     page: 1,
     size: 5
   }
   public totalItems: any = [];
   private alertService: AlertService = inject(AlertService);
+  private UserId: number | null = null;
+
+  setUserId(id: number) {
+    this.UserId = id;
+  }
+  getUserId(): number | null {
+    return this.UserId;
+  }
+
 
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size}).subscribe({

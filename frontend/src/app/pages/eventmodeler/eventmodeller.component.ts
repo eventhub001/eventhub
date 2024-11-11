@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, effect, inject, Input, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
-import { ModelService } from '../../services/model/model.service';
-import { TestComponent } from '../../test/test.component';
+import { TestComponent } from '../../components/evenmodeller3d/test.component';
 import { AssetModel } from '../../interfaces';
 import { CommonModule } from '@angular/common';
+import { ModelService } from '../../services/model.service';
 
 @Component({
   selector: 'app-event-modeller',
@@ -20,9 +20,6 @@ export class EventModellerComponent {
 
   constructor() {
     this.modelService.getAll();
-    // Use the signal directly
-    // this.modelMetadata = this.modelService.models$();
-    // this.loadModelData();
   }
 
 

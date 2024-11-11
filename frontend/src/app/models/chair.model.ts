@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
-import { AxisOrientation, ModelThreeDObject, Size } from "../test/3dobjects";
-import { Position, Side } from "../test/3dtypes";
+import { AxisOrientation, ModelThreeDObject, Size } from "../components/evenmodeller3d/modelobjects/3dobjects";
+import { Position, Side } from "../components/evenmodeller3d/modelobjects/3dtypes";
 import { ThreeDObject } from "./threeobject.model";
 import * as THREE from 'three';
 import {ModelHandler} from "../services/modelsHandler";
