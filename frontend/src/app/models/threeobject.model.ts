@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { Position } from '../test/3dtypes';
-import { AxisOrientation, Size } from '../test/3dobjects';
-import { inferOpositeAxis } from '../test/vectorutils';
+import { Position } from '../components/evenmodeller3d/modelobjects/3dtypes';
+import { AxisOrientation, Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
+import { inferOpositeAxis } from '../components/evenmodeller3d/modelobjects/vectorutils';
 import { constant } from 'lodash';
 import { Asset, Orientation } from '../interfaces';
 

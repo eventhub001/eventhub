@@ -1,10 +1,11 @@
 package com.project.eventhub.logic.entity.chat;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.project.eventhub.logic.entity.eventtype.EventType;
 import com.project.eventhub.logic.entity.user.User;
 import jakarta.persistence.*;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "chat")
 public class Chat {
@@ -13,11 +14,28 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String message;
+    private Integer roomId;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Chat() {}
+
+    public Chat(String message, User user,Integer roomId) {
+        this.message = message;
+        this.user = user;
+        this.roomId = roomId;
+    }
+
+    public Integer getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
+    }
 
     public Integer getId() {
         return id;
@@ -33,5 +51,13 @@ public class Chat {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

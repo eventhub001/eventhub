@@ -32,6 +32,8 @@ export class TaskListComponent {
   @Output() callModalAction: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() callDeleteAction: EventEmitter<ITask> = new EventEmitter<ITask>();
   public authService: AuthService = inject(AuthService);
+  @Input() eventIdSelected: number | null = null; 
+
   public todayDate: Date;
   public dataSource: MatTableDataSource<ITask>;
   public displayedColumns: string[] = ['id', 'taskName', 'description', 'status', 'dueDate', 'priority', 'actions'];

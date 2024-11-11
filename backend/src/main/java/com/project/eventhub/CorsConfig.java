@@ -15,8 +15,10 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:4200/");
         config.addAllowedOrigin("http://localhost:59872/");
+        config.addAllowedOrigin("http://127.0.0.1:5000/");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

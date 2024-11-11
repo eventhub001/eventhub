@@ -11,16 +11,15 @@ import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.util.Optional;
 
 @RequestMapping("/auth")
@@ -45,6 +44,23 @@ public class AuthRestController {
     public AuthRestController(JwtService jwtService, AuthenticationService authenticationService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+    }
+
+    @GetMapping("isauthenticated")
+    public ResponseEntity<Boolean> isAuthenticated(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) throws AuthenticationException {
+        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
+        String userName = jwtService.extractUsername(token);
+        Optional<User> user = userRepository.findByEmail(userName);
+
+        if (user.isPresent()) {
+            return new ResponseEntity<Boolean>(
+                    true,
+                    HttpStatus.OK
+            );
+        }
+        else {
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @PostMapping("/login")

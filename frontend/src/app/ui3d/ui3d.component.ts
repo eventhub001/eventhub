@@ -4,9 +4,8 @@ import { MatrixUI } from './matriz/matriz'
 import { settings, SetUpUI } from './settings/settings'
 import * as UICommands from './commands/commands'
 import { AssetModel } from '../interfaces'
-import { AuthService } from '../services/auth.service'
-import { ModelService } from '../services/model/model.service'
 import { blobsToImages, blobToImage } from './loader/fileloader'
+import { ModelService } from '../services/model.service'
 
 @Component({
     selector: 'app-ui3d',

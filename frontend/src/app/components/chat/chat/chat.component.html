@@ -1,19 +1,35 @@
-<mat-card class="chat-container">
-  <mat-card-header>
-    <mat-card-title>Chat</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="messages">
-      <div *ngFor="let message of messages" class="message">
-        <strong>{{ message.user }}:</strong> {{ message.text }}
-      </div>
+<div class="chat_window">
+  <div class="top_menu">
+    <div class="buttons">
+      <div class="button close"></div>
+      <div class="button minimize"></div>
+      <div class="button maximize"></div>
     </div>
-  </mat-card-content>
-  <mat-card-actions>
-    <mat-form-field class="message-input" appearance="outline">
-      <mat-label>Escribe un mensaje</mat-label>
-      <input matInput [(ngModel)]="newMessage" (keyup.enter)="sendMessage()">
-    </mat-form-field>
-    <button mat-button (click)="sendMessage()">Enviar</button>
-  </mat-card-actions>
-</mat-card>
+    <div class="title">
+      <!-- <img src="/src/assets/icons/whatsapp-512.webp" width="25px" height="25px"> -->
+      EventHub Chat
+    </div>
+  </div>
+  <ul class="messages">
+    <li class="message right" *ngFor="let message of messageList"
+      [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"
+    >
+      <div class="avatar" [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"></div>
+      <div class="text_wrapper">
+        <div class="text"> {{message.message}}</div>
+      </div>
+    </li>
+  </ul>
+  <div class="bottom_wrapper clearfix">
+    <div class="message_input_wrapper">
+      <input class="message_input" placeholder="Message..."  [(ngModel)]="messageInput"/>
+    </div>
+    <div class="send_message" (click)="sendMessage()">
+      <div class="icon"></div>
+      <div class="text">Send</div>
+    </div>
+  </div>
+</div>
+
+
+

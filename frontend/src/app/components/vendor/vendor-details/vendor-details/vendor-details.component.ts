@@ -6,10 +6,12 @@ import { CommonModule } from '@angular/common';
 import { VendorService } from '../../../../services/vendor.service';
 import { UserService } from '../../../../services/user.service';
 import { ChatComponent } from "../../../chat/chat/chat.component";
+import { ChatService } from '../../../../services/chat.service';
+import { NotificationDialogComponent } from '../../../chat/chat/notification-dialog.component/notification-dialog.component.component';
 @Component({
   selector: 'app-vendor1-details',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent],
+  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent, NotificationDialogComponent],
   templateUrl: './vendor-details.component.html',
   styleUrl: './vendor-details.component.scss'
 })
@@ -20,7 +22,7 @@ export class VendorDetails1Component {
   service: VendorService = inject(VendorService)
   @Input() servicios: IVendorService[] = [];
   @Input() vendors: IVendor[] = [];
-
+  public chatService: ChatService = inject(ChatService);
   public userService: UserService = inject(UserService);
 
   constructor() {}
@@ -30,7 +32,7 @@ export class VendorDetails1Component {
   ngOnInit(): void {
     this.loadFromLocalStorage();
     this.getVendorDetails();
-
+    this.chatService.initConnectionSocket()
 
   }
 
@@ -39,12 +41,10 @@ export class VendorDetails1Component {
     if (userId !== null) {
       this.service.getVendorByUserId(userId).subscribe({
         next: (vendorService : IVendorService[]) => {
-          console.log('Vendors fetched:', vendorService); // Verifica los datos obtenidos
           if (vendorService.length > 0) {
-            this.servicios = vendorService; // Asigna el primer vendorService encontrado
+            this.servicios = vendorService;
             this.vendor = vendorService[0].vendor;
             this.saveToLocalStorage();
-            console.log('Services:', this.vendorService); // Verifica los servicios
           }
         },
         error: (err: any) => {

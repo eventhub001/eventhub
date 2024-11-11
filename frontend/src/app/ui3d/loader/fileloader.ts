@@ -1,6 +1,5 @@
 import * as zim from "zimjs";
 import { AssetModel } from "../../interfaces";
-import { ModelService } from "../../services/model/model.service";
 
 export async function blobToImage(blob: Blob): Promise<zim.Bitmap> {
     return new Promise((resolve, reject) => {

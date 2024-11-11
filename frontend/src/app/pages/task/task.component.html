@@ -12,6 +12,7 @@
       <app-task-list
         (callModalAction)="callEdition($event)"
         (callDeleteAction)="taskService.delete($event)"
+        [eventIdSelected]="eventService.getEventId()"
         [tasks]="taskService.task$()"
       />
       @if(taskService.task$().length) {
@@ -20,7 +21,6 @@
           [service]="taskService"
           [customCall]="true"
           (callCustomPaginationMethod)="taskService.getAllByEventId(this.eventService.getEventId() ?? 0)"
-
         />
       }
     </div>
@@ -36,7 +36,10 @@
     <div>
       <app-task-form
         [taskForm]="taskForm"
+        [selectedEventId]="eventService.getEventId()"
+        [taskTemplates]="taskTemplateService.taskTemplates$()"
         (callSaveMethod)="saveTask($event)"
+        (callSaveTaskTemplate)="saveEventTaskTemplate($event)"
         (callUpdateMethod)="updateTask($event)"
       />
     </div>

@@ -31,6 +31,7 @@ export class TaskService extends BaseService<ITask> {
   private eventService: EventsService = inject(EventsService); // Inyecta EventService
 
   getAll() {
+
     this.findAllWithParams({ page: this.search.page, size: this.search.size}).subscribe({
       next: (response: any) => {
         this.search = {...this.search, ...response.meta};

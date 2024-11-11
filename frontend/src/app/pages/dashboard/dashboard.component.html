@@ -1,1 +1,28 @@
-<p>dashboard works!</p>
+<div class="ten mb-0">
+    <h1>Calendario</h1>
+  </div>
+<app-calendario-eventos
+    [events]="eventService.events$()"
+    [tasks]="taskService.task$()"
+    (saveEvent)="saveEvent($event)"
+    (showEventDetails)="showEventDetails($event)"
+    (saveTask)="saveTask($event)"
+    (showTaskDetails)="showtaskDetails($event)"
+
+></app-calendario-eventos>
+<ng-template #showEventModal>
+  <app-modal
+    [hideFooter]="true">
+    <div>
+      <app-event-card-details [event]="eventSelected" ></app-event-card-details>
+    </div>
+  </app-modal>
+</ng-template>
+<ng-template #showTaskModal>
+  <app-modal
+    [hideFooter]="true">
+    <div>
+      <app-task-details [task]="taskSelected" ></app-task-details>
+    </div>
+  </app-modal>
+</ng-template>

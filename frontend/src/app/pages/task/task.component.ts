@@ -3,7 +3,7 @@ import { TaskService } from '../../services/task.service';
 import { ModalService } from '../../services/modal.service';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ITask } from '../../interfaces';
+import { IEvent, IEventTaskTemplate, ITask } from '../../interfaces';
 import { TaskListComponent } from '../../components/task/task-list/task-list.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ModalComponent } from '../../components/modal/modal.component';
@@ -13,6 +13,9 @@ import { EventsService } from '../../services/event.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { EventFormService } from '../../services/evenform.service';
+import { TaskTemplateService } from '../../services/tasktemplate.service';
+import { EventTaskTemplateService } from '../../services/eventtasktemplate.service';
 
 @Component({
   selector: 'app-task',
@@ -36,7 +39,10 @@ export class TaskComponent {
   public taskService: TaskService = inject(TaskService);
   public modalService: ModalService = inject(ModalService);
   public authService: AuthService = inject(AuthService);
+  public eventFormService: EventFormService= inject(EventFormService);
   public eventService: EventsService = inject(EventsService);
+  public taskTemplateService: TaskTemplateService = inject(TaskTemplateService);
+  public eventTaskTemplateService: EventTaskTemplateService = inject(EventTaskTemplateService); 
   @ViewChild('addTaskModal') public addTaskModal: any;
   public fb: FormBuilder = inject(FormBuilder);
 
@@ -51,7 +57,9 @@ export class TaskComponent {
   })
 
 constructor() {
-  this.taskService.search.page = 1;
+  this.taskTemplateService.getAll();
+  this.eventFormService.getAll();
+  this.eventService.search.size = 1000;
   const eventId = this.eventService.getEventId();
   if (eventId !== null) {
     this.taskService.getAllByEventId(eventId);
@@ -64,6 +72,11 @@ saveTask(task: ITask) {
   console.log(task)
   this.taskService.save(task);
   this.modalService.closeAll();
+}
+
+saveEventTaskTemplate(taskTemplate: IEventTaskTemplate) {
+  console.log("saving task template event in database", taskTemplate);
+  this.eventTaskTemplateService.save(taskTemplate);
 }
 
 callEdition(task: ITask) {
