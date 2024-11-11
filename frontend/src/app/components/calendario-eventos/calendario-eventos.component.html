@@ -10,6 +10,15 @@
     </mat-form-field>
   </div>
   
-  <!-- FullCalendar -->
-  <full-calendar [options]="calendarOptions"></full-calendar>
+  <mat-form-field>
+    <mat-label>Tipo de Tarea</mat-label>
+    <mat-select [(value)]="selectedTaskType" (selectionChange)="applyFilters()">
+      <mat-option value="Todos los estados">Todos los estados</mat-option>
+      <mat-option value="Pendiente">Pendiente</mat-option>
+      <mat-option value="En progreso">En progreso</mat-option>
+      <mat-option value="Completado">Completado</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+<full-calendar [options]="calendarOptions"></full-calendar>
   
