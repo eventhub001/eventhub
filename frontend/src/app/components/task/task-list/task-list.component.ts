@@ -10,6 +10,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatButtonModule} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+
 @Component({
   selector: 'app-task-list',
   standalone: true,
@@ -53,6 +54,8 @@ export class TaskListComponent {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+
+
 
   ngOnChanges() {
     this.dataSource.data = this.tasks;

@@ -18,6 +18,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://127.0.0.1:5000/");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

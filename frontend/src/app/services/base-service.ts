@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IResponse } from '../interfaces';
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -53,7 +54,7 @@ export class BaseService<T> {
   public del(id: any): Observable<IResponse<T>> {
     return this.http.delete<IResponse<T>>(this.source + '/' + id);
   }
-  
+
   public delCustomSource(customUrlSource: string): Observable<IResponse<T>> {
     return this.http.delete<IResponse<T>>(`${this.source}/${customUrlSource}`);
   }

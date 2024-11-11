@@ -61,6 +61,49 @@ export interface ILoginResponse {
     eventEndDate?: string;     // Foreign key referencing the type of the event
   }
 
+  export interface IChat{
+    id?: number;
+    userId?: IUser;
+    message?: string;
+    // timestamp?: string;
+
+  }
+
+  export interface IVendor{
+    id?: number;
+    name?: string;
+    description?: string;
+    location?: string;
+    rating?: number;
+    user?: IUser;
+    vendorCategory?: IVendorCategory;
+  }
+
+
+
+  export interface IVendorService{
+    id?: number;
+    service_name?: string;
+    description?: string;
+    price?: number;
+    available?: boolean;
+    vendor?: IVendor;
+  }
+
+
+
+  export interface IVendorCategory{
+    id?: number;
+    category_name?: string;
+    description?: string;
+
+
+
+  }
+
+
+
+
   export interface ITask{
     id?:number;
     taskName?: string;

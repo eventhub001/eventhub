@@ -10,6 +10,9 @@ import { AccessDeniedComponent } from './pages/access-denied/access-denied.compo
 import { EventModellerComponent } from './pages/eventmodeler/eventmodeller.component';
 import { EventmanagerComponent } from './pages/eventmanager/eventmanager.component';
 import { TaskComponent } from './pages/task/task.component';
+import { VendorComponent } from './pages/vendor/vendor/vendor.component';
+import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
+import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
 
 export const routes: Routes = [
   {
@@ -49,12 +52,10 @@ export const routes: Routes = [
       {
       path: "events",
       component: EventmanagerComponent,
-      canActivate: [AuthGuard],
       data: {
         authorities: [
-          IRoleType.admin,
+          IRoleType.user,
           IRoleType.superAdmin,
-          IRoleType.user
           ],
           name: 'Events',
           showInSidebar: true
@@ -83,6 +84,45 @@ export const routes: Routes = [
             IRoleType.user
           ],
           name: 'Task',
+          showInSidebar: false
+        }
+      },
+      {
+        path: 'vendor',
+        component: VendorComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Proveedores',
+          showInSidebar: true
+        }
+      },
+      {
+        path: 'details',
+        component: VendorDetailsComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Detalles del Proveedor',
+          showInSidebar: false
+        }
+      },
+      {
+        path: 'chat',
+        component: ChatpageComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ],
+          name: 'Chat',
           showInSidebar: false
         }
       },
