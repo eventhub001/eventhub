@@ -40,6 +40,7 @@ public class AuthenticationService {
                 .orElseThrow();
     }
 
+
     public String getTokenFromAuthorationHeader(String header) throws AuthenticationException {
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7); // Removes the "Bearer " prefix

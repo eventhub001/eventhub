@@ -48,7 +48,7 @@ public class AuthRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody User user, HttpSession httpSession) {
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody User user) {
         User authenticatedUser = authenticationService.authenticate(user);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -59,7 +59,6 @@ public class AuthRestController {
 
         Optional<User> foundedUser = userRepository.findByEmail(user.getEmail());
 
-
         foundedUser.ifPresent(loginResponse::setAuthUser);
 
         return ResponseEntity.ok(loginResponse);
@@ -67,36 +66,15 @@ public class AuthRestController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already in use");
-        }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+        Optional<Role> optionalRole = roleRepository.findById(user.getRole().getId());
 
         if (optionalRole.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Role not found");
+            return null;
         }
         user.setRole(optionalRole.get());
         User savedUser = userRepository.save(user);
         return ResponseEntity.ok(savedUser);
-    }
-
-    public Long getCurrentUserId() {
-        User user = getAuthenticatedUser();
-        return user != null ? user.getId() : null;
-    }
-
-    // Method to get the full authenticated user object if needed
-    public User getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            return (User) authentication.getPrincipal(); // Assuming principal is User entity
-        }
-
-        return null;
     }
 
 }

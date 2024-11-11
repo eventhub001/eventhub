@@ -60,9 +60,6 @@ export interface ILoginResponse {
     id?: number;
     category_name?: string;
     description?: string;
-
-
-
   }
 
 
@@ -172,3 +169,23 @@ export interface Asset {
 
     clone: () => Asset;
 }
+
+export interface Cotización {
+  id: number;
+  event: string;
+  service: string;
+  quotedAmount: number;
+  quantity?: number;
+  status: 'enviada' | 'aceptada' | 'rechazada';
+}
+
+export interface SolicituRecurso  {
+  id: number;
+  event: string;
+  resourceType: string;
+  date: Date;
+  time: string;
+  quantity: number;
+  status: 'pendiente' | 'aprobado' | 'rechazado';
+}
+

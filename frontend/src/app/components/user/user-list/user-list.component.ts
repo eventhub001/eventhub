@@ -22,4 +22,22 @@ export class UserListComponent {
   @Input() users: IUser[] = [];
   @Output() callModalAction: EventEmitter<IUser> = new EventEmitter<IUser>();
   @Output() callDeleteAction: EventEmitter<IUser> = new EventEmitter<IUser>();
+  
+  filteredUsers: IUser[] = [];
+  searchTerm: string = '';
+
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.userService.getUsers().subscribe((data: any[]) => {
+      this.users = data;
+      this.filteredUsers = data;
+    });
+  }
+
+  filterUsers(): void {
+    this.filteredUsers = this.users.filter(user => 
+      user.name?.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
 }
