@@ -46,7 +46,7 @@ export class VendorService extends BaseService<IVendor> {
 
 
   // getVendorByUserId(userId: number) {
-  //   this.findAllWithParamsAndCustomSource(`user/${userId}`, { page: this.search.page, size: this.search.size}).subscribe({
+  //    q(`user/${userId}`, { page: this.search.page, size: this.search.size}).subscribe({
   //     next: (response: any) => {
   //       this.search = {...this.search, ...response.meta};
   //       this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages: 0}, (_, i) => i+1);
@@ -67,6 +67,21 @@ export class VendorService extends BaseService<IVendor> {
       })
     );
   }
+
+
+  getVendorByUser(userId: number): Observable<IVendor[]> {
+    return this.findAllWithParamsAndCustomSource(`user/${userId}/vendors`, { page: this.search.page, size: this.search.size}).pipe(
+      map((response: any) => response.data),
+      catchError((err: any) => {
+        console.error('error', err);
+        return throwError(err);
+      })
+    );
+  }
+
+
+
+
 
   save(vendor: IVendor) {
     this.add(vendor).subscribe({

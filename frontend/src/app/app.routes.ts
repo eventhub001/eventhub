@@ -113,19 +113,7 @@ export const routes: Routes = [
           showInSidebar: false
         }
       },
-      {
-        path: 'chat',
-        component: ChatpageComponent,
-        data: {
-          authorities: [
-            IRoleType.admin,
-            IRoleType.superAdmin,
-            IRoleType.user
-          ],
-          name: 'Chat',
-          showInSidebar: false
-        }
-      },
+
     ],
   },
 ];

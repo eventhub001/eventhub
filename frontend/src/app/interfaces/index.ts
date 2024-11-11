@@ -29,6 +29,7 @@ export interface ILoginResponse {
     id?: number;
     userId?: IUser;
     message?: string;
+    roomId?: number;
     // timestamp?: string;
 
   }
@@ -40,6 +41,7 @@ export interface ILoginResponse {
     location?: string;
     rating?: number;
     user?: IUser;
+    phone?: string;
     vendorCategory?: IVendorCategory;
   }
 

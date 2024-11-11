@@ -15,7 +15,7 @@ public class Chat {
     private Integer id;
 
     private String message;
-
+    private Integer roomId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -23,9 +23,18 @@ public class Chat {
 
     public Chat() {}
 
-    public Chat(String message, User user) {
+    public Chat(String message, User user,Integer roomId) {
         this.message = message;
         this.user = user;
+        this.roomId = roomId;
+    }
+
+    public Integer getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
     }
 
     public Integer getId() {
