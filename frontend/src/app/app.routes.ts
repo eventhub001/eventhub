@@ -133,7 +133,6 @@ export const routes: Routes = [
             IRoleType.superAdmin,
             IRoleType.user
           ]
-    
         }
       },
     ],
