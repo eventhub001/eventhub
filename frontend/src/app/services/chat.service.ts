@@ -3,12 +3,8 @@ import { BaseService } from './base-service';
 import { IChat } from '../interfaces';
 import * as SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
-<<<<<<< Updated upstream
-import { BehaviorSubject } from 'rxjs';
-=======
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
->>>>>>> Stashed changes
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +27,6 @@ export class ChatService  {
     this.stompClient = Stomp.over(socket);
    }
 
-<<<<<<< Updated upstream
-   joinChatRoom(roomId: string): void {
-=======
 
 
 
@@ -41,7 +34,6 @@ export class ChatService  {
 
    joinChatRoom(roomId: number): Subscription {
     const subscription = new Subscription();
->>>>>>> Stashed changes
     this.stompClient.connect({}, () => {
       const sub = this.stompClient.subscribe(`/topic/${roomId}`, (message: any) => {
         console.log('Raw message from server:', message);
@@ -57,13 +49,8 @@ export class ChatService  {
     return subscription;
   }
 
-<<<<<<< Updated upstream
-
-   sendMessage(roomId: string, chatMessage: IChat){
-=======
   sendMessage(roomId: number, chatMessage: IChat) {
     console.log('Sending message:', chatMessage);
->>>>>>> Stashed changes
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.send(`/app/chat/${roomId}`, {}, JSON.stringify(chatMessage));
     } else {
