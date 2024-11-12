@@ -14,7 +14,7 @@
     <li class="message right" *ngFor="let message of messageList"
       [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"
     >
-      <div class="avatar" [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"></div>
+      <div  [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"></div>
       <div class="text_wrapper">
           <div class="user_name">{{message.user.name + ' ' + message.user.lastname}}</div>
         <div class="text"> {{message.message}}</div>

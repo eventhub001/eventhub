@@ -6,7 +6,7 @@
           </mat-card-header>
           <mat-card-content >
             <p><strong>Descripción:</strong> {{item.description}}</p>
-            <p><strong>Precio:</strong> ${{item.price }}</p>
+            <p><strong>Precio:</strong> ${{item.price | number:'1.0-0' }}</p>
             <p><strong>Contacto:</strong> {{item.vendor?.phone}}</p>
             <p>{{ item.available ?'Disponible' : 'No hay disponibilidad'}}</p>
           </mat-card-content>
