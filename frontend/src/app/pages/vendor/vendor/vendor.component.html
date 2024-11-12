@@ -7,7 +7,6 @@
     </div>
     <div class="col-12">
       <app-vendor-list
-        (callDeleteAction)="vendorService.delete($event)"
         [vendor]="vendorService.vendor$()"
       />
       @if(vendorService.vendor$().length) {

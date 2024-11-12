@@ -6,37 +6,44 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../../services/chat.service';
-import { IUser, IVendor } from '../../../interfaces';
+import { IUser } from '../../../interfaces';
 import { ActivatedRoute, Route } from '@angular/router';
 import { UserService } from '../../../services/user.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+
+
+interface Message {
+  user: string;
+  text: string;
+}
+
 
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatFormFieldModule,MatInputModule,  FormsModule, CommonModule, HttpClientModule, MatSnackBarModule],
+  imports: [MatCardModule, MatButtonModule, MatFormFieldModule,MatInputModule,  FormsModule, CommonModule, MatSnackBarModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent {
-  @ViewChild('messageContainer') private messageContainer!: ElementRef;
+
   public user: UserService = inject(UserService);
   userInterface: IUser | undefined;
   messageInput: string = '';
   userId: number = 0;
   vendorId: number = 0;
+  vendorUserid: number = 0;
+  receiver: string = '';
   messageList: any[] = [];
-  vendorUserid: IVendor | undefined;
+  @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
-  constructor(private chatService: ChatService,  private route: ActivatedRoute,  private snackBar: MatSnackBar) {
+  constructor(private chatService: ChatService,  private route: ActivatedRoute, private snackBar: MatSnackBar) {
 
   }
 
-  ngAfterViewChecked() {
-    this.scrollToBottom();
-  }
 
   ngOnInit(): void {
 
@@ -57,46 +64,34 @@ export class ChatComponent {
   }
 
   sendMessage(): void {
-
-
-    // Getting vendor user id from local storage
-    const vendorUserid = localStorage.getItem('vendor');
-    if (vendorUserid) {
-      const vendorUseridObj = JSON.parse(vendorUserid);
-      this.vendorUserid = vendorUseridObj.user.id;
-    }
-
-
-
     if (this.messageInput.trim() && this.userId) {
       const chatMessage = {
         message: this.messageInput,
         user: { id: this.userId },
-        roomId: this.vendorId,
-        recipientId : this.vendorUserid
+        roomId: this.vendorId // Asegúrate de incluir el roomId en el mensaje
       };
 
-        console.log('Sending message:', chatMessage); // Agrega este registro para depurar
-        this.chatService.sendMessage(this.vendorId, chatMessage);
+      console.log('Sending message:', chatMessage); // Agrega este registro para depurar
+      this.chatService.sendMessage(this.vendorId, chatMessage);
 
+      // Obtener los mensajes existentes del localStorage
+      const storedMessages = localStorage.getItem('chat_messages');
+      const messages = storedMessages ? JSON.parse(storedMessages) : [];
 
-          // Agregar el nuevo mensaje a la lista de mensajes
-        this.messageList.push({
+        // Agregar el nuevo mensaje al array de mensajes
+        messages.push({
           ...chatMessage,
           message_side: 'sender'
         });
 
+      // Guardar el array de mensajes actualizado en el localStorage
+      localStorage.setItem('chat_messages', JSON.stringify(messages));
 
-      // Limpiar el campo de entrada de mensaje
+      // Agregar el mensaje a la lista de mensajes
       this.messageInput = '';
     } else {
       console.error('Message input or user ID is invalid');
     }
-    this.scrollToBottom();
-  }
-
-  ngOnDestroy() {
-    this.chatService.clearSubscriptions();
   }
 
   listenMessages() {
@@ -110,22 +105,39 @@ export class ChatComponent {
 
       // Guardar los mensajes en el localStorage
       localStorage.setItem('chat_messages', JSON.stringify(this.messageList));
-                // Getting vendor user id from local storage
-          const vendorUserid = localStorage.getItem('vendor');
-          if (vendorUserid) {
-            const vendorUseridObj = JSON.parse(vendorUserid);
-            this.vendorUserid = vendorUseridObj.user.id;
-          }
 
-       // Filtrar mensajes para notificar al usuario correcto
+        //obteniendo el receiver
+        const storedMessages = localStorage.getItem('chat_messages');
+        if (storedMessages) {
+          const mssgObj = JSON.parse(storedMessages);
+          const lastMessage = mssgObj[mssgObj.length - 1]; // Accede al último elemento del arreglo
+          this.receiver = lastMessage.message_side;
+          console.log('receiver:', this.receiver); // Agrega este registro para depurar
+        } else {
+          console.error('No user found in localStorage');
+        }
+
+
+      // Obtener vendorUserid del localStorage
+    const vendorUserid = localStorage.getItem('vendor');
+    if (vendorUserid) {
+      const vendorUseridObj = JSON.parse(vendorUserid);
+      this.vendorUserid = vendorUseridObj.user.id;
+    }
+
+
+
+
+
+    // Filtrar mensajes para notificar al usuario correcto
     const newMessages = messages.filter((item: any) => {
       // Si el mensaje es enviado por el vendor y el usuario actual no es el vendor, notificar al usuario actual
-      if (item.user.id === this.vendorUserid && this.userId !== this.vendorUserid) {
+      if (item.user.id === this.vendorUserid && this.receiver === 'receiver') {
         return true;
       }
       // Si el mensaje es enviado por otro usuario y el usuario actual es el vendor, notificar al vendor
-      if (item.user.id !== this.vendorUserid && this.userId === this.vendorUserid) {
-        return true;
+      if (item.user.id !== this.vendorUserid && this.receiver === 'sender') {
+        return false;
       }
       return false;
     });
@@ -133,11 +145,15 @@ export class ChatComponent {
     if (newMessages.length > 0) {
       this.snackBar.open('Tienes un nuevo mensaje', 'Cerrar', {
         duration: 3000,
+        horizontalPosition: 'right'
       });
     }
+
+
+
+
     });
   }
-
 
 
 
@@ -147,7 +163,7 @@ export class ChatComponent {
     const storedMessages = localStorage.getItem('chat_messages');
   if (storedMessages) {
     this.messageList = JSON.parse(storedMessages)
-      //.filter((item: any) => item.roomId === this.vendorId) // Filtra los mensajes por roomId
+      .filter((item: any) => item.roomId === this.vendorId) // Filtra los mensajes por roomId
       .map((item: any) => ({
         ...item,
         message_side: item.user.id !== this.userId ? 'receiver' : 'sender'
@@ -172,8 +188,6 @@ export class ChatComponent {
 
 
 
-
-
   loadingUserIdFromLocalStorage(): void {
     const user = localStorage.getItem('auth_user');
     if (user) {
@@ -186,9 +200,9 @@ export class ChatComponent {
 
   }
 
-
-
-
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
 
   scrollToBottom(): void {
     try {
@@ -196,31 +210,12 @@ export class ChatComponent {
     } catch(err) { }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
 
 
 

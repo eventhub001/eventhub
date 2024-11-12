@@ -102,6 +102,20 @@ public class VendorRestController {
     }
 
 
+    @GetMapping("/user/{userId}/vendors")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getVendorsByUserId(@PathVariable Long userId, HttpServletRequest request) {
+        Optional<User> foundUser = userRepository.findById(userId);
+        if (foundUser.isPresent()) {
+            List<Vendor> vendors = vendorRepository.findByUserId(userId);
+            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+            return new GlobalResponseHandler().handleResponse("Vendors retrieved successfully", vendors, HttpStatus.OK, meta);
+        } else {
+            return new GlobalResponseHandler().handleResponse("User Id " + userId + " not found", HttpStatus.NOT_FOUND, request);
+        }
+    }
+
+
 
     @PutMapping("/{id}")
     public Vendor updateVendor(@PathVariable Integer id, @RequestBody Vendor vendor) {
