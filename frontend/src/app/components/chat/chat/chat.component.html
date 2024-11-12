@@ -10,19 +10,20 @@
       EventHub Chat
     </div>
   </div>
-  <ul class="messages">
+  <ul class="messages" #messageContainer>
     <li class="message right" *ngFor="let message of messageList"
       [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"
     >
       <div class="avatar" [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"></div>
       <div class="text_wrapper">
+          <div class="user_name">{{message.user.name + ' ' + message.user.lastname}}</div>
         <div class="text"> {{message.message}}</div>
       </div>
     </li>
   </ul>
   <div class="bottom_wrapper clearfix">
     <div class="message_input_wrapper">
-      <input class="message_input" placeholder="Message..."  [(ngModel)]="messageInput"/>
+      <input class="message_input" placeholder="Message..."  [(ngModel)]="messageInput" (keyup.enter)="sendMessage()"/>
     </div>
     <div class="send_message" (click)="sendMessage()">
       <div class="icon"></div>
