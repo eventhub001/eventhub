@@ -36,7 +36,17 @@ export const routes: Routes = [
   },
   {
     path: 'event3dplanner',
-    component: EventModellerComponent
+    component: EventModellerComponent,
+    data: {
+      name: 'Modelaje 3D',
+      showInSidebar: true,
+      authorities: [
+        IRoleType.admin,
+        IRoleType.superAdmin,
+        IRoleType.user
+      ]
+
+    }
   },
   {
     path: 'app',
@@ -125,7 +135,7 @@ export const routes: Routes = [
           name: 'Chat',
           showInSidebar: false
         }
-      },
+      }
     ],
   },
 ];
