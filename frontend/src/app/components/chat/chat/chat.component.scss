@@ -159,6 +159,8 @@
     width: calc(100% - 220px);
     min-width: 100px;
     position: relative;
+    word-wrap: break-word; /* Permite el ajuste de texto */
+    white-space: pre-wrap; /* Permite el ajuste de texto y respeta los saltos de línea */
   }
 
   .messages .message .text_wrapper::after,
@@ -185,6 +187,8 @@
   .messages .message .text_wrapper .text {
     font-size: 18px;
     font-weight: 300;
+    word-wrap: break-word; /* Permite el ajuste de texto */
+    white-space: pre-wrap; /* Permite el ajuste de texto y respeta los saltos de línea */
   }
 
   .bottom_wrapper {
@@ -244,4 +248,10 @@
 
   .message_template {
     display: none;
+  }
+
+  .messages .message .text_wrapper .user_name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
   }

@@ -14,7 +14,7 @@ export interface ILoginResponse {
     title: string;                     // Required: The text that will appear on an event
     start: Date | string;              // Required: The event's start date/time
     end: Date | string;                // Required: The event's end date/time
-    
+
     id?: string | number;              // Optional: Unique identifier for the event
     groupId?: string | number;         // Optional: Group identifier for linking events
     allDay?: boolean;                  // Optional: Specifies if the event is all-day
@@ -42,7 +42,7 @@ export interface ILoginResponse {
     rrule?: string;                    // Optional: RRule for recurrence
     duration?: string;                 // Optional: Event duration (for recurrence)
     extendedProps?: { [key: string]: any };  // Optional: Additional properties
-  
+
     // Any other properties can be added dynamically
     [key: string]: any;
   }

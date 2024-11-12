@@ -1,8 +1,8 @@
 package com.project.eventhub.rest.Cotizacion;
 
 
-import com.project.demo.logic.entity.cotizacion.Cotizacion;
-import com.project.demo.logic.entity.cotizacion.CotizacionRepository;
+import com.project.eventhub.logic.entity.cotizacion.Cotizacion;
+import com.project.eventhub.logic.entity.cotizacion.CotizacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +28,8 @@ public class CotizacionRestController {
     @PutMapping("/{id}")
     public Cotizacion updateCotizacion(@PathVariable Long id, @RequestBody Cotizacion cotizacionDetails) {
         Cotizacion cotizacion = (Cotizacion) cotizacionRepository.findById(id).orElseThrow(() -> new RuntimeException("Cotización no encontrada"));
-        cotizacion.setEvento(cotizacionDetails.getEvento());
-        cotizacion.setServicio(cotizacionDetails.getServicio());
+        cotizacion.setEvent(cotizacionDetails.getEvent());
+        cotizacion.setVendor_service(cotizacionDetails.getVendor_service());
         cotizacion.setMontoCotizado(cotizacionDetails.getMontoCotizado());
         cotizacion.setCantidadRecurso(cotizacionDetails.getCantidadRecurso());
         return cotizacionRepository.save(cotizacion);
