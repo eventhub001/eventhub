@@ -59,7 +59,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
 
     private void createRegularUsers() {
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.Supplier);
         if (optionalRole.isEmpty()) {
             return;
         }

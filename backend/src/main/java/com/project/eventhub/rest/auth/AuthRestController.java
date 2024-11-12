@@ -89,7 +89,7 @@ public class AuthRestController {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.Supplier);
 
         if (optionalRole.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Role not found");

@@ -22,13 +22,14 @@ import { TaskTemplateService } from '../../services/tasktemplate.service';
 import { EventTaskTemplateService } from '../../services/eventtasktemplate.service';
 import { TaskService } from '../../services/task.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { PaginationComponent } from "../pagination/pagination.component";
 
 @Component({
   selector: 'app-eventcards',
   standalone: true,
   imports: [MatCardModule, MatButtonModule, DatePipe, CommonModule, EventcarddetailsComponent,
-    FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent,MatPaginatorModule,
-    ModalComponent],
+    FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent, MatPaginatorModule,
+    ModalComponent, PaginationComponent, PaginationComponent],
   templateUrl: './eventcards.component.html',
   styleUrl: './eventcards.component.scss'
 })

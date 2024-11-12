@@ -81,9 +81,10 @@ export class TaskFormComponent {
     }
 
     if (this.selectedTastTemplate !== null) {
+      console.log("selected task template and saving accordingly", this.selectedTastTemplate);
         const eventTaskTemplate: IEventTaskTemplate = {
           taskTemplate: this.selectedTastTemplate,
-          event: {eventId: this.taskForm.controls['event'].value}
+          event: {eventId: Number(this.taskForm.controls['event'].value)}
         }
         this.callSaveTaskTemplate.emit(eventTaskTemplate);
     }

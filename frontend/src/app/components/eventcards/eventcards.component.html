@@ -64,7 +64,11 @@
       </mat-card-actions>
       <!-- Show event details if selected -->
   </mat-card>
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of tasks"></mat-paginator>
+  <app-pagination
+    [service]="eventService"
+    [customCall]="true"
+    (callCustomPaginationMethod)="eventService.getAll()"
+  ></app-pagination>
   <ng-template #addProductsModal>
     <app-modal
       [hideFooter]="true">
