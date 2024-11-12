@@ -191,6 +191,12 @@
     white-space: pre-wrap; /* Permite el ajuste de texto y respeta los saltos de línea */
   }
 
+  .messages .message .text_wrapper .user_name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
   .bottom_wrapper {
     position: relative;
     width: 100%;
@@ -248,10 +254,4 @@
 
   .message_template {
     display: none;
-  }
-
-  .messages .message .text_wrapper .user_name {
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
   }

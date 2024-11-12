@@ -12,9 +12,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.time.LocalDateTime;
 
 
@@ -33,13 +31,23 @@ public class WebSocketController {
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/{roomId}")
     @PostMapping
-    public Chat chatting(@DestinationVariable String roomId, Chat chat) {
+    public Chat chatting(@DestinationVariable Integer roomId, Chat chat) {
         User user = userRepository.findById(chat.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         chat.setUser(user);
 
-        // Save the chat entity if it's new
-        if (chat.getId() == null) {
+        chat.setRoomId(roomId);
+        System.out.println(roomId);
+
+        // Check if the chat already exists in the database
+        if (chat.getId() != null) {
+            Chat existingChat = chatRepository.findById(chat.getId()).orElse(null);
+            if (existingChat != null) {
+                chat = existingChat;
+            } else {
+                chatRepository.save(chat);
+            }
+        } else {
             chatRepository.save(chat);
         }
 
@@ -52,12 +60,25 @@ public class WebSocketController {
         // Save the message to the repository
         messageRepository.save(message);
 
-        System.out.println("Message: " + chat.getMessage());
-        System.out.println("Chat object: " + chat); // Agrega este registro para depurar
-
-        return new Chat(chat.getMessage(), chat.getUser());
+        return new Chat(chat.getMessage(), chat.getUser(), chat.getRoomId());
     }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }
