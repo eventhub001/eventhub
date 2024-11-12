@@ -1,12 +1,12 @@
 import { AfterContentInit, Component, EventEmitter, inject, Input, OnDestroy, Output, SimpleChange, SimpleChanges } from '@angular/core'
-import { Frame, Circle, Dial, Emitter, Pen, MotionController, series, LabelOnArc, Tile, Rectangle, Bitmap, Stage, Carousel, DisplayObject } from 'zimjs'
+import { Frame, Circle, Dial, Emitter, Pen, MotionController, series, LabelOnArc, Tile, Rectangle, Bitmap, Stage, Carousel, Container, DisplayObject } from 'zimjs'
 import { MatrixUI } from './matriz/matriz'
 import { settings, SetUpUI } from './settings/settings'
 import * as UICommands from './commands/commands'
 import { AssetModel } from '../interfaces'
 import { blobsToImages, blobToImage } from './loader/fileloader'
 import { ModelService } from '../services/model.service'
-
+import { AssetSelectorComponent } from './selectors/assetselector'
 @Component({
     selector: 'app-ui3d',
     standalone: true,
@@ -59,7 +59,19 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                 console.log(this.settings);
                 const imgs = await blobToImage(this.images[0]);
 
+                // const items: [(DisplayObject | string)] = [
+                //     imgs.center(),
+                //     imgs.center(),
+                // ];
+                const imgs2 = await blobToImage(this.images[0]);
+
+                
                 this.matriz = new MatrixUI(this.settings.width, this.settings.height, this.settings.x, this.settings.y);
+
+                imgs2.siz(20, 20);
+                imgs.siz(20, 20);
+
+                const assetSelector = new AssetSelectorComponent([imgs, imgs2], 0, 0, 5);
 
                 this.matriz.onCellClick = (row: number, col: number) => {
                     console.log(`Cell clicked at row: ${row}, col: ${col}`);
