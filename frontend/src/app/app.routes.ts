@@ -35,20 +35,6 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'event3dplanner',
-    component: EventModellerComponent,
-    data: {
-      name: 'Modelaje 3D',
-      showInSidebar: true,
-      authorities: [
-        IRoleType.admin,
-        IRoleType.superAdmin,
-        IRoleType.user
-      ]
-
-    }
-  },
-  {
     path: 'app',
     component: AppLayoutComponent,
     canActivate: [AuthGuard],
@@ -135,7 +121,21 @@ export const routes: Routes = [
           name: 'Chat',
           showInSidebar: false
         }
-      }
+      },
+      {
+        path: 'event3dplanner',
+        component: EventModellerComponent,
+        data: {
+          name: 'Modelaje 3D',
+          showInSidebar: true,
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user
+          ]
+    
+        }
+      },
     ],
   },
 ];
