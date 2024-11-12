@@ -67,18 +67,4 @@ export class ChatService  {
     this.subscriptions = [];
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
