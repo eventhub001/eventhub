@@ -65,7 +65,7 @@ public class UserRestController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public User addUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.Supplier);
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
         if (optionalRole.isEmpty()) {
             return null;
         }
@@ -76,11 +76,6 @@ public class UserRestController {
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return UserRepository.findById(id).orElseThrow(RuntimeException::new);
-    }
-
-    @GetMapping("/filterByName/{name}")
-    public List<User> getUserById(@PathVariable String name) {
-        return UserRepository.findUsersWithCharacterInName(name);
     }
 
     @PutMapping("/{id}")

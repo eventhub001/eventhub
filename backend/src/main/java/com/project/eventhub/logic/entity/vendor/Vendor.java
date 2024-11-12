@@ -17,12 +17,14 @@ public class Vendor {
     private String description;
     private String location;
     private Double rating;
+    private String Phone;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "category_id", nullable = false)
     private VendorCategory vendorCategory;
 
@@ -32,6 +34,13 @@ public class Vendor {
         return id;
     }
 
+    public String getPhone() {
+        return Phone;
+    }
+
+    public void setPhone(String Phone) {
+        this.Phone = Phone;
+    }
     public void setId(Integer id) {
         this.id = id;
     }
