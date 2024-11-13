@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="mb-2">
-      <label class="mb-1" for="eventTypeNme">Event Type*</label>
+      <label class="mb-1" for="eventTypeNme">Tipo de evento*</label>
       <select id="eventType" formControlName="eventType" class="form-control">
         <option value="" disabled>Elige una categoría para tu evento</option> <!-- Placeholder -->
         <option *ngFor="let type of eventTypes" [value]="type.eventTypeId">{{type.eventTypeName}}</option>
