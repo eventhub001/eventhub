@@ -53,9 +53,6 @@ export class VendorDetails1Component {
     }
   }
 
-
-
-
   saveToLocalStorage(): void {
     localStorage.setItem('vendor', JSON.stringify(this.vendor));
     localStorage.setItem('servicios', JSON.stringify(this.servicios));

@@ -7,7 +7,7 @@
     </div>
     <div class="col-12">
       <app-vendor-list
-        [vendor]="vendors"
+        [vendor]="vendorService.vendor$()"
       />
       @if(vendorService.vendor$().length) {
 

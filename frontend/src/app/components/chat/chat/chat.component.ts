@@ -110,9 +110,13 @@ export class ChatComponent {
         const storedMessages = localStorage.getItem('chat_messages');
         if (storedMessages) {
           const mssgObj = JSON.parse(storedMessages);
-          const lastMessage = mssgObj[mssgObj.length - 1]; // Accede al último elemento del arreglo
-          this.receiver = lastMessage.message_side;
-          console.log('receiver:', this.receiver); // Agrega este registro para depurar
+          if (mssgObj.length > 0) {
+            const lastMessage = mssgObj[mssgObj.length - 1]; // Accede al último elemento del arreglo
+            this.receiver = lastMessage.message_side;
+            console.log('receiver:', this.receiver); // Agrega este registro para depurar
+          } else {
+            console.error('No messages found in localStorage');
+          }
         } else {
           console.error('No user found in localStorage');
         }
