@@ -13,6 +13,7 @@ import { VendorcategoryService } from '../../../../services/vendorcategory.servi
 import { IVendorCategory } from '../../../../interfaces';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../services/user.service';
+import { VendorService } from '../../../../services/vendor.service';
 
 @Component({
   selector: 'app-vendor-list',
@@ -40,7 +41,7 @@ export class VendorListComponent {
   public dataSource: MatTableDataSource<IVendor>;
   public displayedColumns: string[] = ['id', 'name', 'description', 'location', 'rating', 'category', 'actions'];
   public userService: UserService = inject(UserService);
-
+  public vendorService: VendorService = inject(VendorService);
 
   selectedVendor: IVendor| null = null;
 
@@ -49,7 +50,7 @@ export class VendorListComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(  private router: Router ) {
-    // Asigna la fecha de hoy formateada a la variable todayDate
+    this.vendorService.getVendorByUser
     this.dataSource = new MatTableDataSource(this.vendor);
     this.loadCategories();
   }

@@ -145,7 +145,8 @@ export class ChatComponent {
     if (newMessages.length > 0) {
       this.snackBar.open('Tienes un nuevo mensaje', 'Cerrar', {
         duration: 3000,
-        horizontalPosition: 'right'
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
       });
     }
 

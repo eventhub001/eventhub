@@ -11,7 +11,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ChatService  extends BaseService<IChat> {
 
-
   private stompClient: any;
   private messageSubject: BehaviorSubject<IChat[]> = new BehaviorSubject<IChat[]>([]);
   constructor() {
@@ -27,11 +26,6 @@ export class ChatService  extends BaseService<IChat> {
 
    }
 
-
-
-
-
-
    joinChatRoom(roomId: number): void {
     this.stompClient.connect({}, () => {
       this.stompClient.subscribe(`/topic/${roomId}`, (message: any) => {
@@ -45,7 +39,6 @@ export class ChatService  extends BaseService<IChat> {
     });
   }
 
-
    sendMessage(roomId: number, chatMessage: IChat){
     console.log('Sending message:', chatMessage); // Agrega este registro para depurar
     if (this.stompClient && this.stompClient.connected) {
@@ -54,8 +47,6 @@ export class ChatService  extends BaseService<IChat> {
       console.error('Stomp client is not connected');
     }
    }
-
-
 
     getMessages(){
       return this.messageSubject.asObservable();

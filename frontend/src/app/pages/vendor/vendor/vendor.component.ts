@@ -12,7 +12,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { IVendor } from '../../../interfaces';
+import { IUser, IVendor } from '../../../interfaces';
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-vendor',
   standalone: true,
@@ -36,6 +37,9 @@ import { IVendor } from '../../../interfaces';
 export class VendorComponent {
   public vendorService: VendorService = inject(VendorService);
   public vendors: IVendor[] = [];
+  public user?: IUser;
+  public authService: AuthService = inject(AuthService);
+
   // public modalService: ModalService = inject(ModalService);
   // public authService: AuthService = inject(AuthService);
   // @ViewChild('addVendorModal') public addVendorModal: any;
@@ -50,6 +54,7 @@ export class VendorComponent {
   //   vendorCategory: ['', Validators.required],
   // })
 
+
 constructor() {
   this.vendorService.search.page = 1;
   this.getVendors();
@@ -61,16 +66,30 @@ ngOnInit(): void {
 }
 
 getVendors(): void {
-  this.vendorService.getAll().subscribe({
-    next: (vendors: IVendor[]) => {
-      console.log('Vendors fetched:', vendors); // Verifica los datos obtenidos
-      this.vendors = vendors;
-      this.saveToLocalStorage();
-    },
-    error: (err: any) => {
-      console.error('Error fetching vendors', err);
-    }
-  });
+  this.user = this.authService.getUser();
+  if (this.authService.isSuperAdmin()) {
+    this.vendorService.getAll().subscribe({
+      next: (vendors: IVendor[]) => {
+        console.log('All vendors fetched:', vendors); // Verifica los datos obtenidos
+        this.vendors = vendors;
+        this.saveToLocalStorage();
+      },
+      error: (err: any) => {
+        console.error('Error fetching all vendors', err);
+      }
+    });
+  } else {
+    this.vendorService.getVendorByUser(this.user?.id!).subscribe({
+      next: (vendors: IVendor[]) => {
+        console.log('Vendors fetched:', vendors); // Verifica los datos obtenidos
+        this.vendors = vendors;
+        this.saveToLocalStorage();
+      },
+      error: (err: any) => {
+        console.error('Error fetching vendors', err);
+      }
+    });
+  }
 }
 
 private saveToLocalStorage(): void {
