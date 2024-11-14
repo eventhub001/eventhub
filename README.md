@@ -21,13 +21,21 @@ El objeto que se usa para configurar las dimensiones y posicionamiento del model
     size: Size;
 ```
 **id:**  un id única del modelo. Tiene como objetivo principal relacionar el id del modelo en la aplicación con el de la base de datos.
+
 **url:** la ubicación donde está ubicado el modelo. Para efectos de la aplicación en este momento, se usa solo la ruta local donde se encuentra el model.
+
 **x:** ubicación x trimensional del modelo. No es la posición dentro de la maya.
+
 **y:** ubicación y trimensional del modelo. No es la posición dentro de la maya.
+
 **y:** ubicación z trimensional del modelo. No es la posición dentro de la maya.
+
 **content**: el modelo 3D de THREE JS, se puede pasar cualquier modelo.
+
 **initialOrientation**: La orientación del parametro *content*. Estos puntos se utilizan para rotar el modelo 3D de THREE JS en la orientación precargada.
+
 **orientation:** Se usa para saber la posición actual del modelo, por defecto es intialOrientation.
+
 **size:** Las dimensiones del parametro *content*. Estos puntos se utilizan para cambiar las dimensiones del modelo 3D de THREE JS de manera personalizada.
 
 
