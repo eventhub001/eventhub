@@ -68,8 +68,8 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                 
                 this.matriz = new MatrixUI(this.settings.width, this.settings.height, this.settings.x, this.settings.y);
 
-                imgs2.siz(20, 20);
-                imgs.siz(20, 20);
+                imgs2.siz(50, 50);
+                imgs.siz(50, 50);
 
                 const assetSelector = new AssetSelectorComponent([imgs, imgs2], 0, 0, 5);
 

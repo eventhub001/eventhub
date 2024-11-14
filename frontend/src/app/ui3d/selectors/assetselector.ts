@@ -20,7 +20,6 @@ export class AssetSelectorComponent {
 
      buildcontainer() {
         this.assetsImgs.forEach((image, index) => {
-            image.siz(20, 20);
             image.x = this.x * index + this.padding;
             image.y = this.y + this.padding;
             image.addTo(this.container);

@@ -40,6 +40,9 @@ export class TestComponent {
   camera!: THREE.PerspectiveCamera;
   orbitCamera!: OrbitControls;
   grid!: EventGrid;
+  pointer! : THREE.Vector2;
+  intersector!: THREE.Raycaster;
+
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
   set!: ChairSet;
@@ -84,11 +87,6 @@ export class TestComponent {
     light2.position.set(0, 3, 0);
     light2.target.position.set(-4, -1, 0); 
     light2.castShadow = true;
-
-    light2.shadow.camera = new THREE.OrthographicCamera( -100, 100, 100, -100, 0.5, 1000 ); 
-    light2.shadow.mapSize.width = 1024;
-    light2.shadow.mapSize.height = 1024;
-    // light2.shadow.bias = -0.001;
 
     this.scene.add(light2);
     this.scene.add(light2.target);
@@ -168,57 +166,14 @@ export class TestComponent {
       row: chair.z,
       grid: this.grid,
       direction1: Direction.FRONT});
-    
-    //   chairSet.add({
-    //     x: chair.x,
-    //     y: chair.y,
-    //     z: chair.z,
-    //     grid: this.grid,
-    //     direction1: Direction.FRONT});
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
+    this.intersector = new THREE.Raycaster();
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 1,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
+    this.pointer = new THREE.Vector2(); 
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 2,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
+    this.intersector.setFromCamera(this.pointer, this.camera);
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 3,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 2,
-    //   grid: this.grid,
-    //   direction1: Direction.FRONT});
-
-    // chairSet.add({
-    //   x: chair.x + 2,
-    //   y: chair.y,
-    //   z: chair.z + 2,
-    //   grid: this.grid,
-    //   direction1: Direction.FRONT});
-
-    
     this.eventManager = new Event3DManager(this.grid);
     this.eventManager.addSet(this.set); 
     //this.eventManager.printAssets();
@@ -227,20 +182,7 @@ export class TestComponent {
     DebuggingUtils.showBoundingBox(floor.content, this.scene);
     const box = new THREE.Box3().setFromObject(floor.content);
 
-    //this.grid.moveAssetTo(chair, 2, 0, 0, Side.CENTER, Side.BOTTOM);
-    //this.grid.moveAssetTo(chair2, 0, 0, 0, Side.CENTER, Side.BOTTOM);
-
-    // DebuggingUtils.showBoundingBox(chair.content, this.scene);
-    // DebuggingUtils.showBoundingBox(chair2.content, this.scene);
-
     this.scene.add(floor.content);
-    //this.scene.add(chair.content);
-    //this.scene.add(chair2.content);
-
-    //this.grid.hide();
-
-    //DebuggingUtils.showBoundingBox(floor.content, this.scene);
-    //this.scene.add(center);
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -250,5 +192,41 @@ export class TestComponent {
     };
 
     animate();
+  }
+
+  
+  selectAsset(event: MouseEvent) {
+    this.pointer.x = (event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
+    this.pointer.y = -(event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
+    
+    this.intersector.setFromCamera(this.pointer, this.camera);
+
+    const intersections = this.intersector.intersectObjects(this.eventManager.getAssetsAsObjects(), true);
+
+    if (intersections.length > 0) {
+      console.log(intersections);
+      const object = intersections[0].object.parent as THREE.Mesh;
+      
+      object.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          const childObject = child as THREE.Mesh;
+          const material = childObject.material as THREE.MeshPhysicalMaterial;
+          console.log(childObject);
+          childObject.material = material.clone();
+          const newMaterial = childObject.material as THREE.MeshPhysicalMaterial;
+          newMaterial.color = new THREE.Color(1, 0, 0);
+          newMaterial.transparent = true;
+          newMaterial.opacity = 0.5;
+  
+          console.log(material);
+        }
+      });
+    }
+
+    else {
+      this.eventManager.getAssetsAsObjects().forEach((asset) => {
+        // revert the material back to the original.
+      });
+    }
   }
 }

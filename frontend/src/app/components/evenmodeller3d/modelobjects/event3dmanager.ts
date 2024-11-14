@@ -85,6 +85,26 @@ export class Event3DManager {
         }
     }
 
+    
+    getAssetsAsObjects(): THREE.Object3D[] {
+        const objects: THREE.Object3D[] = [];
+        for (let i = 0; i < this.sets.length; i++) {
+            const set = this.sets[i];
+            objects.push(...set.getAssets())
+        }
+        return objects;
+    }
+
+    findAssetFromObject(uuid: string) {
+        for (let i = 0; i < this.sets.length; i++) {
+            const set = this.sets[i];
+            const asset = set.findAsset(uuid);
+            if (asset) {
+                return asset;
+            }
+        }
+    }
+
     // the idea is manager all the assets in the scene.
 }
 
@@ -126,6 +146,10 @@ export interface Set {
     placeAsset(asset: Asset, x: number, y: number, z: number, grid: EventGrid, scene: THREE.Scene): void;
 
     hasAssetInPosition(x: number, y: number, z: number): boolean;
+
+    getAssets(): THREE.Object3D[];
+
+    findAsset(uuid: string): Asset | null;
 }
 
 export class Set implements Set {
@@ -212,6 +236,27 @@ export class Set implements Set {
             }
         });
         return occupiedByAsset;
+    }
+
+    public getAssets(): THREE.Object3D[] {
+        const objects: THREE.Object3D[] = [];
+        this.matrix.forEach((value, _i, _j, _k) => {
+            if (value !== null) {
+                objects.push(value.content);
+            }
+        });
+        return objects;
+    }
+
+
+    public findAsset(uuid: string) {
+        let asset: Asset | null = null;
+        this.matrix.forEach((value, _i, _j, _k) => {
+            if (value !== null && value.content.uuid === uuid) {
+                asset = value;
+            }
+        });
+        return asset;
     }
 }
 
