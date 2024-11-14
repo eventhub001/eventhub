@@ -37,8 +37,3 @@ El objeto que se usa para configurar las dimensiones y posicionamiento del model
 **orientation:** Se usa para saber la posición actual del modelo, por defecto es intialOrientation.
 
 **size:** Las dimensiones del parametro *content*. Estos puntos se utilizan para cambiar las dimensiones del modelo 3D de THREE JS de manera personalizada.
-
-
-
-
-
