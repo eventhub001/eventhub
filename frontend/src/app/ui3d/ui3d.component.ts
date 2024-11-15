@@ -7,6 +7,7 @@ import { AssetModel } from '../interfaces'
 import { blobsToImages, blobToImage } from './loader/fileloader'
 import { ModelService } from '../services/model.service'
 import { AssetSelectorComponent } from './selectors/assetselector'
+import { ArrowsMenu, DIRECTION, MOVE_DIRECTION } from './arrows/arrows'
 @Component({
     selector: 'app-ui3d',
     standalone: true,
@@ -17,6 +18,7 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     frame: Frame | undefined
     @Input() modelMetadata: AssetModel[] = [];
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
+    @Output() MoveAction: EventEmitter<UICommands.move> = new EventEmitter<UICommands.move>()
     currentChair: number[] = [2, 0];
     matriz?: MatrixUI;
     settings: settings;
@@ -42,7 +44,7 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
         this.frame = new Frame({
             scaling: "zim",
             width: 400,
-            height: 600,
+            height: 800,
             color: lighter,
             outerColor: blue,
             mouseMoveOutside: true, // so Pen and Dial work better
@@ -59,19 +61,22 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                 console.log(this.settings);
                 const imgs = await blobToImage(this.images[0]);
 
-                // const items: [(DisplayObject | string)] = [
-                //     imgs.center(),
-                //     imgs.center(),
-                // ];
                 const imgs2 = await blobToImage(this.images[0]);
 
                 
                 this.matriz = new MatrixUI(this.settings.width, this.settings.height, this.settings.x, this.settings.y);
 
-                imgs2.siz(50, 50);
-                imgs.siz(50, 50);
+                imgs2.siz(100, 100);
+                imgs.siz(100, 100);
 
-                const assetSelector = new AssetSelectorComponent([imgs, imgs2], 0, 0, 5);
+                const assetSelector = new AssetSelectorComponent([imgs], 300, 300, 5);
+
+                const arrowSelection = new ArrowsMenu(0, 0, 300, 300);
+
+                arrowSelection.arrowsOnClick = (dir: DIRECTION) => {
+                    console.log("working on arrows", dir);
+                    this.MoveAction.emit(MOVE_DIRECTION[dir]);
+                }
 
                 this.matriz.onCellClick = (row: number, col: number) => {
                     console.log(`Cell clicked at row: ${row}, col: ${col}`);

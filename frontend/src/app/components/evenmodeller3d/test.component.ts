@@ -6,13 +6,13 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { DebuggingUtils } from './modelobjects/3dobjects';
 import { Side } from './modelobjects/3dtypes';
 import { MetricType, EventGrid } from './modelobjects/events';
-import { Floor } from '../../models/floor.model';
-import { Chair } from '../../models/chair.model';
+import { Floor } from './models/floor.model';
+import { Chair } from './models/chair.model';
 import { ChairSet, Event3DManager, Direction } from './modelobjects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { Ui3DComponent } from '../../ui3d/ui3d.component';
 import * as UICommand from '../../ui3d/commands/commands';
-import { AssetModel } from '../../interfaces';
+import { Asset, AssetModel } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModelService } from '../../services/model.service';
@@ -27,7 +27,7 @@ import { ModelService } from '../../services/model.service';
   imports: [HttpClientModule, Ui3DComponent, CommonModule],
   providers: [HttpClientModule],
   templateUrl: './test.component.html',
-  styleUrl: './test.component.css'
+  styleUrl: './test.component.scss'
 })
 export class TestComponent {
 
@@ -42,6 +42,10 @@ export class TestComponent {
   grid!: EventGrid;
   pointer! : THREE.Vector2;
   intersector!: THREE.Raycaster;
+
+  selectionsBox: THREE.Box3Helper[] = [];
+
+  selectedAsset: Asset[] = [];
 
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
@@ -65,6 +69,16 @@ export class TestComponent {
 
     this.eventManager.render(this.scene);
 
+  }
+
+  public moveComponent(move: UICommand.move) {
+
+    console.log("Row: " + move.z);
+    console.log("Col: " + move.x);
+
+    this.eventManager.move(this.selectedAsset[0], move.x, 0, move.z);
+
+    this.eventManager.render(this.scene);
   }
 
   addRenderingHelpers() {
@@ -100,7 +114,7 @@ export class TestComponent {
     this.renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.setSize( getWindow().innerWidth / 1.4, getWindow().innerHeight / 1.2);
+    this.renderer.setSize( getWindow().innerWidth / 1.8, getWindow().innerHeight / 1.2);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -204,19 +218,27 @@ export class TestComponent {
     const intersections = this.intersector.intersectObjects(this.eventManager.getAssetsAsObjects(), true);
 
     if (intersections.length > 0) {
+
+      if (this.selectionsBox.length > 0) {
+        this.clearBoundingBoxes();
+        this.selectedAsset = [];
+      }
+
       console.log(intersections);
       const object = intersections[0].object.parent as THREE.Mesh;
-      
+
+      this.showBoundingBox(object);
+
+      // as a reminder, the other is: object3D, then the group, then the actual 3D model objects.
+      const selectedAsset = this.eventManager.findAssetFromObject(object.parent!.uuid);
+      if (selectedAsset) {
+        this.selectedAsset.push(selectedAsset);
+      }
+
       object.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           const childObject = child as THREE.Mesh;
           const material = childObject.material as THREE.MeshPhysicalMaterial;
-          console.log(childObject);
-          childObject.material = material.clone();
-          const newMaterial = childObject.material as THREE.MeshPhysicalMaterial;
-          newMaterial.color = new THREE.Color(1, 0, 0);
-          newMaterial.transparent = true;
-          newMaterial.opacity = 0.5;
   
           console.log(material);
         }
@@ -228,5 +250,22 @@ export class TestComponent {
         // revert the material back to the original.
       });
     }
+  }
+
+  showBoundingBox(model: THREE.Object3D) {
+    const box = new THREE.Box3().setFromObject(model);
+    const boxHelper = new THREE.Box3Helper(box, 0xfe04ff);
+
+    this.scene.add(boxHelper);
+
+    this.selectionsBox.push(boxHelper);
+  }
+
+  clearBoundingBoxes() {
+    this.selectionsBox.forEach((box) => {
+      this.scene.remove(box);
+    });
+
+    this.selectionsBox = [];
   }
 }

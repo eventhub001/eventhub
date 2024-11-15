@@ -1,13 +1,14 @@
 import { EventType } from "@angular/router";
-import { ThreeDObject } from "../../../models/threeobject.model";
+import { ThreeDObject } from "../models/threeobject.model";
 import { EventGrid } from "./events";
-import { Chair } from "../../../models/chair.model";
+import { Chair } from "../models/chair.model";
 import { NMatrix } from "./matrices";
 import { Side } from "./3dtypes";
 import * as THREE from 'three';
 import { Asset } from "../../../interfaces";
 
 export class Event3DManager {
+
     sets: Set[] = [];
     grid: EventGrid;
 
@@ -31,14 +32,34 @@ export class Event3DManager {
                 newasset.x = col;
                 newasset.y = floor;
                 newasset.z = row;
-                // create a new set in the position selected.
-                let allowedPosition = true;
             }
         });
 
         if (allowedPosition) {
             const newSet = new Set("Set" + this.sets.length, this.grid, newasset);
             this.addSet(newSet);
+        }
+    }
+
+    
+    move(selectedAsset: Asset, col: number, floor: number, row: number) {
+        let allowedPosition = true;
+        console.log(selectedAsset.x, selectedAsset.y, selectedAsset.z);
+        // verify if there a set created
+        this.sets.forEach((set) => {
+            if (set.hasAssetInPosition(selectedAsset.x + col, selectedAsset.y + floor, selectedAsset.z + row)) {
+                throw new Error("There is already an asset is the position selected");
+            }
+
+            else {
+                selectedAsset.x = selectedAsset.x + col;
+                selectedAsset.y =  selectedAsset.y + floor;
+                selectedAsset.z = selectedAsset.z + row;
+            }
+        });
+
+        if (allowedPosition) {
+            this.move(selectedAsset, selectedAsset.x, selectedAsset.y, selectedAsset.z);
         }
     }
 
@@ -95,7 +116,7 @@ export class Event3DManager {
         return objects;
     }
 
-    findAssetFromObject(uuid: string) {
+    findAssetFromObject(uuid: string) : Asset | null {
         for (let i = 0; i < this.sets.length; i++) {
             const set = this.sets[i];
             const asset = set.findAsset(uuid);
@@ -103,6 +124,8 @@ export class Event3DManager {
                 return asset;
             }
         }
+
+        return null;
     }
 
     // the idea is manager all the assets in the scene.
@@ -219,6 +242,12 @@ export class Set implements Set {
         }
     }
 
+    move(asset: Asset, x: number, y: number, z: number) {
+        this.matrix.matrix[asset.x][asset.y][asset.z] = null;
+        this.matrix.matrix[x][y][z] = asset;
+        
+    }
+
     public getAsset(x: number, y: number, z: number) {
         return this.matrix.matrix[x][y][z];
     }
@@ -249,7 +278,7 @@ export class Set implements Set {
     }
 
 
-    public findAsset(uuid: string) {
+    public findAsset(uuid: string) : Asset | null {
         let asset: Asset | null = null;
         this.matrix.forEach((value, _i, _j, _k) => {
             if (value !== null && value.content.uuid === uuid) {

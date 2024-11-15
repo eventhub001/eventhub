@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { NMatrix } from './matrices';
 import { ThreeCalculationUtils } from './vectorutils';
-import { ThreeDObject } from '../../../models/threeobject.model';
+import { ThreeDObject } from '../models/threeobject.model';
 import { Asset } from '../../../interfaces';
 import { Side } from './3dtypes';
 
