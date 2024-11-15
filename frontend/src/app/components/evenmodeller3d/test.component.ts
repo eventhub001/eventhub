@@ -45,7 +45,7 @@ export class TestComponent {
 
   selectionsBox: THREE.Box3Helper[] = [];
 
-  selectedAsset: Asset[] = [];
+  selectedAsset: ({asset: Asset, position: {col: number; floor: number; row: number}})[] = [];
 
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
@@ -77,8 +77,18 @@ export class TestComponent {
     console.log("Col: " + move.x);
 
     this.eventManager.move(this.selectedAsset[0], move.x, 0, move.z);
-
     this.eventManager.render(this.scene);
+
+    // this.updateSelectionBoundingBox(this.selectedAsset[0].asset.content);
+
+    // const object = this.eventManager.findAssetFromObject(this.selectedAsset[0].asset.content.uuid);
+    // if (object == null) {
+    //   throw new Error("Asset not found! UUID: " + this.selectedAsset[0].asset.content.uuid);
+    // }
+    // this.selectedAsset = [];
+    // this.selectedAsset.push(object);
+
+    this.updateSelection(this.selectedAsset[0].asset.content);
   }
 
   addRenderingHelpers() {
@@ -96,11 +106,15 @@ export class TestComponent {
 
     const light = new THREE.AmbientLight(0xffffff, 0.3);
     this.scene.add(light);
-    const light2 = new THREE.DirectionalLight(0xffffff, 6);
+    const light2 = new THREE.DirectionalLight(0xffffff, 8);
 
-    light2.position.set(0, 3, 0);
-    light2.target.position.set(-4, -1, 0); 
+    light2.position.set(8, 5, 0);
+    light2.target.position.set(-1, -1, 0); 
     light2.castShadow = true;
+    light2.shadow.camera.left = -20;
+    light2.shadow.camera.right = 20;
+    light2.shadow.camera.top = 40;
+    light2.shadow.camera.bottom = -40;
 
     this.scene.add(light2);
     this.scene.add(light2.target);
@@ -232,6 +246,7 @@ export class TestComponent {
       // as a reminder, the other is: object3D, then the group, then the actual 3D model objects.
       const selectedAsset = this.eventManager.findAssetFromObject(object.parent!.uuid);
       if (selectedAsset) {
+        this.selectedAsset = [];
         this.selectedAsset.push(selectedAsset);
       }
 
@@ -248,6 +263,8 @@ export class TestComponent {
     else {
       this.eventManager.getAssetsAsObjects().forEach((asset) => {
         // revert the material back to the original.
+        this.clearBoundingBoxes();
+        this.selectedAsset = [];
       });
     }
   }
@@ -267,5 +284,20 @@ export class TestComponent {
     });
 
     this.selectionsBox = [];
+  }
+
+  updateSelectionBoundingBox(mode: THREE.Object3D) {
+    this.clearBoundingBoxes();
+    this.showBoundingBox(mode);
+  }
+
+  updateSelection(mode: THREE.Object3D) {
+    this.updateSelectionBoundingBox(mode);
+    const selectedAsset = this.eventManager.findAssetFromObject(mode.uuid);
+
+    if (selectedAsset) {
+      this.selectedAsset = [];
+      this.selectedAsset.push(selectedAsset);
+    }
   }
 }

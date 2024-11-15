@@ -42,25 +42,45 @@ export class Event3DManager {
     }
 
     
-    move(selectedAsset: Asset, col: number, floor: number, row: number) {
+    move(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number) {
         let allowedPosition = true;
-        console.log(selectedAsset.x, selectedAsset.y, selectedAsset.z);
+        
+
         // verify if there a set created
         this.sets.forEach((set) => {
-            if (set.hasAssetInPosition(selectedAsset.x + col, selectedAsset.y + floor, selectedAsset.z + row)) {
+            if (set.hasAssetInPosition(selectedAsset.position.col + col, selectedAsset.position.floor + floor, selectedAsset.position.row + row)) {
                 throw new Error("There is already an asset is the position selected");
-            }
-
-            else {
-                selectedAsset.x = selectedAsset.x + col;
-                selectedAsset.y =  selectedAsset.y + floor;
-                selectedAsset.z = selectedAsset.z + row;
             }
         });
 
         if (allowedPosition) {
-            this.move(selectedAsset, selectedAsset.x, selectedAsset.y, selectedAsset.z);
+            console.log("selectedAsset", selectedAsset);
+            this.moveAsset(selectedAsset, selectedAsset.position.col + col, selectedAsset.position.floor + floor, selectedAsset.position.row + row);
         }
+    }
+
+    moveAsset(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number) {
+        console.log("asset", asset);
+        console.log("col", col, "floor", floor, "row", row);
+
+        this.sets.forEach((set) => {
+            if (!set.hasAssetInPosition(col, floor, row)) {
+                set.move(asset, col, floor, row);
+            }
+
+            else {
+                throw new Error("There is already an asset is the position selected");
+            }
+        });
+    }
+
+    hasAssetInPosition(col: number, floor: number, row: number) {
+        for (let i = 0; i < this.sets.length; i++) {
+            if (this.sets[i].hasAssetInPosition(col, floor, row)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public addSet(set: Set) {
@@ -97,6 +117,7 @@ export class Event3DManager {
                         for (let k = 0; k < arr[i][j].length; k++) {
                             if (arr[i][j][k] !== null) {
                                 // render the asset
+                                console.log(`[${i}][${j}][${k}] = ${arr[i][j][k]!.content}`);
                                 set.placeAsset(arr[i][j][k]!, i, j, k, this.grid, scene);
                             }
                         }
@@ -116,12 +137,12 @@ export class Event3DManager {
         return objects;
     }
 
-    findAssetFromObject(uuid: string) : Asset | null {
+    findAssetFromObject(uuid: string) : {asset: Asset, position: {col: number; floor: number; row: number}} | null {
         for (let i = 0; i < this.sets.length; i++) {
             const set = this.sets[i];
             const asset = set.findAsset(uuid);
             if (asset) {
-                return asset;
+                return {asset: asset.asset, position: {col: asset.position.col, floor: asset.position.floor, row: asset.position.row}};
             }
         }
 
@@ -172,7 +193,7 @@ export interface Set {
 
     getAssets(): THREE.Object3D[];
 
-    findAsset(uuid: string): Asset | null;
+    findAsset(uuid: string): {asset: Asset, position: {col: number; floor: number; row: number}} | null;
 }
 
 export class Set implements Set {
@@ -242,9 +263,9 @@ export class Set implements Set {
         }
     }
 
-    move(asset: Asset, x: number, y: number, z: number) {
-        this.matrix.matrix[asset.x][asset.y][asset.z] = null;
-        this.matrix.matrix[x][y][z] = asset;
+    move(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, x: number, y: number, z: number) {
+        this.matrix.matrix[asset.position.col][asset.position.floor][asset.position.row] = null;
+        this.matrix.matrix[x][y][z] = asset.asset;
         
     }
 
@@ -257,10 +278,13 @@ export class Set implements Set {
         scene.add(asset.content);
     }
 
-    public hasAssetInPosition(x: number, y: number, z: number): boolean {
+    public hasAssetInPosition(row: number, floor: number, col: number): boolean {
         let occupiedByAsset = false;
         this.matrix.forEach((value, _i, _j, _k) => {
-            if (value !== null && value.x === x && value.y === y && value.z === z) {
+            if (value !== null && _i === row && _j === floor && _k === col) {
+                console.log('occupied');
+                console.log(_i, _j, _k);
+                console.log(value);
                 occupiedByAsset = true;
             }
         });
@@ -278,14 +302,23 @@ export class Set implements Set {
     }
 
 
-    public findAsset(uuid: string) : Asset | null {
+    public findAsset(uuid: string) : {asset: Asset, position: {col: number; floor: number; row: number}} | null {
+        let col = -1;
+        let floor = -1;
+        let row = -1;
         let asset: Asset | null = null;
         this.matrix.forEach((value, _i, _j, _k) => {
             if (value !== null && value.content.uuid === uuid) {
                 asset = value;
+                col = _i;
+                floor = _j;
+                row = _k; 
             }
         });
-        return asset;
+        if (asset === null) {
+            return null;
+        }
+        return {asset: asset, position: {col: col, floor: floor, row: row}};
     }
 }
 
