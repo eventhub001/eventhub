@@ -153,10 +153,6 @@ export class ChatComponent {
         verticalPosition: 'top',
       });
     }
-
-
-
-
     });
   }
 

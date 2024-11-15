@@ -55,9 +55,8 @@ export class VendorListComponent {
   }
 
 
-  navigateToDetails(userId: number) {
-    this.userService.setUserId(userId);
-    this.router.navigate(['app/details']);
+  navigateToDetails(vendorId: number) {
+    this.router.navigate(['app/details', vendorId]);
   }
 
   private loadCategories(): void {

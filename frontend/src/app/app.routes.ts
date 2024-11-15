@@ -97,7 +97,7 @@ export const routes: Routes = [
         }
       },
       {
-        path: 'details',
+        path: 'details/:vendorid',
         component: VendorDetailsComponent,
         data: {
           authorities: [

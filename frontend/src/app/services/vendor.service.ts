@@ -81,6 +81,16 @@ export class VendorService extends BaseService<IVendor> {
 
 
 
+  getServicesByVendorId(vendorId: number): Observable<IVendor[]> {
+    return this.findAllWithParamsAndCustomSource(`${vendorId}/services`, { page: this.search.page, size: this.search.size}).pipe(
+      map((response: any) => response.data),
+      catchError((err: any) => {
+        console.error('error', err);
+        return throwError(err);
+      })
+    );
+  }
+
 
 
   save(vendor: IVendor) {

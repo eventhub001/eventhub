@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @Component
 public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent> {
@@ -38,8 +37,8 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        this.createCategories();
-        this.createVendors();
+       // this.createCategories();
+        //this.createVendors();
 
     }
 
@@ -63,7 +62,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
         for (int i = 0; i < categoryNames.length; i++) {
             VendorCategory category = new VendorCategory();
-            category.setCategory_name(categoryNames[i]);
+            category.setCategoryName(categoryNames[i]);
             category.setDescription(descriptions[i]);
 
             vendorCategoryRepository.save(category);
@@ -91,7 +90,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
         for (int i = 1; i <= 30; i++) {
             VendorCategory randomCategory = categories.get(random.nextInt(categories.size()));
-            String vendorName = generateVendorName(randomCategory.getCategory_name());
+            String vendorName = generateVendorName(randomCategory.getCategoryName());
             Optional<Vendor> optionalVendor = vendorRepository.findByName(vendorName);
 
             if (optionalVendor.isPresent()) {
@@ -103,7 +102,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
             Vendor vendor = new Vendor();
             vendor.setName(vendorName);
-            vendor.setDescription("Proveedor de " + randomCategory.getCategory_name() + " en " + location);
+            vendor.setDescription("Proveedor de " + randomCategory.getCategoryName() + " en " + location);
             vendor.setLocation(location);
             vendor.setRating(4.5);
             vendor.setPhone("123-456-" + generateRandomDigits(4));
@@ -112,7 +111,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
             vendorRepository.save(vendor);
 
-            createVendorServices(vendor, randomCategory.getCategory_name());
+            createVendorServices(vendor, randomCategory.getCategoryName());
         }
     }
 
