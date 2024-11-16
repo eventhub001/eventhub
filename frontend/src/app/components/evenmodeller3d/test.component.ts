@@ -1,4 +1,4 @@
-import { afterRender, AfterRenderRef, Component, ElementRef, inject, Input, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { afterRender, AfterRenderRef, Component, ElementRef, inject, Input, Signal, signal, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -12,10 +12,11 @@ import { ChairSet, Event3DManager, Direction } from './modelobjects/event3dmanag
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { Ui3DComponent } from '../../ui3d/ui3d.component';
 import * as UICommand from '../../ui3d/commands/commands';
-import { Asset, AssetModel } from '../../interfaces';
+import { Asset, AssetImg, AssetModel } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModelService } from '../../services/model.service';
+import { directionToProjection, fixProjectionMapping } from './projections/camera';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,7 @@ export class TestComponent {
 
   @ViewChild("mainThreeCv", {static: false}) mainThreeCv!: ElementRef<HTMLCanvasElement>;	
   @Input() modelMetadata: AssetModel[] = [];
-  @Input() images: Blob[] = [];
+  @Input() images: AssetImg[] = [];
   modelService: ModelService = inject(ModelService);
   renderer!: THREE.WebGLRenderer;
   scene!: THREE.Scene;
@@ -42,16 +43,24 @@ export class TestComponent {
   grid!: EventGrid;
   pointer! : THREE.Vector2;
   intersector!: THREE.Raycaster;
-
   selectionsBox: THREE.Box3Helper[] = [];
 
   selectedAsset: ({asset: Asset, position: {col: number; floor: number; row: number}})[] = [];
+  selectedFloor: THREE.Object3D | null = null;
 
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
   set!: ChairSet;
   isLoading: boolean = true;
 
+  arrowToProjection: directionToProjection = {
+    ['up']:{x: 0, y: 0, z: -1},
+    ['down']:{x: 0, y: 0, z: 1},
+    ['left']:{x: -1, y: 0, z: 0},
+    ['right']:{x: 1, y: 0, z: 0},
+  };
+
+  arrowToProjectionSignal: Signal<directionToProjection> = signal(this.arrowToProjection);
   // debugging properties. Must remove later.
   defaultChair!: Chair;
 
@@ -61,11 +70,22 @@ export class TestComponent {
 
   public addComponent(addtion: UICommand.addtion) {
     
+    if (addtion.id) {
+      console.log("Row: " + this.selectedFloor?.userData["x"]);
+      console.log("Col: " + this.selectedFloor?.userData["z"]);
+      this.eventManager.add(this.defaultChair, this.selectedFloor?.userData["x"], 0, this.selectedFloor?.userData["z"]);
+      this.eventManager.render(this.scene);
+      return;
+    }
 
     console.log("Row: " + addtion.z);
     console.log("Col: " + addtion.x);
 
-    this.eventManager.add(this.defaultChair, addtion.x, 0, addtion.z);
+    if (addtion.x == null || addtion.z == null) {
+      throw new Error('Invalid addtion operation. Please select a row and a column.');
+    }
+
+    this.eventManager.add(this.defaultChair, addtion.x!, 0, addtion.z!);
 
     this.eventManager.render(this.scene);
 
@@ -78,15 +98,6 @@ export class TestComponent {
 
     this.eventManager.move(this.selectedAsset[0], move.x, 0, move.z);
     this.eventManager.render(this.scene);
-
-    // this.updateSelectionBoundingBox(this.selectedAsset[0].asset.content);
-
-    // const object = this.eventManager.findAssetFromObject(this.selectedAsset[0].asset.content.uuid);
-    // if (object == null) {
-    //   throw new Error("Asset not found! UUID: " + this.selectedAsset[0].asset.content.uuid);
-    // }
-    // this.selectedAsset = [];
-    // this.selectedAsset.push(object);
 
     this.updateSelection(this.selectedAsset[0].asset.content);
   }
@@ -178,6 +189,7 @@ export class TestComponent {
     DebuggingUtils.showLights(floor.content);
 
     this.scene.add(this.grid.model);
+    this.scene.add(this.grid.floorGrid);
 
     this.set = new ChairSet("left", this.grid, chair);
 
@@ -196,11 +208,8 @@ export class TestComponent {
       direction1: Direction.FRONT});
 
     this.intersector = new THREE.Raycaster();
-
     this.pointer = new THREE.Vector2(); 
-
     this.intersector.setFromCamera(this.pointer, this.camera);
-
 
     this.eventManager = new Event3DManager(this.grid);
     this.eventManager.addSet(this.set); 
@@ -215,6 +224,10 @@ export class TestComponent {
     const animate = () => {
       requestAnimationFrame(animate);
       this.camera.updateProjectionMatrix();
+      const direction: THREE.Vector3 = this.camera.getWorldDirection(new THREE.Vector3());
+      console.log(direction.z);
+      fixProjectionMapping(this.arrowToProjection, direction);
+      
       this.renderer.render(this.scene, this.camera);
       this.orbitCamera.update();
     };
@@ -229,7 +242,7 @@ export class TestComponent {
     
     this.intersector.setFromCamera(this.pointer, this.camera);
 
-    const intersections = this.intersector.intersectObjects(this.eventManager.getAssetsAsObjects(), true);
+    const intersections = this.intersector.intersectObjects([...this.eventManager.getAssetsAsObjects(), this.grid.floorGrid], true);
 
     if (intersections.length > 0) {
 
@@ -239,25 +252,15 @@ export class TestComponent {
       }
 
       console.log(intersections);
+      if (intersections[0].object.name === "floor") {
+        this.updateSelection(intersections[0].object);
+        return;
+      } 
+
       const object = intersections[0].object.parent as THREE.Mesh;
 
-      this.showBoundingBox(object);
 
-      // as a reminder, the other is: object3D, then the group, then the actual 3D model objects.
-      const selectedAsset = this.eventManager.findAssetFromObject(object.parent!.uuid);
-      if (selectedAsset) {
-        this.selectedAsset = [];
-        this.selectedAsset.push(selectedAsset);
-      }
-
-      object.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          const childObject = child as THREE.Mesh;
-          const material = childObject.material as THREE.MeshPhysicalMaterial;
-  
-          console.log(material);
-        }
-      });
+      this.updateSelection(object.parent!);
     }
 
     else {
@@ -292,12 +295,37 @@ export class TestComponent {
   }
 
   updateSelection(mode: THREE.Object3D) {
+    if (mode.name === "floor") {
+      console.log("selecting floor");
+      const mesh = mode as THREE.Mesh;
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.color = new THREE.Color(0xff0000);
+      mode.visible = true;
+
+      if (this.selectedFloor) {
+        this.selectedFloor.visible = false;
+        this.selectedFloor = mode;
+      }
+
+      else {
+        this.selectedFloor = mode;
+      }
+      return;
+    }
+
     this.updateSelectionBoundingBox(mode);
     const selectedAsset = this.eventManager.findAssetFromObject(mode.uuid);
 
     if (selectedAsset) {
       this.selectedAsset = [];
       this.selectedAsset.push(selectedAsset);
+    }
+  }
+
+  updateArrowControlsVector() {
+    const direction: THREE.Vector3 = this.camera.getWorldDirection(new THREE.Vector3());
+    if (direction.x < 1.001) {
+      console.log("horizontal+");
     }
   }
 }

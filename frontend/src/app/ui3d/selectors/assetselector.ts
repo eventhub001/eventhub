@@ -1,13 +1,14 @@
 import { Container, Bitmap } from 'zimjs';
+import { AssetBitmap } from '../../interfaces';
 
 export class AssetSelectorComponent {
-    assetsImgs: Bitmap[] = [];
+    assetsImgs: AssetBitmap[] = [];
     container: Container = new Container();
     x: number = 0;
     y: number = 0;
     padding: number = 0;
 
-    constructor(bitmap: Bitmap[], x: number, y: number, padding: number) {
+    constructor(bitmap: AssetBitmap[], x: number, y: number, padding: number) {
         this.assetsImgs = bitmap;
         this.x = x;
         this.y = y;
@@ -20,11 +21,20 @@ export class AssetSelectorComponent {
 
      buildcontainer() {
         this.assetsImgs.forEach((image, index) => {
-            image.x = this.x * index + this.padding;
-            image.y = this.y + this.padding;
-            image.addTo(this.container);
-            this.x += image.width + this.padding
+            image.bitmap.siz(110, 100);
+            image.bitmap.x = this.x * index + this.padding;
+            image.bitmap.y = this.y + this.padding;
+            image.bitmap.addTo(this.container);
+            this.x += image.bitmap.width + this.padding
+
+            image.bitmap.on('click', () => {
+                this.onBitmapClick(image.id);
+            })
         })
+     }
+
+     onBitmapClick(id: number) {
+        console.log("id", id);
      }
 
 }

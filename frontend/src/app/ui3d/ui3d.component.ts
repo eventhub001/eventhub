@@ -3,9 +3,8 @@ import { Frame, Circle, Dial, Emitter, Pen, MotionController, series, LabelOnArc
 import { MatrixUI } from './matriz/matriz'
 import { settings, SetUpUI } from './settings/settings'
 import * as UICommands from './commands/commands'
-import { AssetModel } from '../interfaces'
-import { blobsToImages, blobToImage } from './loader/fileloader'
-import { ModelService } from '../services/model.service'
+import { AssetBitmap, AssetImg, AssetModel } from '../interfaces'
+import { blobsToImages, blobToImage } from './loader/blobloader'
 import { AssetSelectorComponent } from './selectors/assetselector'
 import { ArrowsMenu, DIRECTION, MOVE_DIRECTION } from './arrows/arrows'
 @Component({
@@ -19,12 +18,11 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     @Input() modelMetadata: AssetModel[] = [];
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
     @Output() MoveAction: EventEmitter<UICommands.move> = new EventEmitter<UICommands.move>()
-    currentChair: number[] = [2, 0];
+    @Output() AddtionFromModelSelectedAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
     matriz?: MatrixUI;
     settings: settings;
-    modelService: ModelService = inject(ModelService);
-    modelImgs: Map<number, Bitmap> = new Map<number, Bitmap>();
-    @Input() images: Blob[] = [];
+    modelImgs: AssetBitmap[] = [];
+    @Input() images: AssetImg[] = [];
     stage: Stage | undefined;
     
     constructor() {
@@ -59,17 +57,22 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                 new MotionController(pen, "pressmove")
 
                 console.log(this.settings);
-                const imgs = await blobToImage(this.images[0]);
+                // const imgs = await blobToImage(this.images[0].blob);
+                const imgs: AssetBitmap[] = await Promise.all(
+                    this.images.map(async (img) => {
+                    const {id, bitmap} = await this.imgAssetToBitmap(img);
+                    return {id: id, bitmap: bitmap};
+                }));
 
-                const imgs2 = await blobToImage(this.images[0]);
-
-                
                 this.matriz = new MatrixUI(this.settings.width, this.settings.height, this.settings.x, this.settings.y);
 
-                imgs2.siz(100, 100);
-                imgs.siz(100, 100);
+                const assetSelector = new AssetSelectorComponent(imgs, 10, 300, 5);
 
-                const assetSelector = new AssetSelectorComponent([imgs], 300, 300, 5);
+                assetSelector.onBitmapClick = (id: number) => {
+                    this.AdditionAction.emit({
+                        id: id
+                    });
+                }
 
                 const arrowSelection = new ArrowsMenu(0, 0, 300, 300);
 
@@ -91,5 +94,9 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
 
     } 
 
-    title = 'ZIM Template';
+    async imgAssetToBitmap(asset: AssetImg) : Promise<AssetBitmap> {
+        const id = asset.id;
+        const bitmap = await blobToImage(asset.blob);
+        return {id: id, bitmap: bitmap};
+    }
 }

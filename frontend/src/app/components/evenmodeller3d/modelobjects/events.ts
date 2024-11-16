@@ -31,6 +31,7 @@ export class EventGrid {
     depth: number;
     metric: MetricType;
     model: THREE.Object3D;
+    floorGrid: THREE.Object3D;
 
     constructor(width: number, height: number, depth: number, metric: MetricType) {
         this.cols = 21;
@@ -43,6 +44,8 @@ export class EventGrid {
         this.nMatrix = new NMatrix<ThreeDObject>(this.cols, this.floor, this.rows, null);
 
         this.model = this.createAsThreeJSObject();
+
+        this.floorGrid = this.createFloorGridAsThreeJSObject();
     }
 
     // debugging. Must remove later.
@@ -58,7 +61,6 @@ export class EventGrid {
         const furthestPointx = cube.position.x - this.width / 2;
         const furthestPointz = cube.position.z - this.depth / 2;
         const furthestPointy = cube.position.y - this.height / 2;
-
         // make the grid
         for (let i = 0; i < this.cols; i++) {
             for (let j = 0; j < this.rows; j++) {
@@ -79,15 +81,49 @@ export class EventGrid {
                     lineS.position.x = furthestPointx + i * (this.width / this.cols) + (this.width / this.cols) / 2;
                     lineS.position.z = furthestPointz + j * (this.depth / this.rows) + (this.depth / this.rows) / 2;
                     lineS.position.y = furthestPointy + k * (this.height / this.floor) + (this.height / this.floor) / 2 - this.height / 2;
+
                     cube.add(lineS);
                 }
             }
-            
         }
 
         cube.add(line);
 
         return cube;
+    }
+
+    public createFloorGridAsThreeJSObject() {
+        const floor = new THREE.Object3D();
+
+        const furthestPointx = floor.position.x - this.width / 2;
+        const furthestPointz = floor.position.z - this.depth / 2;
+
+        for (let i = 0; i < this.cols; i++) {
+            for (let j = 0; j < this.rows; j++) {
+                //const material = new THREE.LineBasicMaterial({color: 0x0000ff});
+                const geometry = new THREE.BoxGeometry((this.width / this.cols), 0, (this.depth / this.rows));
+                const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+
+                const floorsection = new THREE.Mesh( geometry, material );
+
+                floorsection.position.x = furthestPointx + i * (this.width / this.cols) + (this.width / this.cols) / 2;
+                floorsection.position.z = furthestPointz + j * (this.depth / this.rows) + (this.depth / this.rows) / 2;
+                
+                floorsection.userData = {x: i, y: 0, z: j};
+                floorsection.name = "floor";
+
+                // z-fightin solution.
+                floorsection.material.polygonOffset = true;
+                floorsection.material.depthTest = true;
+                floorsection.material.polygonOffsetFactor = -1;
+                floorsection.material.polygonOffsetUnits = -1;
+
+                floorsection.visible = false;
+                floor.add(floorsection);
+            }
+        }
+
+        return floor;
     }
 
     public hide() {
@@ -134,7 +170,6 @@ export class EventGrid {
         );
 
         return positionPoint;
-
     }
 
     public get(x: number, y: number, z: number) {
