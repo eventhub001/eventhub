@@ -14,4 +14,8 @@ export class Originator {
         }
         return new MementoThreeObject(this.state!);
     }
+
+    public restoreFromMemento(memento: Memento) {
+        this.state = memento.getAsset();
+    }
 }

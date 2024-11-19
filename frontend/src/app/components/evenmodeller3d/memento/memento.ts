@@ -15,4 +15,6 @@ export class MementoThreeObject {
     getAsset() {
         return this.asset;
     }
+
+
 }

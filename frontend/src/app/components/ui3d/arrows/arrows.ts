@@ -22,6 +22,8 @@ export class ArrowsMenu {
     width: number;
     height: number;
     offborder: number; 
+    rotationPad!: zim.Container;
+    rotationsArrows: zim.Triangle[] = []; 
     constructor(x: number, y: number, width: number, height: number) {
         this.x = x;
         this.y = y;
@@ -82,9 +84,28 @@ export class ArrowsMenu {
                 arrow.color = "blue";
             })
         })
+
+        const scale = 0.8;
+        this.rotationPad = new zim.Container();
+        this.rotationPad.addTo(this.container).pos(0, 0, CENTER, CENTER);
+
+
+        const containerWidth = this.width;
+        const containerHeight = this.height;
+        const rotationImg = new zim.Pic("../../../assets/img/rotate_right.png", 100, 100).outline().addTo().pos(containerWidth / 2, containerHeight / 2).sca(scale).cur();
+        rotationImg.pos(rotationImg.x - rotationImg.width / 2, rotationImg.y - rotationImg.height / 2);
+
+        
+        this.rotationPad.on("click", () => {
+            this.rotationPadOnClick();
+        })
     }
 
     arrowsOnClick(dir: DIRECTION) {
-        console.log(dir);
+        return;
+    }
+
+    rotationPadOnClick() {
+        return;
     }
 }

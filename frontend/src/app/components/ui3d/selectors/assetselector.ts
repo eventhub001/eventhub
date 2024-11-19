@@ -1,5 +1,5 @@
-import { Container, Bitmap } from 'zimjs';
-import { AssetBitmap } from '../../interfaces';
+import { Container, Bitmap, Rectangle } from 'zimjs';
+import { AssetBitmap } from '../../../interfaces';
 
 export class AssetSelectorComponent {
     assetsImgs: AssetBitmap[] = [];
@@ -31,6 +31,7 @@ export class AssetSelectorComponent {
                 this.onBitmapClick(image.id);
             })
         })
+
      }
 
      onBitmapClick(id: number) {

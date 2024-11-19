@@ -1,4 +1,4 @@
-import { afterRender, AfterRenderRef, Component, ElementRef, inject, Input, Signal, signal, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { afterRender, AfterRenderRef, Component, computed, effect, ElementRef, inject, Input, Signal, signal, SimpleChange, SimpleChanges, ViewChild, WritableSignal } from '@angular/core';
 import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -10,13 +10,13 @@ import { Floor } from './models/floor.model';
 import { Chair } from './models/chair.model';
 import { ChairSet, Event3DManager, Direction } from './modelobjects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { Ui3DComponent } from '../../ui3d/ui3d.component';
-import * as UICommand from '../../ui3d/commands/commands';
 import { Asset, AssetImg, AssetModel } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModelService } from '../../services/model.service';
-import { directionToProjection, fixProjectionMapping } from './projections/camera';
+import { directionToProjection, fixProjectionMapping, isSameDirectionToProjection } from './projections/camera';
+import * as UICommand from '../ui3d/commands/commands';
+import { Ui3DComponent } from '../ui3d/ui3d.component';
 
 @Injectable({
   providedIn: 'root'
@@ -53,19 +53,26 @@ export class TestComponent {
   set!: ChairSet;
   isLoading: boolean = true;
 
+  mousePosition: {x: number, y: number} = {x: 0, y: 0};
+
   arrowToProjection: directionToProjection = {
-    ['up']:{x: 0, y: 0, z: -1},
-    ['down']:{x: 0, y: 0, z: 1},
-    ['left']:{x: -1, y: 0, z: 0},
-    ['right']:{x: 1, y: 0, z: 0},
+    ['up']: { x: 0, y: 0, z: -1 },
+    ['down']: { x: 0, y: 0, z: 1 },
+    ['left']: { x: -1, y: 0, z: 0 },
+    ['right']: { x: 1, y: 0, z: 0 }
   };
 
-  arrowToProjectionSignal: Signal<directionToProjection> = signal(this.arrowToProjection);
+  arrowToProjectionSignal: WritableSignal<directionToProjection> = signal<directionToProjection>(this.arrowToProjection, {equal: isSameDirectionToProjection});
+  get arrowToProjection$() {
+    return this.arrowToProjectionSignal;
+  }
   // debugging properties. Must remove later.
   defaultChair!: Chair;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
-
+    // effect(() => {
+    //   console.log(this.arrowToProjectionSignal);
+    // })
   }
 
   public addComponent(addtion: UICommand.addtion) {
@@ -84,9 +91,7 @@ export class TestComponent {
     if (addtion.x == null || addtion.z == null) {
       throw new Error('Invalid addtion operation. Please select a row and a column.');
     }
-
     this.eventManager.add(this.defaultChair, addtion.x!, 0, addtion.z!);
-
     this.eventManager.render(this.scene);
 
   }
@@ -143,14 +148,11 @@ export class TestComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("modelMetadata", this.modelMetadata);
-    console.log("images", this.images);
     if (changes["images"]) {
       if (this.images.length > 0) {
         this.isLoading = false;
         console.log('finished loading');
       }
-
     }
   }
 
@@ -225,9 +227,9 @@ export class TestComponent {
       requestAnimationFrame(animate);
       this.camera.updateProjectionMatrix();
       const direction: THREE.Vector3 = this.camera.getWorldDirection(new THREE.Vector3());
-      console.log(direction.z);
-      fixProjectionMapping(this.arrowToProjection, direction);
-      
+      const projectionArrowMapping = fixProjectionMapping(this.arrowToProjection, this.camera.position, direction);
+      this.arrowToProjectionSignal.set(projectionArrowMapping);
+
       this.renderer.render(this.scene, this.camera);
       this.orbitCamera.update();
     };
@@ -235,10 +237,25 @@ export class TestComponent {
     animate();
   }
 
+  mouseDown(event: MouseEvent) {
+    this.mousePosition.x = (event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
+    this.mousePosition.y = (event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
+  }
   
   selectAsset(event: MouseEvent) {
+    const pointerUpX = this.pointer.x;
+    const pointerUpY = this.pointer.y;
+  
     this.pointer.x = (event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
     this.pointer.y = -(event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
+
+    if (
+      this.mousePosition.x !== this.pointer.x &&
+      this.mousePosition.y !== this.pointer.x
+    )
+    {
+      return;
+    }
     
     this.intersector.setFromCamera(this.pointer, this.camera);
 
@@ -259,16 +276,7 @@ export class TestComponent {
 
       const object = intersections[0].object.parent as THREE.Mesh;
 
-
       this.updateSelection(object.parent!);
-    }
-
-    else {
-      this.eventManager.getAssetsAsObjects().forEach((asset) => {
-        // revert the material back to the original.
-        this.clearBoundingBoxes();
-        this.selectedAsset = [];
-      });
     }
   }
 
@@ -281,7 +289,7 @@ export class TestComponent {
     this.selectionsBox.push(boxHelper);
   }
 
-  clearBoundingBoxes() {
+  clearBoundingBoxes(selectionBox?: string) {
     this.selectionsBox.forEach((box) => {
       this.scene.remove(box);
     });

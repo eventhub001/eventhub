@@ -3,10 +3,11 @@ import { Frame, Circle, Dial, Emitter, Pen, MotionController, series, LabelOnArc
 import { MatrixUI } from './matriz/matriz'
 import { settings, SetUpUI } from './settings/settings'
 import * as UICommands from './commands/commands'
-import { AssetBitmap, AssetImg, AssetModel } from '../interfaces'
 import { blobsToImages, blobToImage } from './loader/blobloader'
 import { AssetSelectorComponent } from './selectors/assetselector'
 import { ArrowsMenu, DIRECTION, MOVE_DIRECTION } from './arrows/arrows'
+import { AssetBitmap, AssetImg, AssetModel } from '../../interfaces'
+import { directionToProjection } from '../evenmodeller3d/projections/camera'
 @Component({
     selector: 'app-ui3d',
     standalone: true,
@@ -19,6 +20,7 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
     @Output() MoveAction: EventEmitter<UICommands.move> = new EventEmitter<UICommands.move>()
     @Output() AddtionFromModelSelectedAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
+    @Input() arrowDirectionToProjection!: directionToProjection;
     matriz?: MatrixUI;
     settings: settings;
     modelImgs: AssetBitmap[] = [];
@@ -78,7 +80,7 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
 
                 arrowSelection.arrowsOnClick = (dir: DIRECTION) => {
                     console.log("working on arrows", dir);
-                    this.MoveAction.emit(MOVE_DIRECTION[dir]);
+                    this.MoveAction.emit(this.arrowDirectionToProjection[dir]);
                 }
 
                 this.matriz.onCellClick = (row: number, col: number) => {
