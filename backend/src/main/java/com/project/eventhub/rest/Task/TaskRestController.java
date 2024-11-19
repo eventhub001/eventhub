@@ -124,8 +124,25 @@ public class TaskRestController {
         }
     }
 
+                @GetMapping("/event/tasks/search")
+                @PreAuthorize("isAuthenticated()")
+                public ResponseEntity<?> getAllTasksByEventName(
+                        @RequestParam String eventName,
+                        @RequestParam(defaultValue = "1") int page,
+                        @RequestParam(defaultValue = "10") int size,
+                        HttpServletRequest request) {
+                    Pageable pageable = PageRequest.of(page - 1, size);
+                    Page<Task> taskPage = taskRepository.getTaskByEvent_EventName(eventName, pageable);
 
+                    Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+                    meta.setTotalPages(taskPage.getTotalPages());
+                    meta.setTotalElements(taskPage.getTotalElements());
+                    meta.setPageNumber(taskPage.getNumber() + 1);
+                    meta.setPageSize(taskPage.getSize());
 
+                    return new GlobalResponseHandler().handleResponse("Tasks retrieved successfully",
+                            taskPage.getContent(), HttpStatus.OK, meta);
+                }
 
     @PutMapping("/{id}")
     public Task updateTask(@PathVariable Integer id, @RequestBody Task task) {

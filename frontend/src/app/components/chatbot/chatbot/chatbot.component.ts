@@ -1,7 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { EventsService } from '../../../services/event.service';
-import { IEvent } from '../../../interfaces';
+import { IEvent, ITask } from '../../../interfaces';
+import { TaskService } from '../../../services/task.service';
 
 @Component({
   selector: 'app-chatbot',
@@ -15,7 +16,7 @@ export class ChatbotComponent{
 
   public authService: AuthService = inject(AuthService);
   public eventService: EventsService = inject(EventsService);
-
+  public taskService: TaskService = inject(TaskService);
   constructor() {
   }
 
@@ -92,7 +93,41 @@ handleUserResponse(userMessage: string, botResponse: string, parameters: any) {
     });
   }
 
-
+   // Verificar si el usuario quiere ver las tareas de un evento específico
+if (userMessage.toLowerCase().includes('ver tareas del evento') ||
+    userMessage.toLowerCase().includes('mostrar tareas del evento') ||
+    userMessage.toLowerCase().includes('listar tareas del evento')) {
+      const eventNameMatch = userMessage.match(/(ver|mostrar|listar) tareas del evento (.+)/i);
+      if (eventNameMatch && eventNameMatch[2]) {
+    const eventName = eventNameMatch[2].trim();
+    this.taskService.getAllTasksByEventName(eventName).subscribe({
+      next: (tasks: ITask[]) => {
+        if (tasks.length > 0) {
+          const dfMessenger = document.querySelector('df-messenger') as any;
+          const cards = tasks.map(task => ({
+            type: "info",
+            title: task.taskName,
+            subtitle: `Descripción: ${task.description ? task.description : 'No disponible'} \nProgreso: ${task.status} \nPrioridad: ${task.priority} \nFecha de Vencimiento: ${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'Fecha no disponible'}`,
+            //actionLink: `https://example.com/tasks/${}`
+          }));
+          dfMessenger.renderCustomCard(cards);
+          dfMessenger.renderCustomText('Aquí tienes las tareas del evento. ¡Espero que te sean útiles!');
+        } else {
+          const dfMessenger = document.querySelector('df-messenger') as any;
+          dfMessenger.renderCustomText(`No hay tareas registradas para el evento "${eventName}".`);
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching tasks', err);
+        const dfMessenger = document.querySelector('df-messenger') as any;
+        dfMessenger.renderCustomText('Hubo un error al obtener las tareas del evento. Por favor, inténtalo de nuevo más tarde.');
+      }
+    });
+  } else {
+    const dfMessenger = document.querySelector('df-messenger') as any;
+    dfMessenger.renderCustomText('Por favor, especifica el nombre del evento.');
+  }
+}
 
   // Capturar la cantidad de asistentes si el intent es preguntar_asistentes
   if (parameters && parameters.cantidad_personas) {
