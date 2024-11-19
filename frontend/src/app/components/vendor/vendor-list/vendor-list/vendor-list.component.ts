@@ -36,9 +36,9 @@ export class VendorListComponent {
   @Output() callDeleteAction: EventEmitter<IVendor> = new EventEmitter<IVendor>();
   public authService: AuthService = inject(AuthService);
   public categories: IVendorCategory[] = [];
-  public vendorCategoryService: VendorcategoryService = inject(VendorcategoryService); //injeccion del category service para llamar el getall
+  public vendorCategoryService: VendorcategoryService = inject(VendorcategoryService);
   public dataSource: MatTableDataSource<IVendor>;
-  public displayedColumns: string[] = ['id', 'name', 'description', 'location', 'rating', 'category', 'actions'];
+  public displayedColumns: string[] = [ 'name', 'description', 'location', 'rating', 'category', 'actions'];
   public userService: UserService = inject(UserService);
 
 
@@ -49,7 +49,6 @@ export class VendorListComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(  private router: Router ) {
-    // Asigna la fecha de hoy formateada a la variable todayDate
     this.dataSource = new MatTableDataSource(this.vendor);
     this.loadCategories();
   }

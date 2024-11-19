@@ -13,6 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { IVendor } from '../../../interfaces';
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-vendor',
   standalone: true,
@@ -36,19 +37,8 @@ import { IVendor } from '../../../interfaces';
 export class VendorComponent {
   public vendorService: VendorService = inject(VendorService);
   public vendors: IVendor[] = [];
-  // public modalService: ModalService = inject(ModalService);
-  // public authService: AuthService = inject(AuthService);
-  // @ViewChild('addVendorModal') public addVendorModal: any;
-  // public fb: FormBuilder = inject(FormBuilder);
+  public authService: AuthService = inject(AuthService);
 
-  // taskForm = this.fb.group({
-  //   id: [''],
-  //   name: ['', Validators.required],
-  //   description: ['', Validators.required],
-  //   location: ['', Validators.required],
-  //   rating: ['', Validators.required],
-  //   vendorCategory: ['', Validators.required],
-  // })
 
 constructor() {
   this.vendorService.search.page = 1;
@@ -61,16 +51,31 @@ ngOnInit(): void {
 }
 
 getVendors(): void {
-  this.vendorService.getAll().subscribe({
-    next: (vendors: IVendor[]) => {
-      console.log('Vendors fetched:', vendors); // Verifica los datos obtenidos
-      this.vendors = vendors;
-      this.saveToLocalStorage();
-    },
-    error: (err: any) => {
-      console.error('Error fetching vendors', err);
-    }
-  });
+  if (this.authService.isSuperAdmin()) {
+    this.vendorService.getAll().subscribe({
+      next: (vendors: IVendor[]) => {
+        console.log('Vendors fetched:', vendors);
+        this.vendors = vendors;
+        this.saveToLocalStorage();
+      },
+      error: (err: any) => {
+        console.error('Error fetching vendors', err);
+      }
+    });
+  } else {
+    const userId = this.authService.getUser()?.id;
+    console.log('User ID:', userId);
+    this.vendorService.getVendorByUser(userId!).subscribe({
+      next: (vendors: IVendor[]) => {
+        console.log('Vendors fetched:', vendors);
+        this.vendors = vendors;
+        this.saveToLocalStorage();
+      },
+      error: (err: any) => {
+        console.error('Error fetching vendors', err);
+      }
+    });
+  }
 }
 
 private saveToLocalStorage(): void {
@@ -87,30 +92,4 @@ private loadFromLocalStorage(): void {
 onPaginationChange(): void {
   this.getVendors();
 }
-
-// saveVendor(vendor: IVendor) {
-//   console.log(vendor)
-//   this.vendorService.save(vendor);
-//   this.modalService.closeAll();
-// }
-
-// callEdition(vendor: IVendor) {
-//   this.taskForm.controls['id'].setValue(vendor.id ? JSON.stringify(vendor.id)  : '');
-//   this.taskForm.controls['name'].setValue(vendor.name ? vendor.name : '');
-//   this.taskForm.controls['description'].setValue(vendor.description ? vendor.description : '');
-//   this.taskForm.controls['location'].setValue(vendor.location ? vendor.location : '');
-//   this.taskForm.controls['rating'].setValue(vendor.rating ?  JSON.stringify(vendor.rating) : '');
-
-//   this.modalService.displayModal('md', this.addVendorModal);
-// }
-
-// updateUser(vendor: IVendor) {
-//   this.vendorService.update(vendor);
-//   this.modalService.closeAll();
-// }
-
-// callModalAction() {
-//   this.taskForm.reset();
-//   this.modalService.displayModal('md', this.addVendorModal)
-// }
 }

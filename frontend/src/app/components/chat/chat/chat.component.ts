@@ -7,9 +7,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../../services/chat.service';
 import { IUser } from '../../../interfaces';
-import { ActivatedRoute, Route } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { UserService } from '../../../services/user.service';
-import { HttpClientModule } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 
@@ -48,18 +47,13 @@ export class ChatComponent {
   ngOnInit(): void {
 
 
-    // Getting user id from local storage
     this.loadingUserIdFromLocalStorage();
 
-    // Getting vendor id from local storage
     this.loadvendorIdFromLocalStorage();
 
-    // Load messages from local storage
     this.loadMessagesFromLocalStorage();
 
-    // Join chat room
     this.chatService.joinChatRoom(this.vendorId);
-    // Listen for messages
     this.listenMessages();
   }
 
@@ -68,26 +62,22 @@ export class ChatComponent {
       const chatMessage = {
         message: this.messageInput,
         user: { id: this.userId },
-        roomId: this.vendorId // Asegúrate de incluir el roomId en el mensaje
+        roomId: this.vendorId
       };
 
-      console.log('Sending message:', chatMessage); // Agrega este registro para depurar
+      console.log('Sending message:', chatMessage);
       this.chatService.sendMessage(this.vendorId, chatMessage);
 
-      // Obtener los mensajes existentes del localStorage
       const storedMessages = localStorage.getItem('chat_messages');
       const messages = storedMessages ? JSON.parse(storedMessages) : [];
 
-        // Agregar el nuevo mensaje al array de mensajes
         messages.push({
           ...chatMessage,
           message_side: 'sender'
         });
 
-      // Guardar el array de mensajes actualizado en el localStorage
       localStorage.setItem('chat_messages', JSON.stringify(messages));
 
-      // Agregar el mensaje a la lista de mensajes
       this.messageInput = '';
     } else {
       console.error('Message input or user ID is invalid');
@@ -97,23 +87,21 @@ export class ChatComponent {
   listenMessages() {
     this.chatService.getMessages().subscribe((messages: any) => {
       this.messageList = messages
-        .filter((item: any) => item.roomId === this.vendorId) // Filtra los mensajes por roomId
+        .filter((item: any) => item.roomId === this.vendorId)
         .map((item: any) => ({
           ...item,
           message_side: item.user.id !== this.userId ? 'receiver' : 'sender'
         }));
 
-      // Guardar los mensajes en el localStorage
       localStorage.setItem('chat_messages', JSON.stringify(this.messageList));
 
-        //obteniendo el receiver
         const storedMessages = localStorage.getItem('chat_messages');
         if (storedMessages) {
           const mssgObj = JSON.parse(storedMessages);
           if (mssgObj.length > 0) {
-            const lastMessage = mssgObj[mssgObj.length - 1]; // Accede al último elemento del arreglo
+            const lastMessage = mssgObj[mssgObj.length - 1];
             this.receiver = lastMessage.message_side;
-            console.log('receiver:', this.receiver); // Agrega este registro para depurar
+            console.log('receiver:', this.receiver);
           } else {
             console.error('No messages found in localStorage');
           }
@@ -122,7 +110,6 @@ export class ChatComponent {
         }
 
 
-      // Obtener vendorUserid del localStorage
     const vendorUserid = localStorage.getItem('vendor');
     if (vendorUserid) {
       const vendorUseridObj = JSON.parse(vendorUserid);
@@ -133,13 +120,11 @@ export class ChatComponent {
 
 
 
-    // Filtrar mensajes para notificar al usuario correcto
     const newMessages = messages.filter((item: any) => {
-      // Si el mensaje es enviado por el vendor y el usuario actual no es el vendor, notificar al usuario actual
       if (item.user.id === this.vendorUserid && this.receiver === 'receiver') {
         return true;
       }
-      // Si el mensaje es enviado por otro usuario y el usuario actual es el vendor, notificar al vendor
+
       if (item.user.id !== this.vendorUserid && this.receiver === 'sender') {
         return false;
       }
@@ -164,7 +149,7 @@ export class ChatComponent {
     const storedMessages = localStorage.getItem('chat_messages');
   if (storedMessages) {
     this.messageList = JSON.parse(storedMessages)
-      .filter((item: any) => item.roomId === this.vendorId) // Filtra los mensajes por roomId
+      .filter((item: any) => item.roomId === this.vendorId)
       .map((item: any) => ({
         ...item,
         message_side: item.user.id !== this.userId ? 'receiver' : 'sender'
@@ -175,12 +160,11 @@ export class ChatComponent {
 
 
   loadvendorIdFromLocalStorage(): void {
-    // Getting vendor id from local storage
     const vendorId = localStorage.getItem('vendor');
     if (vendorId) {
       const vendorObj = JSON.parse(vendorId);
       this.vendorId = vendorObj.id;
-      console.log('Vendor Id:', this.vendorId); // Agrega este registro para depurar
+      console.log('Vendor Id:', this.vendorId);
     } else {
       console.error('No user found in localStorage');
     }
@@ -194,7 +178,7 @@ export class ChatComponent {
     if (user) {
       const userObj = JSON.parse(user);
       this.userId = userObj.id;
-      console.log('User ID:', this.userId); // Agrega este registro para depurar
+      console.log('User ID:', this.userId);
     } else {
       console.error('No user found in localStorage');
     }

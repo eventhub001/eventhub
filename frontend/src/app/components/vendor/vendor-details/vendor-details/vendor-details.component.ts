@@ -38,7 +38,6 @@ export class VendorDetails1Component {
   ngOnInit(): void {
     this.loadFromLocalStorage();
 
-    //this.getVendorDetails();
     this.chatService.initConnectionSocket()
 
   }
