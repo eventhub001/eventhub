@@ -1,4 +1,4 @@
-package com.project.eventhub.logic.entity.event;
+package com.project.eventhub.logic.entity.eventtype;
 
 import com.project.eventhub.logic.entity.eventtype.EventType;
 import org.springframework.data.jpa.repository.JpaRepository;

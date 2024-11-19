@@ -1,4 +1,7 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
+import { AuthService } from '../../../services/auth.service';
+import { EventsService } from '../../../services/event.service';
+import { IEvent } from '../../../interfaces';
 
 @Component({
   selector: 'app-chatbot',
@@ -10,20 +13,18 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 })
 export class ChatbotComponent{
 
+  public authService: AuthService = inject(AuthService);
+  public eventService: EventsService = inject(EventsService);
+
   constructor() {
   }
 
   ngAfterViewInit() {
-    // Escucha el evento dfMessengerLoaded y usa renderCustomText
-    window.addEventListener('dfMessengerLoaded', (response: any) => {
-      //this.renderCustomCard()
-    });
+    // window.addEventListener('dfMessengerLoaded', (response: any) => {
+    // });
 
     // Escucha el evento df-response-received para capturar la respuesta del usuario
     window.addEventListener('df-response-received', (event: any) => {
-
-
-
       this.responseReceived(event);
     });
   }
@@ -37,34 +38,16 @@ export class ChatbotComponent{
     dfMessenger.renderCustomText(customText);
   }
 
-renderCustomCard() {
+  renderCustomCard(events: IEvent[]) {
     const dfMessenger = document.querySelector('df-messenger') as any;
-  const payload = [
-    {
-      "type": "info",
-      "title": "Info item title",
-      "subtitle": "Info item subtitle",
-      "image": {
-        "src": {
-          "rawUrl": "https://example.com/images/logo.png"
-        }
-      },
-      "actionLink": "https://example.com"
-    },
-    {
-      "type": "info",
-      "title": "Info item title",
-      "subtitle": "Info item subtitle",
-      "image": {
-        "src": {
-          "rawUrl": "https://example.com/images/logo.png"
-        }
-      },
-      "actionLink": "https://example.com"
-    }
-  ];
-  dfMessenger.renderCustomCard(payload);
-}
+    const payload = events.map(event => ({
+      type: "info",
+      title: event.eventName,
+      subtitle: `Fecha: ${event.eventStartDate ? new Date(event.eventStartDate).toLocaleDateString() : 'Fecha no disponible'} Hora: ${event.eventStartDate ? new Date(event.eventStartDate).toLocaleTimeString() : 'Hora no disponible'}`,
+      actionLink: `http://localhost:4200/app/events`
+    }));
+    dfMessenger.renderCustomCard(payload);
+  }
 
 responseReceived(event: any) {
   if (event.detail && event.detail.response) {
@@ -86,12 +69,30 @@ handleUserResponse(userMessage: string, botResponse: string, parameters: any) {
   console.log('User Message:', userMessage);
   console.log('Bot Response:', botResponse);
 
-  // Aquí puedes agregar lógica para mostrar una respuesta personalizada
-  // if (userMessage.includes('evento')) {
-  //   const customResponse = 'Parece que necesitas ayuda con un evento. ¿Puedes darme más detalles?';
-  //   const dfMessenger = document.querySelector('df-messenger') as any;
-  //   dfMessenger.renderCustomText(customResponse);
-  // }
+
+   // Verificar si el usuario quiere ver la lista de eventos
+   if (userMessage.toLowerCase().includes('lista de eventos')|| userMessage.toLowerCase().includes('ver eventos') || userMessage.toLowerCase().includes('mis eventos')) {
+    const userId = this.authService.getUser()?.id;
+    this.eventService.getEventsByUserId(userId!).subscribe({
+      next: (events: IEvent[]) => {
+        if (events.length > 0) {
+          this.renderCustomCard(events);
+          const dfMessenger = document.querySelector('df-messenger') as any;
+          dfMessenger.renderCustomText('Puedes ver los eventos que tienes registrados haciendo click sobre la tarjeta. ¡Disfruta de tus eventos!');
+        } else {
+          const dfMessenger = document.querySelector('df-messenger') as any;
+          dfMessenger.renderCustomText('No tienes eventos registrados.');
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching events', err);
+        const dfMessenger = document.querySelector('df-messenger') as any;
+        dfMessenger.renderCustomText('Hubo un error al obtener tus eventos. Por favor, inténtalo de nuevo más tarde.');
+      }
+    });
+  }
+
+
 
   // Capturar la cantidad de asistentes si el intent es preguntar_asistentes
   if (parameters && parameters.cantidad_personas) {
@@ -102,6 +103,15 @@ handleUserResponse(userMessage: string, botResponse: string, parameters: any) {
     const dfMessenger = document.querySelector('df-messenger') as any;
     dfMessenger.renderCustomText(respuestaPersonalizada);
   }
+
+
+
+
+
+
+
+
+
 }
 
 

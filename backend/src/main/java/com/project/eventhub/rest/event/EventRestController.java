@@ -4,7 +4,6 @@ import com.project.eventhub.logic.entity.auth.AuthenticationService;
 import com.project.eventhub.logic.entity.auth.JwtService;
 import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.event.EventRepository;
-import com.project.eventhub.logic.entity.event.EventTypeRepository;
 import com.project.eventhub.logic.entity.eventform.EventFormRepository;
 import com.project.eventhub.logic.entity.formtemplatetask.EventTaskTemplateRepository;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
@@ -41,8 +40,7 @@ public class EventRestController {
     @Autowired
     private JwtService jwtService;
 
-    @Autowired
-    private EventTypeRepository eventTypeRepository;
+
 
     @Autowired
     private EventFormRepository eventFormRepository;
@@ -178,4 +176,69 @@ public class EventRestController {
                 meta
         );
     }
+
+
+
+
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getEventsByUserId(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) throws AuthenticationException {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Event> eventsPage;
+
+        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
+        String userName = jwtService.extractUsername(token);
+        Optional<User> user = userRepository.findByEmail(userName);
+
+        if (user.isPresent()) {
+                eventsPage = eventRepository.findAllByUserId(userId, pageable);
+        }
+        else {
+            throw new AuthenticationException("User not found.");
+        }
+
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(eventsPage.getTotalPages());
+        meta.setTotalElements(eventsPage.getTotalElements());
+        meta.setPageNumber(eventsPage.getNumber());
+        meta.setPageSize(eventsPage.getSize());
+
+        return new GlobalResponseHandler().handleResponse(
+                "Events retrieved successfully",
+                eventsPage.getContent(),
+                HttpStatus.OK,
+                meta
+        );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -1,7 +1,5 @@
-package com.project.eventhub.logic.entity.rol;
+package com.project.eventhub.logic.entity.vendor;
 
-import com.project.eventhub.logic.entity.vendor.Vendor;
-import com.project.eventhub.logic.entity.vendor.VendorRepository;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.entity.VendorCategory.VendorCategory;

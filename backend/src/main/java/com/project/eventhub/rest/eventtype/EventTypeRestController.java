@@ -1,6 +1,6 @@
 package com.project.eventhub.rest.eventtype;
 
-import com.project.eventhub.logic.entity.event.EventTypeRepository;
+import com.project.eventhub.logic.entity.eventtype.EventTypeRepository;
 import com.project.eventhub.logic.entity.eventtype.EventType;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
 import com.project.eventhub.logic.http.Meta;
