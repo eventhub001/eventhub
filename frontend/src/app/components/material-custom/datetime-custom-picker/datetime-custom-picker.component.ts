@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
@@ -13,7 +14,7 @@ import {MatInputModule} from '@angular/material/input';
   styleUrl: 'datetime-custom-picker.component.scss',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateTimeCustomPickerComponent {

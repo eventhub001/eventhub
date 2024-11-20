@@ -52,18 +52,4 @@ export class ChatService  extends BaseService<IChat> {
       return this.messageSubject.asObservable();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

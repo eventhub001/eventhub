@@ -38,8 +38,8 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        this.createCategories();
-        this.createVendors();
+//        this.createCategories();
+//        this.createVendors();
 
     }
 

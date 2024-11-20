@@ -22,7 +22,8 @@ export class EventCalendarBuilder {
                 type: "Event",
                 eventTypeId: event.eventType?.eventTypeId,
                 eventTypeName: event.eventType?.eventTypeName,
-                eventDescription: event.eventDescription
+                eventDescription: event.eventDescription,
+                userId: event.userId
             },
             color: "#EA55A1",
             ...this.settings
@@ -60,6 +61,7 @@ export class EventCalendarBuilder {
     parseToEvent(event: ICalendarEvent) {
         const eventObj: IEvent = {
             eventId: Number(event.id),
+            userId: Number(event.extendedProps?.["userId"]),
             eventName: event.title,
             eventStartDate: this.asDate(event.start as string) + "T" + this.asTime(event.start as string),
             eventEndDate: this.asDate(event.end as string) + "T" + this.asTime(event.end as string),
