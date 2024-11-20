@@ -1,3 +1,4 @@
+import { ICotizacion } from './interfaces/index';
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { AppLayoutComponent } from './components/app-layout/app-layout.component';
@@ -13,6 +14,8 @@ import { TaskComponent } from './pages/task/task.component';
 import { VendorComponent } from './pages/vendor/vendor/vendor.component';
 import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
 import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
+import { SolicitudesComponent } from './pages/solicitudes/solicitudes/solicitudes.component';
+import { CotizacionesComponent } from './pages/cotizar/cotizar.component';
 
 export const routes: Routes = [
   {
@@ -113,7 +116,32 @@ export const routes: Routes = [
           showInSidebar: false
         }
       },
-
+      {
+        path: 'recursos',
+        component: SolicitudesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+          ],
+          name: 'Mis Solicitudes',
+          showInSidebar: true
+        }
+      },
+      {
+        path: 'cotizar',
+        component: CotizacionesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+          ],
+          name: 'Cotizaciones',
+          showInSidebar: true
+        }
+      },
     ],
   },
 ];

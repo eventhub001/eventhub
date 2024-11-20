@@ -1,0 +1,40 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Fecha Evento</th>
+      <th scope="col">Hora Evento</th>
+      <th scope="col">Fecha Solicitud</th>
+      <th scope="col">Cantidad</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Recurso</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of recursos; track item.id) {
+    <tr>
+      <th scope="row">{{item.id}}</th>
+      <td>{{item.fechaEvento}}</td>
+      <td>{{item.horaEvento}}</td>
+      <td>{{item.fechaSolicitud}}</td>
+      <td>{{item.cantidad_solicitada}}</td>
+      <td>{{item.estado}}</td>
+      <td>{{item.vendor_service_id?.service_name}}</td>
+      <td>
+        <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2" type="button"><i class="fas fa-pen"></i></button>
+        <button (click)="callDeleteAction.emit(item)" class="btn btn-danger" type="button"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>
+  } @empty {
+    <tr *ngIf="!recursos?.length">
+      <td colspan="8">
+        <div class="d-flex justify-content-center align-items-center w-100">
+          <p class="mb-0">No hay solicitudes</p>
+        </div>
+      </td>
+    </tr>
+  }
+  </tbody>
+
+</table>

@@ -18,7 +18,7 @@ public class Cotizacion {
     private Integer cantidadRecurso;
 
     @ManyToOne
-    private User user; // Relación con User (Planificador)
+    private User user;
 
     private String estado; // "Enviada", "Aceptada", "Rechazada"
 

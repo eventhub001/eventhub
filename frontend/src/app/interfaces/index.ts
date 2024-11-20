@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
 
@@ -218,24 +219,28 @@ export interface Asset {
     clone: () => Asset;
 }
 
-export interface Cotización {
-  id: number;
-  event: string;
-  service: string;
-  quotedAmount: number;
-  quantity?: number;
-  status: 'enviada' | 'aceptada' | 'rechazada';
+export interface ICotizacion {
+  id?: number;
+  event?: IEvent;
+  vendor_service_id?: IVendorService;
+  montoCotizado?: number;
+  cantidadRecurso?: number;
+  user?: IUser;
+  estado?: 'enviada' | 'aceptada' | 'rechazada';
 }
 
-export interface SolicituRecurso  {
-  id: number;
-  event: string;
-  resourceType: string;
-  date: Date;
-  time: string;
-  quantity: number;
-  status: 'pendiente' | 'aprobado' | 'rechazado';
+export interface SolicituRecurso {
+  id?: number;
+  vendor_service_id?: IVendorService;
+  user_id?: IUser;
+  fechaSolicitud?: Date;
+  fechaEvento?: Date;
+  horaEvento?: string; // Hora específica del evento
+  cantidad_solicitada?: number; // Cantidad solicitada
+  estado?: String; // Estado de la solicitud
+  event_event_id?: IEvent;
 }
+
 export interface IEventForm {
   taskFormId?: number; // Optional because it might be undefined for new forms
   event: IEvent; // Assuming User entity has a numeric ID

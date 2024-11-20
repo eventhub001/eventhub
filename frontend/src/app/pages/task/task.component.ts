@@ -42,7 +42,7 @@ export class TaskComponent {
   public eventFormService: EventFormService= inject(EventFormService);
   public eventService: EventsService = inject(EventsService);
   public taskTemplateService: TaskTemplateService = inject(TaskTemplateService);
-  public eventTaskTemplateService: EventTaskTemplateService = inject(EventTaskTemplateService); 
+  public eventTaskTemplateService: EventTaskTemplateService = inject(EventTaskTemplateService);
   @ViewChild('addTaskModal') public addTaskModal: any;
   public fb: FormBuilder = inject(FormBuilder);
 
@@ -106,4 +106,22 @@ callModalAction() {
   this.taskForm.reset();
   this.modalService.displayModal('md', this.addTaskModal)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

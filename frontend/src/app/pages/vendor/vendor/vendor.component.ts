@@ -12,7 +12,11 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { IVendor } from '../../../interfaces';
+import { ICotizacion, IVendor } from '../../../interfaces';
+import { CotizarFormComponent } from "../../../components/cotizar/cotizar-form/cotizar-form.component";
+import { Validators, FormBuilder } from '@angular/forms';
+import { ModalService } from '../../../services/modal.service';
+import { CotizacionService } from '../../../services/Cotizacion.Service';
 @Component({
   selector: 'app-vendor',
   standalone: true,
@@ -28,18 +32,20 @@ import { IVendor } from '../../../interfaces';
     MatInputModule,
     MatTableModule,
     MatSortModule,
-
-  ],
+    CotizarFormComponent
+],
   templateUrl: './vendor.component.html',
   styleUrl: './vendor.component.scss'
 })
 export class VendorComponent {
-  public vendorService: VendorService = inject(VendorService);
   public vendors: IVendor[] = [];
+  public vendorService: VendorService = inject(VendorService);
+  public cotizacionService: CotizacionService = inject(CotizacionService);
+  public modalService: ModalService = inject(ModalService);
   // public modalService: ModalService = inject(ModalService);
   // public authService: AuthService = inject(AuthService);
   // @ViewChild('addVendorModal') public addVendorModal: any;
-  // public fb: FormBuilder = inject(FormBuilder);
+  public fb: FormBuilder = inject(FormBuilder);
 
   // taskForm = this.fb.group({
   //   id: [''],
@@ -88,6 +94,23 @@ onPaginationChange(): void {
   this.getVendors();
 }
 
+cotizacionForm = this.fb.group({
+  id: [''],
+  event: ['', Validators.required],
+  service: ['', Validators.required],
+  quotedAmount: ['', Validators.required],
+  quantity: ['', Validators.required],
+  status: ['', Validators.required]
+});
+
+saveCotizacion(cotizacion: ICotizacion) {
+  this.cotizacionService.save(cotizacion);
+  this.modalService.closeAll();
+}
+updateCotizacion(cotizacion: ICotizacion) {
+  this.cotizacionService.update(cotizacion);
+  this.modalService.closeAll();
+}
 // saveVendor(vendor: IVendor) {
 //   console.log(vendor)
 //   this.vendorService.save(vendor);

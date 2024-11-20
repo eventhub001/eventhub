@@ -1,4 +1,56 @@
-@defer {
+<div>
+        <h6>Solicitar</h6>
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <button
+            (click)="modalService.displayModal('md', addRecursosModal)"
+            type="button"
+            class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+
+        <ng-template #addRecursosModal>
+          <app-modal [hideFooter]="true">
+            <div>
+              <app-solicitud-form
+                [solicitudForm]="solicitudForm"
+                (callSaveMethod)="saveRecurso($event)"
+                (callUpdateMethod)="updatRecurso($event)"
+              />
+            </div>
+          </app-modal>
+        </ng-template>
+      </div>
+    </div>
+
+    <div>
+      <h6>Realizar Cotización</h6>
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <button
+          (click)="modalService.displayModal('md', addCotizacionesModal)"
+            type="button"
+            class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+
+        <ng-template #addCotizacionesModal>
+          <app-modal [hideFooter]="true">
+            <div>
+              <app-cotizacion-form
+                [cotizacionForm]="cotizacionForm"
+                (callSaveMethod)="saveCotizacion($event)"
+                (callUpdateMethod)="updateCotizacion($event)"
+                [vendorId]="selectedVendor?.id ?? 0"
+              />
+            </div>
+          </app-modal>
+        </ng-template>
+      </div>
+    </div>
+
   <div class="row p-4">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
@@ -6,16 +58,3 @@
     </div>
     <div class="col-12">
       <app-vendor1-details/>
-
-    </div>
-    <div class="row p-4">
-      <div class="col-8">
-        <app-chat/>
-      </div>
-    </div>
-
-  </div>
-
-
-
-}

@@ -1,0 +1,36 @@
+@defer {
+  <div class="row p-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Cotizaciones</h2>
+
+      </div>
+    </div>
+    <div class="col-12">
+      <app-cotizacion-list
+        (callModalAction)="callEdition($event)"
+        (callDeleteAction)="cotizacionService.delete($event)"
+        [cotizaciones]="cotizacionService.cotizacion$()"
+      />
+    </div>
+    @if(cotizacionService.cotizacion$().length) {
+      <app-pagination
+        [service]="cotizacionService"
+        [customCall]="true"
+        (callCustomPaginationMethod)="cotizacionService.getAllCotizacionesByUserId(this.userId)"
+      />
+    }
+  </div>
+} @loading (minimum 1.5s) {
+  <app-loader/>
+}
+
+<ng-template #addCotizacionesModal>
+  <app-modal [hideFooter]="true">
+    <app-cotizacion-form
+      [cotizacionForm]="cotizacionForm"
+      (callSaveMethod)="saveCotizacion($event)"
+      (callUpdateMethod)="updateCotizacion($event)"
+    ></app-cotizacion-form>
+  </app-modal>
+</ng-template>

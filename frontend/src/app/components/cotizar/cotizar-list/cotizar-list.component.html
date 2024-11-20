@@ -1,0 +1,45 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Evento</th>
+      <th scope="col">Servicio</th>
+      <th scope="col">Monto Cotizado</th>
+      <th scope="col">Cantidad</th>
+      <th scope="col">Estatus</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Iteración sobre cotizaciones -->
+    @for (item of cotizaciones; track item.id) {
+      <tr>
+        <th scope="row">{{ item.id }}</th>
+        <td>{{ item.event }}</td>
+        <td>{{ item.vendor_service_id }}</td>
+        <td>{{ item.cantidadRecurso }}</td>
+        <td>{{ item.montoCotizado }}</td>
+        <td>{{ item.estado }}</td>
+        <td>
+          <!-- Botón para editar -->
+          <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2" type="button">
+            <i class="fas fa-pen"></i>
+          </button>
+          <!-- Botón para eliminar -->
+          <button (click)="callDeleteAction.emit(item)" class="btn btn-danger" type="button">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    } @empty {
+      <!-- Mensaje cuando no hay cotizaciones -->
+      <tr>
+        <td colspan="7">
+          <div class="d-flex justify-content-center align-items-center w-100">
+            <p class="mb-0">No hay cotizaciones</p>
+          </div>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

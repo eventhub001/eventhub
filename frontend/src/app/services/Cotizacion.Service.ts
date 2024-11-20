@@ -1,16 +1,17 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { BaseService } from './base-service';
-import { ISearch, Cotización } from '../interfaces';
+import { ISearch, ICotizacion } from '../interfaces';
 import { AlertService } from './alert.service';
 import { map, Observable, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CotizacionService extends BaseService<Cotización> {
+export class CotizacionService extends BaseService<ICotizacion> {
 
-  protected override source: string = 'cotizacion';
-  private cotizacionListSignal = signal<Cotización[]>([]);
+  protected override source: string = 'cotizaciones';
+  private cotizacionListSignal = signal<ICotizacion[]>([]);
+  private alertService = inject(AlertService);
 
   get cotizacion$() {
     return this.cotizacionListSignal;
@@ -18,61 +19,73 @@ export class CotizacionService extends BaseService<Cotización> {
 
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 10
   };
 
   public totalItems: any = [];
 
-  getAll(): Observable<Cotización[]> {
-    return this.findAllWithParams({ page: this.search.page, size: this.search.size }).pipe(
-      map((response: any) => {
-        this.search = { ...this.search, ...response.meta };
-        this.totalItems = Array.from({ length: this.search.totalPages ? this.search.totalPages : 0 }, (_, i) => i + 1);
+  getAll() {
+    this.findAllWithParams({ page: this.search.page, size: this.search.size}).subscribe({
+      next: (response: any) => {
+        this.search = {...this.search, ...response.meta};
+        this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages : 0}, (_, i) => i+1);
         this.cotizacionListSignal.set(response.data);
-        return response.data;
-      }),
-      catchError((err: any) => {
-        console.error('Error fetching cotizaciones', err);
-        return throwError(err);
-      })
-    );
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    });
   }
 
-  save(cotizacion: Cotización) {
+
+  getAllCotizacionesByUserId(userId: number) {
+    this.findAllWithParamsAndCustomSource(`user/${userId}/cotizaciones`, { page: this.search.page, size: this.search.size}).subscribe({
+      next: (response: any) => {
+        this.search = {...this.search, ...response.meta};
+        this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages : 0}, (_, i) => i + 1);
+        this.cotizacionListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('Error fetching cotizaciones by user', err);
+      }
+    });
+  }
+
+  save(cotizacion: ICotizacion) {
     this.add(cotizacion).subscribe({
       next: (response: any) => {
-        inject(AlertService).displayAlert('success', 'Cotización saved successfully', 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', 'Cotización saved successfully', 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
-        inject(AlertService).displayAlert('error', 'Error saving cotización', 'center', 'top', ['error-snackbar']);
-        console.error('error', err);
+        this.alertService.displayAlert('error', 'Error saving cotización', 'center', 'top', ['error-snackbar']);
+        console.error('Error saving cotización', err);
       }
     });
   }
 
-  update(cotizacion: Cotización) {
+  update(cotizacion: ICotizacion) {
     this.editCustomSource(`${cotizacion.id}`, cotizacion).subscribe({
       next: (response: any) => {
-        inject(AlertService).displayAlert('success', 'Cotización updated successfully', 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', 'Cotización updated successfully', 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
-        inject(AlertService).displayAlert('error', 'Error updating cotización', 'center', 'top', ['error-snackbar']);
-        console.error('error', err);
+        this.alertService.displayAlert('error', 'Error updating cotización', 'center', 'top', ['error-snackbar']);
+        console.error('Error updating cotización', err);
       }
     });
   }
 
-  delete(cotizacion: Cotización) {
+  delete(cotizacion: ICotizacion) {
     this.delCustomSource(`${cotizacion.id}`).subscribe({
       next: (response: any) => {
-        inject(AlertService).displayAlert('success', 'Cotización deleted successfully', 'center', 'top', ['success-snackbar']);
+        this.alertService.displayAlert('success', 'Cotización deleted successfully', 'center', 'top', ['success-snackbar']);
         this.getAll();
       },
       error: (err: any) => {
-        inject(AlertService).displayAlert('error', 'Error deleting cotización', 'center', 'top', ['error-snackbar']);
-        console.error('error', err);
+        this.alertService.displayAlert('error', 'Error deleting cotización', 'center', 'top', ['error-snackbar']);
+        console.error('Error deleting cotización', err);
       }
     });
   }
