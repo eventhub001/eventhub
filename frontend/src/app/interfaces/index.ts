@@ -97,7 +97,7 @@ export interface ILoginResponse {
 
   export interface IVendorCategory{
     id?: number;
-    category_name?: string;
+    categoryName?: string;
     description?: string;
 
 

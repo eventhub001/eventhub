@@ -3,7 +3,7 @@ import { VendorService } from '../../../services/vendor.service';
 import { UserService } from '../../../services/user.service';
 import { LoaderComponent } from "../../../components/loader/loader.component";
 import { VendorDetails1Component } from '../../../components/vendor/vendor-details/vendor-details/vendor-details.component';
-import { IVendor, IVendorService } from '../../../interfaces';
+import { IVendor} from '../../../interfaces';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';

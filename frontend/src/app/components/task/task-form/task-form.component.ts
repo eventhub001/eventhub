@@ -48,7 +48,7 @@ export class TaskFormComponent {
   @Output() callSaveMethod: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() callUpdateMethod: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() callSaveTaskTemplate: EventEmitter<IEventTaskTemplate> = new EventEmitter<IEventTaskTemplate>();
-  
+
   ngOnChanges() {
     if (this.taskTemplates.length > 0) {
       this.filteredTaskTemplates = this.taskTemplates
@@ -59,10 +59,9 @@ export class TaskFormComponent {
     const selectElement = document.getElementById('templates') as HTMLSelectElement;
     if (selectElement) {
       selectElement.showPicker();
-      // unfocus the selection now.
     }
   }
-  
+
   callSave(generateWithDescription: boolean = false) {
 
     if (generateWithDescription) {
@@ -75,7 +74,7 @@ export class TaskFormComponent {
           status: 'Pendiente',
           event:  { eventId: Number(this.taskForm.controls['event'].value) }
         }
-        
+
         this.callSaveMethod.emit(taskToSave);
       })
     }
@@ -119,7 +118,7 @@ export class TaskFormComponent {
     }
 
     const templateFound: ITaskTemplate =  this.taskTemplates.find(t => t.taskTemplateId === Number(target.value))!;
-    
+
     console.log(templateFound);
     this.taskForm.controls['taskName'].setValue(templateFound.taskTemplateName);
     console.log(templateFound.taskTemplateDescription);

@@ -7,7 +7,7 @@
     </div>
     <div class="col-12">
       <app-vendor-list
-        [vendor]="vendorService.vendor$()"
+        [vendor]="vendors"
       />
       @if(vendorService.vendor$().length) {
 
@@ -20,14 +20,3 @@
       }
     </div>
   </div>
-
-
-<!-- <ng-template #addTaskModal>
-  <app-modal
-    [hideFooter]="true"
-  >
-    <div>
-
-    </div>
-  </app-modal>
-</ng-template> -->

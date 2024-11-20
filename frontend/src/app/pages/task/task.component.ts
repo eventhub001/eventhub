@@ -3,7 +3,7 @@ import { TaskService } from '../../services/task.service';
 import { ModalService } from '../../services/modal.service';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, Validators } from '@angular/forms';
-import { IEvent, IEventTaskTemplate, ITask } from '../../interfaces';
+import { IEventTaskTemplate, ITask } from '../../interfaces';
 import { TaskListComponent } from '../../components/task/task-list/task-list.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ModalComponent } from '../../components/modal/modal.component';
@@ -42,7 +42,7 @@ export class TaskComponent {
   public eventFormService: EventFormService= inject(EventFormService);
   public eventService: EventsService = inject(EventsService);
   public taskTemplateService: TaskTemplateService = inject(TaskTemplateService);
-  public eventTaskTemplateService: EventTaskTemplateService = inject(EventTaskTemplateService); 
+  public eventTaskTemplateService: EventTaskTemplateService = inject(EventTaskTemplateService);
   @ViewChild('addTaskModal') public addTaskModal: any;
   public fb: FormBuilder = inject(FormBuilder);
 
@@ -94,7 +94,6 @@ updateTask(task: ITask) {
 console.log(task)
 if (task.dueDate) {
   const dueDate = new Date(task.dueDate);
- // Ajustar la fecha a UTC antes de guardar teniendo en cuenta la zona horaria GMT-6
  const adjustedDate = new Date(dueDate.getTime() + (6 * 60 * 60 * 1000)); // Añadir 6 horas
  task.dueDate = adjustedDate;
 }

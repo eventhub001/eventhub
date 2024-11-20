@@ -7,6 +7,7 @@ import { VendorService } from '../../../../services/vendor.service';
 import { UserService } from '../../../../services/user.service';
 import { ChatComponent } from "../../../chat/chat/chat.component";
 import { ChatService } from '../../../../services/chat.service';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-vendor1-details',
   standalone: true,
@@ -23,36 +24,38 @@ export class VendorDetails1Component {
   @Input() vendors: IVendor[] = [];
   public chatService: ChatService = inject(ChatService);
   public userService: UserService = inject(UserService);
+  public vendorid: number = 0;
+  constructor(private route: ActivatedRoute) {
+    this.route.params.subscribe(params => {
+      this.vendorid = +params['vendorid'];
+      this.getVendorDetails();
+    });
 
-  constructor() {}
+  }
 
 
 
   ngOnInit(): void {
     this.loadFromLocalStorage();
-    this.getVendorDetails();
+
     this.chatService.initConnectionSocket()
 
   }
 
   getVendorDetails(): void {
-    const userId = this.userService.getUserId();
-    if (userId !== null) {
-      this.service.getVendorByUserId(userId).subscribe({
-        next: (vendorService : IVendorService[]) => {
-          if (vendorService.length > 0) {
-            this.servicios = vendorService;
-            this.vendor = vendorService[0].vendor;
-            this.saveToLocalStorage();
-          }
-        },
-        error: (err: any) => {
-          console.error('Error fetching vendor details', err);
+    this.service.getServicesByVendorId(this.vendorid).subscribe({
+      next: (vendorService: IVendorService[]) => {
+        if (vendorService.length > 0) {
+          this.servicios = vendorService;
+          this.vendor = vendorService[0].vendor;
+          this.saveToLocalStorage();
         }
-      });
-    }
+      },
+      error: (err: any) => {
+        console.error('Error fetching vendor details', err);
+      }
+    });
   }
-
   saveToLocalStorage(): void {
     localStorage.setItem('vendor', JSON.stringify(this.vendor));
     localStorage.setItem('servicios', JSON.stringify(this.servicios));

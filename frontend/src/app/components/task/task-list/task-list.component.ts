@@ -32,7 +32,7 @@ export class TaskListComponent {
   @Output() callModalAction: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() callDeleteAction: EventEmitter<ITask> = new EventEmitter<ITask>();
   public authService: AuthService = inject(AuthService);
-  @Input() eventIdSelected: number | null = null; 
+  @Input() eventIdSelected: number | null = null;
 
   public todayDate: Date;
   public dataSource: MatTableDataSource<ITask>;
@@ -43,7 +43,6 @@ export class TaskListComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor() {
-    // Asigna la fecha de hoy formateada a la variable todayDate
     this.todayDate = new Date();
     this.dataSource = new MatTableDataSource(this.tasks);
 

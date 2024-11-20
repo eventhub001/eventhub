@@ -19,4 +19,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     @Transactional
     @Query("DELETE FROM Task ef WHERE ef.event.eventId = :eventId")
     void deleteTaskByEvent_EventId(@Param("eventId") Long id);
+
+    @Query("SELECT t FROM Task t JOIN t.event e WHERE e.eventName LIKE %:eventName%")
+    Page<Task> getTaskByEvent_EventName(@Param("eventName") String eventName, Pageable pageable);
 }

@@ -3,8 +3,6 @@ package com.project.eventhub.rest.VendorCategory;
 
 import com.project.eventhub.logic.entity.VendorCategory.VendorCategory;
 import com.project.eventhub.logic.entity.VendorCategory.VendorCategoryRepository;
-import com.project.eventhub.logic.entity.VendorService.Vendor_service;
-import com.project.eventhub.logic.entity.vendor.Vendor;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
 import com.project.eventhub.logic.http.Meta;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,7 +54,7 @@ public class VendorCategoryRestController {
     public VendorCategory updateCategory(@PathVariable Integer id, @RequestBody VendorCategory vendorCategory) {
         return vendorCategoryRepository.findById(id)
                 .map(existingVendorCategory -> {
-                    Optional.ofNullable(vendorCategory.getCategory_name()).ifPresent(existingVendorCategory::setCategory_name);
+                    Optional.ofNullable(vendorCategory.getCategoryName()).ifPresent(existingVendorCategory::setCategoryName);
                     Optional.ofNullable(vendorCategory.getDescription()).ifPresent(existingVendorCategory::setDescription);
                     return vendorCategoryRepository.save(existingVendorCategory);
                 })
