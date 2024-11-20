@@ -117,15 +117,15 @@ export class ThreeDObject implements Asset {
     }
 
     public clone(): Asset {
-        this.content = this.content.clone();
+        const newContent = this.content.clone();
         
-        this.content.traverse((child) => {
+        newContent.traverse((child) => {
             if (child instanceof THREE.Mesh) {
                 child.material = child.material.clone();
             }
         });
 
-        return new ThreeDObject(this.id, { x: this.x, y: this.y, z: this.z }, this.size, this.content.clone(), this.initialOrientation, this.url);
+        return new ThreeDObject(this.id, { x: this.x, y: this.y, z: this.z }, this.size, newContent, this.initialOrientation, this.url);
     }
 
     private rotateWithQuaternion(Quaternion: THREE.Quaternion, from: THREE.Vector3, to: THREE.Vector3) {

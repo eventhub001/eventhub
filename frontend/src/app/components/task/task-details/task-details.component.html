@@ -8,6 +8,7 @@
         <p *ngIf="task.updateDate">Última actualización: {{ asDate(task.updateDate) }}</p>
         <p *ngIf="task.dueDate">Fecha límite: {{ asDate(task.dueDate) }}</p>
         <p *ngIf="task.status">Estado: {{ task.status }}</p>
+        <p *ngIf="task.event">Evento relacionado: {{ task.event.eventName }}</p>
       </mat-card-content>
     </mat-card-header>
   </div>
