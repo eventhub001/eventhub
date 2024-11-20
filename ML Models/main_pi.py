@@ -61,7 +61,7 @@ def compute():
 
     result = model.get_top_n(5)
     frequency_templates = get_templates(result)
-    frequency_templates = frequency_templates[frequency_templates["count"] >= 0.5]
+    frequency_templates = frequency_templates[frequency_templates["count"] >= 0.3]
     frequency_templates_json = frequency_templates.to_dict(orient="records")
 
     result_json = result.to_dict(orient="records")

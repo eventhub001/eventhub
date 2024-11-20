@@ -7,7 +7,7 @@ import { IEvent } from '../../../interfaces';
   standalone: true,
   templateUrl: 'delete-event-confirmation.component.html',
   styleUrl: 'delete-event-confirmation.component.scss',
-  imports: [MatDialogModule]
+  imports: [MatDialogModule, MatDialogActions],
 })
 export class EventDeleteConfirmationComponent {
   @Output() confirmed = new EventEmitter<IEvent>();

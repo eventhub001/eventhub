@@ -1,8 +1,8 @@
 <form [formGroup]="taskForm" class="row">
   <div>
-    <h2 class="mb-0">Add Task</h2>
+    <h4 class="mb-3" style="text-align: center" >Crear tarea</h4>
   </div>
-  
+
   <div class="mb-2">
     <label class="mb-1" for="name">Selecciona desde una plantilla predeterminada*</label>
     <input type="text" class="form-control mb-2" id="search"
@@ -73,6 +73,6 @@
     }
   </div>
   <div class="d-flex justify-content-end">
-    <button (click)="callSave(false)" [disabled]="taskForm.invalid" class="btn btn-primary" type="button">Save</button>
+    <button (click)="callSave(false)" [disabled]="taskForm.invalid" class="btn btn-primary" type="button">Guardar</button>
   </div>
 </form>

@@ -76,11 +76,6 @@ public class UserRestController {
         return UserRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
-    @GetMapping("/filterByName/{name}")
-    public List<User> getUserById(@PathVariable String name) {
-        return UserRepository.findUsersWithCharacterInName(name);
-    }
-
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         return UserRepository.findById(id)

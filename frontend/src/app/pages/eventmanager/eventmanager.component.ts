@@ -16,6 +16,7 @@ export class EventmanagerComponent {
   eventService: EventsService = inject(EventsService);
 
   constructor() {
+    this.eventService.search.size = 10;
     this.eventService.getAll();
   }
 }

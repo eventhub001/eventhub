@@ -16,8 +16,17 @@ import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/ve
 import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
 import { SolicitudesComponent } from './pages/solicitudes/solicitudes/solicitudes.component';
 import { CotizacionesComponent } from './pages/cotizar/cotizar.component';
+import { LandingPageComponent } from './pages/lading-pages/ladingpage.component';
+import { IndexComponent } from './pages/members/index/index.component';
+import { AboutComponent } from './pages/members/about/about.component';
+import { ContactComponent } from './pages/members/contact/contact.component';
+
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: LandingPageComponent
+  },
   {
     path: 'login',
     component: LoginComponent,
@@ -29,37 +38,38 @@ export const routes: Routes = [
     canActivate: [GuestGuard],
   },
   {
+    path: 'index',
+    component: IndexComponent
+  },
+  {
+    path: 'about',
+    component: AboutComponent
+  },
+  {
+    path: 'contact',
+    component: ContactComponent
+  },
+  {
     path: 'access-denied',
     component: AccessDeniedComponent,
-  },
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-  {
-    path: 'event3dplanner',
-    component: EventModellerComponent
   },
   {
     path: 'app',
     component: AppLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-
       {
-        path: 'app',
+        path: '',
         redirectTo: 'users',
         pathMatch: 'full',
       },
       {
-      path: "events",
-      component: EventmanagerComponent,
-      data: {
-        authorities: [
-          IRoleType.user,
-          IRoleType.superAdmin,
-          ],
+        path: 'events',
+        component: EventmanagerComponent,
+        data: {
+          authorities: [
+            IRoleType.user,
+            IRoleType.superAdmin],
           name: 'Eventos',
           showInSidebar: true
         }
@@ -71,8 +81,7 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
-          ],
+            IRoleType.user],
           name: 'Calendario',
           showInSidebar: true
         }
@@ -84,8 +93,7 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
-          ],
+            IRoleType.user],
           name: 'Task',
           showInSidebar: false
         }
@@ -97,8 +105,7 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
-          ],
+            IRoleType.user],
           name: 'Proveedores',
           showInSidebar: true
         }
@@ -110,8 +117,7 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
-          ],
+            IRoleType.user],
           name: 'Detalles del Proveedor',
           showInSidebar: false
         }
@@ -123,10 +129,21 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user,
-          ],
+            IRoleType.user],
           name: 'Mis Solicitudes',
           showInSidebar: true
+        }
+      },
+      {
+        path: 'chat',
+        component: ChatpageComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user],
+          name: 'Chat',
+          showInSidebar: false
         }
       },
       {
@@ -136,10 +153,21 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user,
-          ],
+            IRoleType.user],
           name: 'Cotizaciones',
           showInSidebar: true
+        }
+      },
+      {
+        path: 'event3dplanner',
+        component: EventModellerComponent,
+        data: {
+          name: 'Modelaje 3D',
+          showInSidebar: true,
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user]
         }
       },
     ],

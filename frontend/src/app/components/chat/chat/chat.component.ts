@@ -1,4 +1,4 @@
-import { Component, Inject, inject } from '@angular/core';
+import { Component, ElementRef, Inject, inject, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,12 +6,11 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../../services/chat.service';
-import { IChat, IUser } from '../../../interfaces';
+import { IUser } from '../../../interfaces';
 import { ActivatedRoute, Route } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { HttpClientModule } from '@angular/common/http';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { NotificationDialogComponent } from './notification-dialog.component/notification-dialog.component.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 
@@ -25,7 +24,7 @@ interface Message {
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatFormFieldModule,MatInputModule,  FormsModule, CommonModule, HttpClientModule],
+  imports: [MatCardModule, MatButtonModule, MatFormFieldModule,MatInputModule,  FormsModule, CommonModule, MatSnackBarModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
@@ -36,9 +35,12 @@ export class ChatComponent {
   messageInput: string = '';
   userId: number = 0;
   vendorId: number = 0;
+  vendorUserid: number = 0;
+  receiver: string = '';
   messageList: any[] = [];
+  @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
-  constructor(private chatService: ChatService,  private route: ActivatedRoute, private dialog: MatDialog) {
+  constructor(private chatService: ChatService,  private route: ActivatedRoute, private snackBar: MatSnackBar) {
 
   }
 
@@ -103,17 +105,63 @@ export class ChatComponent {
 
       // Guardar los mensajes en el localStorage
       localStorage.setItem('chat_messages', JSON.stringify(this.messageList));
+
+        //obteniendo el receiver
+        const storedMessages = localStorage.getItem('chat_messages');
+        if (storedMessages) {
+          const mssgObj = JSON.parse(storedMessages);
+          if (mssgObj.length > 0) {
+            const lastMessage = mssgObj[mssgObj.length - 1]; // Accede al último elemento del arreglo
+            this.receiver = lastMessage.message_side;
+            console.log('receiver:', this.receiver); // Agrega este registro para depurar
+          } else {
+            console.error('No messages found in localStorage');
+          }
+        } else {
+          console.error('No user found in localStorage');
+        }
+
+
+      // Obtener vendorUserid del localStorage
+    const vendorUserid = localStorage.getItem('vendor');
+    if (vendorUserid) {
+      const vendorUseridObj = JSON.parse(vendorUserid);
+      this.vendorUserid = vendorUseridObj.user.id;
+    }
+
+
+
+
+
+    // Filtrar mensajes para notificar al usuario correcto
+    const newMessages = messages.filter((item: any) => {
+      // Si el mensaje es enviado por el vendor y el usuario actual no es el vendor, notificar al usuario actual
+      if (item.user.id === this.vendorUserid && this.receiver === 'receiver') {
+        return true;
+      }
+      // Si el mensaje es enviado por otro usuario y el usuario actual es el vendor, notificar al vendor
+      if (item.user.id !== this.vendorUserid && this.receiver === 'sender') {
+        return false;
+      }
+      return false;
+    });
+
+    if (newMessages.length > 0) {
+      this.snackBar.open('Tienes un nuevo mensaje', 'Cerrar', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+    }
+
+
+
+
     });
   }
 
 
 
-  showNotification(message: any): void {
-    // Lógica para mostrar el pop-up
-    this.dialog.open(NotificationDialogComponent, {
-      data: { message: message.message }
-    });
-  }
 
 
   loadMessagesFromLocalStorage(): void {
@@ -157,8 +205,15 @@ export class ChatComponent {
 
   }
 
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
 
-
+  scrollToBottom(): void {
+    try {
+      this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
+    } catch(err) { }
+  }
 
 }
 

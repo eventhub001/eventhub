@@ -7,11 +7,10 @@ import { VendorService } from '../../../../services/vendor.service';
 import { UserService } from '../../../../services/user.service';
 import { ChatComponent } from "../../../chat/chat/chat.component";
 import { ChatService } from '../../../../services/chat.service';
-import { NotificationDialogComponent } from '../../../chat/chat/notification-dialog.component/notification-dialog.component.component';
 @Component({
   selector: 'app-vendor1-details',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent, NotificationDialogComponent],
+  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent],
   templateUrl: './vendor-details.component.html',
   styleUrl: './vendor-details.component.scss'
 })
@@ -59,8 +58,6 @@ ngOnChanges() {
       });
     }
   }
-
-
   saveToLocalStorage(): void {
     localStorage.setItem('vendor', JSON.stringify(this.vendor));
     localStorage.setItem('servicios', JSON.stringify(this.servicios));

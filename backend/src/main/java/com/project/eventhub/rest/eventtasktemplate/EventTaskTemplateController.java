@@ -51,6 +51,7 @@ public class EventTaskTemplateController {
     @PostMapping
     public ResponseEntity<EventTaskTemplate> createUserTemplateTask(@RequestBody EventTaskTemplate userTemplateTask) {
         EventTaskTemplate savedUserTemplateTask = userTemplateTaskRepository.save(userTemplateTask);
+        System.out.println("Plantilla guardada de manera exitosa");
         return ResponseEntity.ok(savedUserTemplateTask);
     }
 
