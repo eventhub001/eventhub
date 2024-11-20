@@ -1,10 +1,10 @@
 import { ThreeDObject } from "./threeobject.model";
-import { Position } from "../components/evenmodeller3d/modelobjects/3dtypes";
+import { Position } from "../modelobjects/3dtypes";
 import * as THREE from 'three';
-import { AxisOrientation, Size } from "../components/evenmodeller3d/modelobjects/3dobjects";
+import { AxisOrientation, Size } from "../modelobjects/3dobjects";
 import { HttpClient } from "@angular/common/http";
-import { AssetTexture } from "../interfaces";
-import { TextureHandler } from "../services/modelsHandler";
+import { AssetTexture } from "../../../interfaces";
+import { TextureHandler } from "../../../services/modelsHandler";
 
 export class Floor extends ThreeDObject {
     
@@ -40,9 +40,17 @@ export class Floor extends ThreeDObject {
         //this.fixOrientation();
     }
 
-    public override clone(): Floor {
-        return new Floor(this.width, this.depth, {x: this.x, y: this.y, z: this.z}, this.url, this.initialOrientation, this.content.clone());
-    }
+    // public override clone(): Floor {
+    //     const newContent = this.content.clone();
+        
+    //     newContent.traverse((child) => {
+    //         if (child instanceof THREE.Mesh) {
+    //             child.material = child.material.clone();
+    //         }
+    //     });
+
+    //     return new Floor(this.width, this.depth, {x: this.x, y: this.y, z: this.z}, this.url, this.initialOrientation, newContent);
+    // }
 
     public static async createFromModel(
         width: number,

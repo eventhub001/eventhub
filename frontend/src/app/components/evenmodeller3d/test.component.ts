@@ -1,4 +1,4 @@
-import { afterRender, AfterRenderRef, Component, ElementRef, inject, Input, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { afterRender, AfterRenderRef, Component, computed, effect, ElementRef, inject, Input, Signal, signal, SimpleChange, SimpleChanges, ViewChild, WritableSignal } from '@angular/core';
 import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -6,16 +6,17 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { DebuggingUtils } from './modelobjects/3dobjects';
 import { Side } from './modelobjects/3dtypes';
 import { MetricType, EventGrid } from './modelobjects/events';
-import { Floor } from '../../models/floor.model';
-import { Chair } from '../../models/chair.model';
+import { Floor } from './models/floor.model';
+import { Chair } from './models/chair.model';
 import { ChairSet, Event3DManager, Direction } from './modelobjects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { Ui3DComponent } from '../../ui3d/ui3d.component';
-import * as UICommand from '../../ui3d/commands/commands';
-import { AssetModel } from '../../interfaces';
+import { Asset, AssetImg, AssetModel } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModelService } from '../../services/model.service';
+import { directionToProjection, fixProjectionMapping, isSameDirectionToProjection } from './projections/camera';
+import * as UICommand from '../ui3d/commands/commands';
+import { Ui3DComponent } from '../ui3d/ui3d.component';
 
 @Injectable({
   providedIn: 'root'
@@ -27,41 +28,83 @@ import { ModelService } from '../../services/model.service';
   imports: [HttpClientModule, Ui3DComponent, CommonModule],
   providers: [HttpClientModule],
   templateUrl: './test.component.html',
-  styleUrl: './test.component.css'
+  styleUrl: './test.component.scss'
 })
 export class TestComponent {
 
   @ViewChild("mainThreeCv", {static: false}) mainThreeCv!: ElementRef<HTMLCanvasElement>;	
   @Input() modelMetadata: AssetModel[] = [];
-  @Input() images: Blob[] = [];
+  @Input() images: AssetImg[] = [];
   modelService: ModelService = inject(ModelService);
   renderer!: THREE.WebGLRenderer;
   scene!: THREE.Scene;
   camera!: THREE.PerspectiveCamera;
   orbitCamera!: OrbitControls;
   grid!: EventGrid;
+  pointer! : THREE.Vector2;
+  intersector!: THREE.Raycaster;
+  selectionsBox: THREE.Box3Helper[] = [];
+
+  selectedAsset: ({asset: Asset, position: {col: number; floor: number; row: number}})[] = [];
+  selectedFloor: THREE.Object3D | null = null;
+
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
   set!: ChairSet;
   isLoading: boolean = true;
 
+  mousePosition: {x: number, y: number} = {x: 0, y: 0};
+
+  arrowToProjection: directionToProjection = {
+    ['up']: { x: 0, y: 0, z: -1 },
+    ['down']: { x: 0, y: 0, z: 1 },
+    ['left']: { x: -1, y: 0, z: 0 },
+    ['right']: { x: 1, y: 0, z: 0 }
+  };
+
+  arrowToProjectionSignal: WritableSignal<directionToProjection> = signal<directionToProjection>(this.arrowToProjection, {equal: isSameDirectionToProjection});
+  get arrowToProjection$() {
+    return this.arrowToProjectionSignal;
+  }
   // debugging properties. Must remove later.
   defaultChair!: Chair;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
-
+    // effect(() => {
+    //   console.log(this.arrowToProjectionSignal);
+    // })
   }
 
   public addComponent(addtion: UICommand.addtion) {
     
+    if (addtion.id) {
+      console.log("Row: " + this.selectedFloor?.userData["x"]);
+      console.log("Col: " + this.selectedFloor?.userData["z"]);
+      this.eventManager.add(this.defaultChair, this.selectedFloor?.userData["x"], 0, this.selectedFloor?.userData["z"]);
+      this.eventManager.render(this.scene);
+      return;
+    }
 
     console.log("Row: " + addtion.z);
     console.log("Col: " + addtion.x);
 
-    this.eventManager.add(this.defaultChair, addtion.x, 0, addtion.z);
-
+    if (addtion.x == null || addtion.z == null) {
+      throw new Error('Invalid addtion operation. Please select a row and a column.');
+    }
+    this.eventManager.add(this.defaultChair, addtion.x!, 0, addtion.z!);
     this.eventManager.render(this.scene);
 
+  }
+
+  public moveComponent(move: UICommand.move) {
+
+    console.log("Row: " + move.z);
+    console.log("Col: " + move.x);
+
+    this.eventManager.move(this.selectedAsset[0], move.x, 0, move.z);
+    this.eventManager.render(this.scene);
+
+    this.updateSelection(this.selectedAsset[0].asset.content);
   }
 
   addRenderingHelpers() {
@@ -79,16 +122,15 @@ export class TestComponent {
 
     const light = new THREE.AmbientLight(0xffffff, 0.3);
     this.scene.add(light);
-    const light2 = new THREE.DirectionalLight(0xffffff, 6);
+    const light2 = new THREE.DirectionalLight(0xffffff, 8);
 
-    light2.position.set(0, 3, 0);
-    light2.target.position.set(-4, -1, 0); 
+    light2.position.set(8, 5, 0);
+    light2.target.position.set(-1, -1, 0); 
     light2.castShadow = true;
-
-    light2.shadow.camera = new THREE.OrthographicCamera( -100, 100, 100, -100, 0.5, 1000 ); 
-    light2.shadow.mapSize.width = 1024;
-    light2.shadow.mapSize.height = 1024;
-    // light2.shadow.bias = -0.001;
+    light2.shadow.camera.left = -20;
+    light2.shadow.camera.right = 20;
+    light2.shadow.camera.top = 40;
+    light2.shadow.camera.bottom = -40;
 
     this.scene.add(light2);
     this.scene.add(light2.target);
@@ -102,18 +144,15 @@ export class TestComponent {
     this.renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.setSize( getWindow().innerWidth / 1.4, getWindow().innerHeight / 1.2);
+    this.renderer.setSize( getWindow().innerWidth / 1.8, getWindow().innerHeight / 1.2);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("modelMetadata", this.modelMetadata);
-    console.log("images", this.images);
     if (changes["images"]) {
       if (this.images.length > 0) {
         this.isLoading = false;
         console.log('finished loading');
       }
-
     }
   }
 
@@ -152,6 +191,7 @@ export class TestComponent {
     DebuggingUtils.showLights(floor.content);
 
     this.scene.add(this.grid.model);
+    this.scene.add(this.grid.floorGrid);
 
     this.set = new ChairSet("left", this.grid, chair);
 
@@ -168,57 +208,11 @@ export class TestComponent {
       row: chair.z,
       grid: this.grid,
       direction1: Direction.FRONT});
-    
-    //   chairSet.add({
-    //     x: chair.x,
-    //     y: chair.y,
-    //     z: chair.z,
-    //     grid: this.grid,
-    //     direction1: Direction.FRONT});
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
+    this.intersector = new THREE.Raycaster();
+    this.pointer = new THREE.Vector2(); 
+    this.intersector.setFromCamera(this.pointer, this.camera);
 
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 1,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
-
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 2,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
-
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 3,
-    //   grid: this.grid,
-    //   direction1: Direction.RIGHT});
-
-    // chairSet.add({
-    //   x: chair.x,
-    //   y: chair.y,
-    //   z: chair.z + 2,
-    //   grid: this.grid,
-    //   direction1: Direction.FRONT});
-
-    // chairSet.add({
-    //   x: chair.x + 2,
-    //   y: chair.y,
-    //   z: chair.z + 2,
-    //   grid: this.grid,
-    //   direction1: Direction.FRONT});
-
-    
     this.eventManager = new Event3DManager(this.grid);
     this.eventManager.addSet(this.set); 
     //this.eventManager.printAssets();
@@ -227,28 +221,119 @@ export class TestComponent {
     DebuggingUtils.showBoundingBox(floor.content, this.scene);
     const box = new THREE.Box3().setFromObject(floor.content);
 
-    //this.grid.moveAssetTo(chair, 2, 0, 0, Side.CENTER, Side.BOTTOM);
-    //this.grid.moveAssetTo(chair2, 0, 0, 0, Side.CENTER, Side.BOTTOM);
-
-    // DebuggingUtils.showBoundingBox(chair.content, this.scene);
-    // DebuggingUtils.showBoundingBox(chair2.content, this.scene);
-
     this.scene.add(floor.content);
-    //this.scene.add(chair.content);
-    //this.scene.add(chair2.content);
-
-    //this.grid.hide();
-
-    //DebuggingUtils.showBoundingBox(floor.content, this.scene);
-    //this.scene.add(center);
 
     const animate = () => {
       requestAnimationFrame(animate);
       this.camera.updateProjectionMatrix();
+      const direction: THREE.Vector3 = this.camera.getWorldDirection(new THREE.Vector3());
+      const projectionArrowMapping = fixProjectionMapping(this.arrowToProjection, this.camera.position, direction);
+      this.arrowToProjectionSignal.set(projectionArrowMapping);
+
       this.renderer.render(this.scene, this.camera);
       this.orbitCamera.update();
     };
 
     animate();
+  }
+
+  mouseDown(event: MouseEvent) {
+    this.mousePosition.x = (event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
+    this.mousePosition.y = (event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
+  }
+  
+  selectAsset(event: MouseEvent) {
+    const pointerUpX = this.pointer.x;
+    const pointerUpY = this.pointer.y;
+  
+    this.pointer.x = (event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
+    this.pointer.y = -(event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
+
+    if (
+      this.mousePosition.x !== this.pointer.x &&
+      this.mousePosition.y !== this.pointer.x
+    )
+    {
+      return;
+    }
+    
+    this.intersector.setFromCamera(this.pointer, this.camera);
+
+    const intersections = this.intersector.intersectObjects([...this.eventManager.getAssetsAsObjects(), this.grid.floorGrid], true);
+
+    if (intersections.length > 0) {
+
+      if (this.selectionsBox.length > 0) {
+        this.clearBoundingBoxes();
+        this.selectedAsset = [];
+      }
+
+      console.log(intersections);
+      if (intersections[0].object.name === "floor") {
+        this.updateSelection(intersections[0].object);
+        return;
+      } 
+
+      const object = intersections[0].object.parent as THREE.Mesh;
+
+      this.updateSelection(object.parent!);
+    }
+  }
+
+  showBoundingBox(model: THREE.Object3D) {
+    const box = new THREE.Box3().setFromObject(model);
+    const boxHelper = new THREE.Box3Helper(box, 0xfe04ff);
+
+    this.scene.add(boxHelper);
+
+    this.selectionsBox.push(boxHelper);
+  }
+
+  clearBoundingBoxes(selectionBox?: string) {
+    this.selectionsBox.forEach((box) => {
+      this.scene.remove(box);
+    });
+
+    this.selectionsBox = [];
+  }
+
+  updateSelectionBoundingBox(mode: THREE.Object3D) {
+    this.clearBoundingBoxes();
+    this.showBoundingBox(mode);
+  }
+
+  updateSelection(mode: THREE.Object3D) {
+    if (mode.name === "floor") {
+      console.log("selecting floor");
+      const mesh = mode as THREE.Mesh;
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.color = new THREE.Color(0xff0000);
+      mode.visible = true;
+
+      if (this.selectedFloor) {
+        this.selectedFloor.visible = false;
+        this.selectedFloor = mode;
+      }
+
+      else {
+        this.selectedFloor = mode;
+      }
+      return;
+    }
+
+    this.updateSelectionBoundingBox(mode);
+    const selectedAsset = this.eventManager.findAssetFromObject(mode.uuid);
+
+    if (selectedAsset) {
+      this.selectedAsset = [];
+      this.selectedAsset.push(selectedAsset);
+    }
+  }
+
+  updateArrowControlsVector() {
+    const direction: THREE.Vector3 = this.camera.getWorldDirection(new THREE.Vector3());
+    if (direction.x < 1.001) {
+      console.log("horizontal+");
+    }
   }
 }

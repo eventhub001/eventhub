@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
-import { AssetModel, ISearch } from '../interfaces';
+import { Observable, forkJoin, map } from 'rxjs';
+import { AssetImg, AssetModel, ISearch } from '../interfaces';
 import { AlertService } from './alert.service';
 import { BaseService } from './base-service';
 
@@ -10,7 +10,7 @@ import { BaseService } from './base-service';
 export class ModelService extends BaseService<AssetModel> {
   protected override source: string = 'models';
   private modelListSignal = signal<AssetModel[]>([]);
-  private modelImgListSignal = signal<Blob[]>([]);
+  private modelImgListSignal = signal<AssetImg[]>([]);
   public alertService: AlertService = inject(AlertService);
   get models$() {
     return this.modelListSignal;
@@ -37,13 +37,15 @@ export class ModelService extends BaseService<AssetModel> {
   
         // Array of observables for each image
         const imageRequests = response.data.map((model: AssetModel) =>
-          this.getImg(model.modelImgPath)
+          this.getImg(model.modelImgPath).pipe(
+            map((imgBlob: Blob) => ({id: model.id, blob: imgBlob})),
+          )
         );
   
         // Wait until all image requests are complete
         forkJoin(imageRequests).subscribe({
           next: (imgBlobs: unknown) => {
-            const blobs = imgBlobs as Blob[];
+            const blobs = imgBlobs as AssetImg[];
             this.modelImgListSignal.set(blobs);
           },
           error: (err: any) => {

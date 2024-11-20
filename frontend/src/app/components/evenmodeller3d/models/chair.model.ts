@@ -1,14 +1,20 @@
 import { HttpClient } from "@angular/common/http";
-import { AxisOrientation, ModelThreeDObject, Size } from "../components/evenmodeller3d/modelobjects/3dobjects";
-import { Position, Side } from "../components/evenmodeller3d/modelobjects/3dtypes";
+import { AxisOrientation, ModelThreeDObject, Size } from "../modelobjects/3dobjects";
+import { Position, Side } from "../modelobjects/3dtypes";
 import { ThreeDObject } from "./threeobject.model";
 import * as THREE from 'three';
-import {ModelHandler} from "../services/modelsHandler";
-import { AssetModel } from "../interfaces";
+import {ModelHandler} from "../../../services/modelsHandler";
+import { AssetModel } from "../../../interfaces";
 
 export class Chair extends ThreeDObject {
 
-    constructor(id: number, url: string, size: Size, content: THREE.Object3D, position: Position, initialorientation?: AxisOrientation) {
+    constructor(
+        id: number,
+        url: string,
+        size: Size,
+        content: THREE.Object3D,
+        position: Position,
+        initialorientation?: AxisOrientation) {
         
         super(id, position, size, content, initialorientation, url);
 
@@ -38,7 +44,15 @@ export class Chair extends ThreeDObject {
         return newchair;
     }
 
-    public override clone(): Chair {
-        return new Chair(this.id, this.url!, this.size, this.content.clone(), {x: this.x, y: this.y, z: this.z});
-    }
+    // public override clone(): Chair {
+    //     const newContent = this.content.clone();
+        
+    //     newContent.traverse((child) => {
+    //         if (child instanceof THREE.Mesh) {
+    //             child.material = child.material.clone();
+    //         }
+    //     });
+
+    //     return new Chair(this.id, this.url!, this.size, this.content.clone(), {x: this.x, y: this.y, z: this.z});
+    // }
 }

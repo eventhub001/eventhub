@@ -3,10 +3,11 @@ import { Frame, Circle, Dial, Emitter, Pen, MotionController, series, LabelOnArc
 import { MatrixUI } from './matriz/matriz'
 import { settings, SetUpUI } from './settings/settings'
 import * as UICommands from './commands/commands'
-import { AssetModel } from '../interfaces'
-import { blobsToImages, blobToImage } from './loader/fileloader'
-import { ModelService } from '../services/model.service'
+import { blobsToImages, blobToImage } from './loader/blobloader'
 import { AssetSelectorComponent } from './selectors/assetselector'
+import { ArrowsMenu, DIRECTION, MOVE_DIRECTION } from './arrows/arrows'
+import { AssetBitmap, AssetImg, AssetModel } from '../../interfaces'
+import { directionToProjection } from '../evenmodeller3d/projections/camera'
 @Component({
     selector: 'app-ui3d',
     standalone: true,
@@ -17,12 +18,13 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     frame: Frame | undefined
     @Input() modelMetadata: AssetModel[] = [];
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
-    currentChair: number[] = [2, 0];
+    @Output() MoveAction: EventEmitter<UICommands.move> = new EventEmitter<UICommands.move>()
+    @Output() AddtionFromModelSelectedAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
+    @Input() arrowDirectionToProjection!: directionToProjection;
     matriz?: MatrixUI;
     settings: settings;
-    modelService: ModelService = inject(ModelService);
-    modelImgs: Map<number, Bitmap> = new Map<number, Bitmap>();
-    @Input() images: Blob[] = [];
+    modelImgs: AssetBitmap[] = [];
+    @Input() images: AssetImg[] = [];
     stage: Stage | undefined;
     
     constructor() {
@@ -42,7 +44,7 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
         this.frame = new Frame({
             scaling: "zim",
             width: 400,
-            height: 600,
+            height: 800,
             color: lighter,
             outerColor: blue,
             mouseMoveOutside: true, // so Pen and Dial work better
@@ -57,21 +59,29 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                 new MotionController(pen, "pressmove")
 
                 console.log(this.settings);
-                const imgs = await blobToImage(this.images[0]);
+                // const imgs = await blobToImage(this.images[0].blob);
+                const imgs: AssetBitmap[] = await Promise.all(
+                    this.images.map(async (img) => {
+                    const {id, bitmap} = await this.imgAssetToBitmap(img);
+                    return {id: id, bitmap: bitmap};
+                }));
 
-                // const items: [(DisplayObject | string)] = [
-                //     imgs.center(),
-                //     imgs.center(),
-                // ];
-                const imgs2 = await blobToImage(this.images[0]);
-
-                
                 this.matriz = new MatrixUI(this.settings.width, this.settings.height, this.settings.x, this.settings.y);
 
-                imgs2.siz(20, 20);
-                imgs.siz(20, 20);
+                const assetSelector = new AssetSelectorComponent(imgs, 10, 300, 5);
 
-                const assetSelector = new AssetSelectorComponent([imgs, imgs2], 0, 0, 5);
+                assetSelector.onBitmapClick = (id: number) => {
+                    this.AdditionAction.emit({
+                        id: id
+                    });
+                }
+
+                const arrowSelection = new ArrowsMenu(0, 0, 300, 300);
+
+                arrowSelection.arrowsOnClick = (dir: DIRECTION) => {
+                    console.log("working on arrows", dir);
+                    this.MoveAction.emit(this.arrowDirectionToProjection[dir]);
+                }
 
                 this.matriz.onCellClick = (row: number, col: number) => {
                     console.log(`Cell clicked at row: ${row}, col: ${col}`);
@@ -86,5 +96,9 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
 
     } 
 
-    title = 'ZIM Template';
+    async imgAssetToBitmap(asset: AssetImg) : Promise<AssetBitmap> {
+        const id = asset.id;
+        const bitmap = await blobToImage(asset.blob);
+        return {id: id, bitmap: bitmap};
+    }
 }

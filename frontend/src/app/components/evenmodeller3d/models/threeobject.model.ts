@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { Position } from '../components/evenmodeller3d/modelobjects/3dtypes';
-import { AxisOrientation, Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
-import { inferOpositeAxis } from '../components/evenmodeller3d/modelobjects/vectorutils';
+import { Position } from '../modelobjects/3dtypes';
+import { AxisOrientation, Size } from '../modelobjects/3dobjects';
+import { inferOpositeAxis } from '../modelobjects/vectorutils';
 import { constant } from 'lodash';
-import { Asset, Orientation } from '../interfaces';
+import { Asset, Orientation } from '../../../interfaces';
 
 export class ThreeDObject implements Asset {
     id: number; 
@@ -16,14 +16,16 @@ export class ThreeDObject implements Asset {
     orientation: Orientation;
     size: Size;
 
-    constructor(id: number, position: Position,
-            size: Size,
-            content: THREE.Object3D,
-            sides: AxisOrientation = {
-                front: new THREE.Vector3(0, 0, 1),
-                right: new THREE.Vector3(1, 0, 0),
-                top: new THREE.Vector3(0, 1, 0) },
-            url?: string) {
+    constructor(
+        id: number,
+        position: Position,
+        size: Size,
+        content: THREE.Object3D,
+        orientation: AxisOrientation = {
+            front: new THREE.Vector3(0, 0, 1),
+            right: new THREE.Vector3(1, 0, 0),
+            top: new THREE.Vector3(0, 1, 0) },
+        url?: string) {
         
         this.orientation = {
             front: new THREE.Vector3(0, 0, 1),
@@ -34,16 +36,16 @@ export class ThreeDObject implements Asset {
             bottom: new THREE.Vector3(0, -1, 0)
         };
         
-        const back = inferOpositeAxis(sides.front);
-        const left = inferOpositeAxis(sides.right);
-        const bottom = inferOpositeAxis(sides.top);
+        const back = inferOpositeAxis(orientation.front);
+        const left = inferOpositeAxis(orientation.right);
+        const bottom = inferOpositeAxis(orientation.top);
         this.size = size;
         this.initialOrientation = {
-            front: sides.front,
+            front: orientation.front,
             back: back,
             left: left,
-            right: sides.right,
-            top: sides.top,
+            right: orientation.right,
+            top: orientation.top,
             bottom: bottom
         };
         this.id = id;
@@ -59,12 +61,10 @@ export class ThreeDObject implements Asset {
 
         if (this.content === undefined) {
             throw new Error('Content is not defined. Cannot fix orientation.');
-            return;
         }
 
         if (!this.initialOrientation.top) {
             throw new Error('Top vector is not defined.');
-            return;
         }
 
         const currentUp = new THREE.Vector3(0, 1, 0); // Default up vector in THREE.js
@@ -117,6 +117,14 @@ export class ThreeDObject implements Asset {
     }
 
     public clone(): Asset {
+        this.content = this.content.clone();
+        
+        this.content.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                child.material = child.material.clone();
+            }
+        });
+
         return new ThreeDObject(this.id, { x: this.x, y: this.y, z: this.z }, this.size, this.content.clone(), this.initialOrientation, this.url);
     }
 

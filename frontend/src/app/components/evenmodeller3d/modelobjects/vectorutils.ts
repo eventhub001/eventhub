@@ -14,8 +14,10 @@ export class ThreeCalculationUtils {
         const center = new THREE.Vector3();
         box3.getCenter(center);
         return [
-            // math rounding the values for the y because for some reason the library is not returning 0 but instead a small number close to 9
+            // math rounding the values for the y because for some reason the library is not returning 0 but instead a small number close to 9.
             // watch this behavior as it might cause some issues.
+            // Update 11/14/2024: The problem rises from the rotation, when we compute with either quaternion
+            // or simple trigonometry the rotation value will always be a long fraction with cannot make the full rotation properly since the fraction are finite.
             new THREE.Vector3(box3.min.x, roundSmallToZero(box3.min.y), box3.min.z),
             new THREE.Vector3(box3.max.x, roundSmallToZero(box3.min.y), box3.min.z),
             new THREE.Vector3(box3.max.x, roundSmallToZero(box3.min.y), box3.max.z),

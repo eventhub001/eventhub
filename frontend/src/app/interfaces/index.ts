@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
+import * as zim from 'zimjs';
 
 export interface ILoginResponse {
     accessToken: string;
@@ -219,6 +220,16 @@ export interface Asset {
 
 
     clone: () => Asset;
+}
+
+export interface AssetImg {
+  id: number;
+  blob: Blob;
+}
+
+export interface AssetBitmap {
+  id: number;
+  bitmap: zim.Bitmap;
 }
 
 export interface IEventForm {

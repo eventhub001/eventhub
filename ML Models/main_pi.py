@@ -48,15 +48,25 @@ def compute():
     if not token or not is_user_logged_in(token) or type(is_user_logged_in(token)) == dict:
         return jsonify({"status": "Unauthorized"}), 401
 
+    # Aquí cambiamos la tabla que queremos usar para entrenamiento. Esto para el entrenanimiento.
     event_form = select_table("event_form")
     event_form_question = select_table("event_form_question")
     training_data = flat_question_and_answers(event_form=event_form, event_form_question=event_form_question)
 
+    # Modelo de AI. Aqui se pasa la tabla que queremos usar para entrenar.
     model = CosineRecommendationSystem(training_data)
+    # Aqui se pasa la columna que usaremos para entrenar.
+    # tabla de proveedores:
+    # id de vendor | vendor details
+    #      1       | Descripcion: Vendor etc, etc, Es de Cartago, de categoria De bodas.
+    #      2       | Descripcion: Vendor etc, etc, Es de Cartago, de categoria De bodas. 
+
     model.tokenize("form answers")
 
+    # Se pasa el ejemplo que quiero que me de la recomendación.
     model.transform(request.json["new_user_answers"])
 
+    # Aqui haace pensar al modelo.
     model.cosine_similarity()
 
     result = model.get_top_n(5)

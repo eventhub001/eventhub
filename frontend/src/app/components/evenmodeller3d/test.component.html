@@ -2,22 +2,23 @@
     .container {
         display: flex;
         flex-direction: row;
+        justify-content: center;
+    }
+
+    .main-three {
+        align-self: center;
     }
 </style>
 <div class="container">
-    <canvas class="main-three" #mainThreeCv width="20px"></canvas>
+    <canvas class="main-three" #mainThreeCv (click)="selectAsset($event)" (mousedown)="mouseDown($event)"></canvas>
     <div *ngIf="isLoading">Loading...</div>
     <div *ngIf="!isLoading">
         <app-ui3d
         (AdditionAction)="addComponent($event)"
+        (MoveAction)="moveComponent($event)"
         [images]="images"
+        [arrowDirectionToProjection]="arrowToProjection$()"
         [modelMetadata]="modelMetadata"
         ></app-ui3d>
     </div>
-    <!-- @else {    
-        <app-ui3d
-        (AdditionAction)="addComponent($event)"
-        [modelMetadata]="modelMetadata"
-        ></app-ui3d>
-    } -->
 </div>
