@@ -35,8 +35,8 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-       // this.createCategories();
-        //this.createVendors();
+        this.createCategories();
+        this.createVendors();
 
     }
 
@@ -100,7 +100,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
             Vendor vendor = new Vendor();
             vendor.setName(vendorName);
-            vendor.setDescription("Proveedor de " + randomCategory.getCategoryName() + " en " + location);
+            vendor.setDescription(generateVendorDescription(randomCategory.getCategoryName()));
             vendor.setLocation(location);
             vendor.setRating(4.5);
             vendor.setPhone("123-456-" + generateRandomDigits(4));
@@ -111,6 +111,37 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
             createVendorServices(vendor, randomCategory.getCategoryName());
         }
+    }
+
+    private String generateVendorDescription(String categoryName) {
+        String[] serviceDetails = {
+                "ofrece servicios excepcionales en",
+                "es conocido por su excelente",
+                "proporciona soluciones innovadoras en",
+                "es un líder en el mercado de",
+                "se especializa en"
+        };
+        String[] additionalDetails = {
+                "con años de experiencia en el sector.",
+                "utilizando los mejores materiales y técnicas.",
+                "con un equipo altamente capacitado.",
+                "garantizando la satisfacción del cliente.",
+                "con precios competitivos y calidad superior."
+        };
+        String[] uniqueDetails = {
+                "Cada proyecto es tratado con la máxima dedicación y profesionalismo.",
+                "Nos adaptamos a las necesidades específicas de cada cliente.",
+                "Ofrecemos un servicio personalizado y de alta calidad.",
+                "Nuestro compromiso es superar las expectativas de nuestros clientes.",
+                "Trabajamos con pasión y dedicación en cada tarea."
+        };
+
+        Random random = new Random();
+        String detail = serviceDetails[random.nextInt(serviceDetails.length)];
+        String additional = additionalDetails[random.nextInt(additionalDetails.length)];
+        String unique = uniqueDetails[random.nextInt(uniqueDetails.length)];
+
+        return "Proveedor de " + categoryName + " que " + detail + " " + categoryName + " " + additional + " " + unique;
     }
 
     private void createVendorServices(Vendor vendor, String categoryName) {

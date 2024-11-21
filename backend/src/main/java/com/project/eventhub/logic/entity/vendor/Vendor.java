@@ -14,6 +14,7 @@ public class Vendor {
 
 
     private String name;
+
     private String description;
     private String location;
     private Double rating;

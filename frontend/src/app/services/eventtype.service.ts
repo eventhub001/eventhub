@@ -10,16 +10,20 @@ import { AlertService } from './alert.service';
 export class EventTypesService extends BaseService<IEventType> {
   protected override source: string = 'event-types';
   private eventTypeListSignal = signal<IEventType[]>([]);
+  
   get eventTypes$() {
     return this.eventTypeListSignal;
   }
-  public search: ISearch = { 
+  public search: ISearch = {
     page: 1,
     size: 5
   }
   public totalItems: any = [];
   private authService: AuthService = inject(AuthService);
   private alertService: AlertService = inject(AlertService);
+
+
+
 
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size }).subscribe({
