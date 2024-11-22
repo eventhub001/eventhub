@@ -176,7 +176,9 @@ export interface ILoginResponse {
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",
-    superAdmin = 'ROLE_SUPER_ADMIN'
+    superAdmin = 'ROLE_SUPER_ADMIN',
+    Supplier = 'ROLE_Supplier',
+    Producer = 'ROLE_Producer'
   }
 
 export interface AssetModel {

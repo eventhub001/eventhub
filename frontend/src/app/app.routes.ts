@@ -17,6 +17,7 @@ import { LandingPageComponent } from './pages/lading-pages/ladingpage.component'
 import { IndexComponent } from './pages/members/index/index.component';
 import { AboutComponent } from './pages/members/about/about.component';
 import { ContactComponent } from './pages/members/contact/contact.component';
+import { ProductosComponent } from './pages/members/productos/productos.component';
 
 export const routes: Routes = [
   { path: '',
@@ -42,7 +43,9 @@ export const routes: Routes = [
   { path: 'contact',
     component: ContactComponent,
   },
-
+  { path: 'productos',
+    component: ProductosComponent,
+  },
 
   {
     path: 'access-denied',
@@ -71,6 +74,8 @@ export const routes: Routes = [
         authorities: [
           IRoleType.user,
           IRoleType.superAdmin,
+          IRoleType.Producer,
+          IRoleType.Supplier
           ],
           name: 'Eventos',
           showInSidebar: true
@@ -83,7 +88,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Calendario',
           showInSidebar: true
@@ -96,7 +103,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Task',
           showInSidebar: false
@@ -109,7 +118,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Proveedores',
           showInSidebar: true
@@ -122,7 +133,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Detalles del Proveedor',
           showInSidebar: false
@@ -135,7 +148,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Chat',
           showInSidebar: false
@@ -150,7 +165,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ]
         }
       },

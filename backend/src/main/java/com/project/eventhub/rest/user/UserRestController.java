@@ -41,7 +41,7 @@ public class UserRestController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ResponseEntity<?> getAllUsers(
-            @RequestParam(defaultValue = "0") int page, // Número de página, por defecto 0
+            @RequestParam(defaultValue = "1") int page, // Número de página, por defecto 0
             @RequestParam(defaultValue = "10") int size, // Tamaño de página, por defecto 10
             HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page-1, size);
@@ -62,14 +62,8 @@ public class UserRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public User addUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-        if (optionalRole.isEmpty()) {
-            return null;
-        }
-        user.setRole(optionalRole.get());
         return UserRepository.save(user);
     }
 

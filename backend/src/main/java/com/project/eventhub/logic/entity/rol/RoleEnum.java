@@ -2,5 +2,10 @@ package com.project.eventhub.logic.entity.rol;
 
 public enum RoleEnum {
     SUPER_ADMIN,
-    USER
+    Supplier,
+    Producer
+
 }
+
+// SUPER_ADMIN,
+// USER

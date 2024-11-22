@@ -36,8 +36,7 @@ public class SecurityConfiguration {
                 .csrf().disable()
 
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/roles").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll().requestMatchers(HttpMethod.GET, "/roles").permitAll()
                         .requestMatchers("/chat/**").permitAll() //permite la conexion con el controlador websocket desde el localhost 4200
                         .anyRequest().authenticated()
                 )

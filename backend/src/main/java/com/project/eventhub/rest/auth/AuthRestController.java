@@ -26,7 +26,6 @@ import java.util.Optional;
 @RestController
 public class AuthRestController {
 
-
     @Autowired
     private UserRepository userRepository;
 
@@ -36,8 +35,6 @@ public class AuthRestController {
     @Autowired
     private RoleRepository roleRepository;
 
-
-
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
 
@@ -46,8 +43,9 @@ public class AuthRestController {
         this.authenticationService = authenticationService;
     }
 
-    @GetMapping("isauthenticated")
-    public ResponseEntity<Boolean> isAuthenticated(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) throws AuthenticationException {
+    /*@GetMapping("isauthenticated")
+    public ResponseEntity<Boolean> isAuthenticated(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization)
+            throws AuthenticationException {
         String token = authenticationService.getTokenFromAuthorationHeader(authorization);
         String userName = jwtService.extractUsername(token);
         Optional<User> user = userRepository.findByEmail(userName);
@@ -55,13 +53,12 @@ public class AuthRestController {
         if (user.isPresent()) {
             return new ResponseEntity<Boolean>(
                     true,
-                    HttpStatus.OK
-            );
-        }
-        else {
+                    HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.UNAUTHORIZED);
         }
     }
+*/
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody User user, HttpSession httpSession) {
@@ -75,11 +72,12 @@ public class AuthRestController {
 
         Optional<User> foundedUser = userRepository.findByEmail(user.getEmail());
 
-
         foundedUser.ifPresent(loginResponse::setAuthUser);
 
         return ResponseEntity.ok(loginResponse);
     }
+
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {

@@ -12,7 +12,6 @@ import java.util.Optional;
 public class RoleSeeder implements ApplicationListener<ContextRefreshedEvent> {
     private final RoleRepository roleRepository;
 
-
     public RoleSeeder(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
@@ -23,12 +22,11 @@ public class RoleSeeder implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     private void loadRoles() {
-        RoleEnum[] roleNames = new RoleEnum[] { RoleEnum.SUPER_ADMIN, RoleEnum.USER };
+        RoleEnum[] roleNames = new RoleEnum[] { RoleEnum.SUPER_ADMIN, RoleEnum.Supplier, RoleEnum.Producer };
         Map<RoleEnum, String> roleDescriptionMap = Map.of(
                 RoleEnum.SUPER_ADMIN, "Super Administrator role",
-                RoleEnum.USER, "User role"
-
-        );
+                RoleEnum.Supplier, "Proveedor role",
+                RoleEnum.Producer, "Productor role");
 
         Arrays.stream(roleNames).forEach((roleName) -> {
             Optional<Role> optionalRole = roleRepository.findByName(roleName);

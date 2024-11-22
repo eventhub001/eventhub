@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { BaseService } from './base-service';
 import { ISearch, IUser } from '../interfaces';
-import { Observable, catchError, tap, throwError } from 'rxjs';
+import { Observable, of, catchError, tap, throwError } from 'rxjs';
 import { AlertService } from './alert.service';
 
 @Injectable({
@@ -28,6 +28,11 @@ export class UserService extends BaseService<IUser> {
     return this.UserId;
   }
 
+  getUsers(): Observable<IUser[]> {
+
+    return of(this.userListSignal());
+
+  }
 
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size}).subscribe({
