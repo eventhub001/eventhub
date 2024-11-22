@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipo - EventHub</title>
-    <link rel="stylesheet" href="../about/about.component.scss">
+    <title>Proyectos - EventHub</title>
+    <link rel="stylesheet" href="./productos.component.scss">
 </head>
 <body>
     <header>
-        <div class="logo-container">
+      <div class="logo-container">
+        <a href="http://localhost:4200/index">
             <img src="../../../../assets/members/logo.png" alt="Logo EventHub" class="logo">
-        </div>
+        </a>
+    </div>
+
         <nav>
           <ul>
             <li><a onclick="window.location.href='http://localhost:4200/index'">Sobre Nosotros</a></li>
@@ -22,26 +25,14 @@
     </header>
 
     <main>
-      <section class="team">
-          <h1>Conoce a Nuestro Equipo</h1>
-          <div class="team-container">
-              <div class="member-card">
-                  <img src="../../../../assets/members/zac.jpg" alt="Zachary Hernández Valverde" class="profile-pic">
-                  <h3>Zachary Hernández Valverde</h3>
-                  <p>Coordinador General</p>
-                  <p><strong>Fortalezas:</strong> Organización, Paciencia, Resiliencia.</p>
-              </div>
-              <div class="member-card">
-                  <img src="../../../../assets/members/ale.jpg" alt="Alejandro Ortiz Trejos" class="profile-pic">
-                  <h3>Alejandro Ortiz Trejos</h3>
-                  <p>Calidad 1</p>
-                  <p><strong>Fortalezas:</strong> Disciplina, Orden, Creatividad.</p>
-              </div>
-              <div class="member-card">
-                  <img src="../../../../assets/members/joh.jpg" alt="Johnny Pérez Boza" class="profile-pic">
-                  <h3>Johnny Pérez Boza</h3>
-                  <p>Coordinador de soporte</p>
-                  <p><strong>Fortalezas:</strong> Empatía, Puntualidad, Perseverancia.</p>
+      <section class="projects">
+          <h1>Proyectos Realizados</h1>
+          <div class="projects-container">
+              <div class="project-card">
+                  <h5>Plataforma de Gestión de Eventos</h5>
+                  <p>Event Hub es una plataforma innovadora diseñada para gestionar y coordinar eventos de manera eficiente,
+                    conectando a organizadores y proveedores para crear experiencias inolvidables con facilidad y control.</p>
+                  <a onclick="window.location.href='http://localhost:4200'" class="project-button">Ver Proyecto</a>
               </div>
           </div>
       </section>
