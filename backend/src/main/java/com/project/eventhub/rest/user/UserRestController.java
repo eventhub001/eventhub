@@ -39,7 +39,7 @@ public class UserRestController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('Producer', 'Supplier', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllUsers(
             @RequestParam(defaultValue = "1") int page, // Número de página, por defecto 0
             @RequestParam(defaultValue = "10") int size, // Tamaño de página, por defecto 10

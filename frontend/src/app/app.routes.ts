@@ -18,6 +18,8 @@ import { IndexComponent } from './pages/members/index/index.component';
 import { AboutComponent } from './pages/members/about/about.component';
 import { ContactComponent } from './pages/members/contact/contact.component';
 import { ProductosComponent } from './pages/members/productos/productos.component';
+import { UsersComponent } from './pages/users/users.component';
+import { AdminRoleGuard } from './guards/admin-role.guard';
 
 export const routes: Routes = [
   { path: '',

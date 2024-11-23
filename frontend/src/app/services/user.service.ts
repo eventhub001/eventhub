@@ -8,6 +8,7 @@ import { AlertService } from './alert.service';
   providedIn: 'root',
 })
 export class UserService extends BaseService<IUser> {
+  private apiUrl = 'http://localhost:4200/app/users';
   protected override source: string = 'users';
   private userListSignal = signal<IUser[]>([]);
   get users$() {
@@ -15,7 +16,7 @@ export class UserService extends BaseService<IUser> {
   }
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 10
   }
   public totalItems: any = [];
   private alertService: AlertService = inject(AlertService);

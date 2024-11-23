@@ -25,7 +25,7 @@ public class ModelRestController {
     ModelRepository modelRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('Producer', 'Supplier', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAll(
             @RequestParam(defaultValue = "0") int page, // Número de página, por defecto 0
             @RequestParam(defaultValue = "10") int size, // Tamaño de página, por defecto 10

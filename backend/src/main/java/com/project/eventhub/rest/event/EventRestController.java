@@ -56,7 +56,7 @@ public class EventRestController {
     @Autowired
     private UserRepository userRepository;
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('Producer', 'Supplier', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllEvents(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
