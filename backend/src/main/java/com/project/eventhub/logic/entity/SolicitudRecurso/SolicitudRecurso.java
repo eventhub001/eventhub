@@ -2,6 +2,7 @@ package com.project.eventhub.logic.entity.SolicitudRecurso;
 
 import com.project.eventhub.logic.entity.VendorService.Vendor_service;
 import com.project.eventhub.logic.entity.event.Event;
+import com.project.eventhub.logic.entity.status.Status;
 import com.project.eventhub.logic.entity.user.User;
 import jakarta.persistence.*;
 
@@ -20,14 +21,15 @@ public class SolicitudRecurso {
     @ManyToOne
     private Event event; // Relación con Recurso solicitado
 
-    private String estado; // "Pendiente", "Aprobada", "Rechazada", "Cancelada"
+    @ManyToOne
+    private Status status; // Relación con Status
+    private String estado;
     private String fechaSolicitud;
     private String fechaEvento;
     private String horaEvento;
     private Integer cantidad_solicitada;
 
     // Getters and setters
-
 
     public Long getId() {
         return id;
@@ -59,6 +61,14 @@ public class SolicitudRecurso {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getEstado() {

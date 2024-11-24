@@ -3,7 +3,7 @@ import { UserService } from './../../../../services/user.service';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { SolicituRecursoService } from '../../../../services/SolicituRecurso.Service';
 import { IVendor, IVendorService, SolicituRecurso } from '../../../../interfaces';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VendorService } from '../../../../services/vendor.service';
 import { CommonModule } from '@angular/common';
 
@@ -23,6 +23,7 @@ export class SolicitudFormComponent {
   public VendorServiceService: VendorServiceService = inject(VendorServiceService);
   public UserService: UserService = inject(UserService);
   service: VendorService = inject(VendorService)
+  fb: any;
 
 
 
@@ -38,6 +39,7 @@ export class SolicitudFormComponent {
   }
 
   @Input() servicios: IVendorService[] = [];
+  @Input() eventos: any[] = [];
   vendor: IVendor | undefined;
   @Input() solicitudForm!: FormGroup;
   @Output() callSaveMethod: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
@@ -76,6 +78,13 @@ export class SolicitudFormComponent {
       this.callSaveMethod.emit(solicitud);
     }
   }
+
+  ngOnInit(): void {
+    this.solicitudForm = this.fb.group({
+      vendor_service_id: ['', Validators.required]
+    });
+  }
+
   ngOnChanges() {
     // blabla solicitudRecursos$()
     }

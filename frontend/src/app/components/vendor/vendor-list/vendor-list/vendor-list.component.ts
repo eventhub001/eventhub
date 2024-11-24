@@ -194,6 +194,5 @@ export class VendorListComponent {
 
     this.cotizacionService.update(cotizacion);
     this.modalService.closeAll();
-    console.log('Cotización actualizada exitosamente');
   }
 }

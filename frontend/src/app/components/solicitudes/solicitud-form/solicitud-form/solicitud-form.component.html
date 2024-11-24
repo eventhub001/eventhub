@@ -4,7 +4,21 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="fechaEvento">Fecha de Evento*</label>
+    <label class="mb-1" for="vendor_service_id">Eventos</label>
+    <select id="vendor_service_id" formControlName="vendor_service_id" class="form-select">
+      <ng-container *ngFor="let evento of eventos">
+        <ng-container *ngIf="evento.available">
+          <option [value]="evento.id">{{evento.name}}</option>
+        </ng-container>
+      </ng-container>
+    </select>
+    <div *ngIf="solicitudForm.controls['vendor_service_id'].invalid && (solicitudForm.controls['vendor_service_id'].dirty || solicitudForm.controls['vendor_service_id'].touched)">
+      <p class="text-danger my-1">Recurso es requerido</p>
+    </div>
+  </div>
+
+  <div class="mb-2">
+    <label class="mb-1" for="fechaEvento">Fecha de Evento</label>
     <input id="fechaEvento" formControlName="fechaEvento" type="date" class="form-control">
     @if (solicitudForm.controls['fechaEvento'].invalid && (solicitudForm.controls['fechaEvento'].dirty || solicitudForm.controls['fechaEvento'].touched)) {
       <p class="text-danger my-1">Fecha de Evento es requerida</p>
@@ -12,7 +26,7 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="horaEvento">Hora de Evento*</label>
+    <label class="mb-1" for="horaEvento">Hora de Evento</label>
     <input id="horaEvento" formControlName="horaEvento" type="time" class="form-control">
     @if (solicitudForm.controls['horaEvento'].invalid && (solicitudForm.controls['horaEvento'].dirty || solicitudForm.controls['horaEvento'].touched)) {
       <p class="text-danger my-1">Hora de Evento es requerida</p>
@@ -20,7 +34,7 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="fechaSolicitud">Fecha de Solicitud*</label>
+    <label class="mb-1" for="fechaSolicitud">Fecha de Solicitud</label>
     <input id="fechaSolicitud" formControlName="fechaSolicitud" type="date" class="form-control">
     @if (solicitudForm.controls['fechaSolicitud'].invalid && (solicitudForm.controls['fechaSolicitud'].dirty || solicitudForm.controls['fechaSolicitud'].touched)) {
       <p class="text-danger my-1">Fecha de Solicitud es requerida</p>
@@ -28,7 +42,7 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="cantidad_solicitada">Cantidad Solicitada*</label>
+    <label class="mb-1" for="cantidad_solicitada">Cantidad Solicitada</label>
     <input min="1" id="cantidad_solicitada" formControlName="cantidad_solicitada" type="number" class="form-control">
     @if (solicitudForm.controls['cantidad_solicitada'].invalid && (solicitudForm.controls['cantidad_solicitada'].dirty || solicitudForm.controls['cantidad_solicitada'].touched)) {
       <p class="text-danger my-1">Cantidad es requerida</p>
@@ -36,7 +50,7 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="vendor_service_id">Recursos*</label>
+    <label class="mb-1" for="vendor_service_id">Recursos</label>
     <select id="vendor_service_id" formControlName="vendor_service_id" class="form-select">
       <ng-container *ngFor="let item of servicios">
         <ng-container *ngIf="item.available">
@@ -50,7 +64,7 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="estado">Status*</label>
+    <label class="mb-1" for="estado">Status</label>
     <select id="estado" formControlName="estado" class="form-select">
       @for (item of estado; track item.id) {
         <option [value]="item.id">{{ item.nombre }}</option>

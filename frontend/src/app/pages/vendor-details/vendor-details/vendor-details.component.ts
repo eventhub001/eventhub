@@ -179,6 +179,5 @@ export class VendorDetailsComponent {
 
     this.cotizacionService.update(cotizacion);
     this.modalService.closeAll();
-    console.log('Cotización actualizada exitosamente');
   }
 }

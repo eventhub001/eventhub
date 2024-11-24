@@ -10,6 +10,7 @@ import { AlertService } from './alert.service';
 export class EventsService extends BaseService<IEvent> {
   protected override source: string = 'events';
   private eventListSignal = signal<IEvent[]>([]);
+  events: IEvent[] = [];
   get events$() {
     return this.eventListSignal;
   }
@@ -111,5 +112,13 @@ export class EventsService extends BaseService<IEvent> {
         console.error('error', err);
       }
     })
+  }
+
+  ngOnInit(): void {
+    this.getEvents();
+  }
+
+  getEvents(): void {
+    this.getAll();
   }
 }
