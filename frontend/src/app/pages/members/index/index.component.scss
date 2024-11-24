@@ -1,0 +1,104 @@
+body {
+    font-family: 'Baron', sans-serif;
+    background: #121212;
+    color: #EFEFEF;
+    margin: 0;
+    padding: 0;
+    transition: background 0.5s;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #2A2A2A;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li a {
+    color: #F22786;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px;
+}
+
+nav ul li a:hover {
+    color: #F280AA;
+}
+
+.intro {
+    text-align: center;
+    padding: 80px 20px;
+    background: #1A1A1D;
+}
+
+.intro h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    background: #F22786;
+    color: #EFEFEF;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.cta-button:hover {
+    background: #D9B448;
+}
+
+.features {
+    padding: 50px 20px;
+    background: #333;
+    text-align: center;
+}
+
+.feature-cards {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-card {
+    background: #2A2A2A;
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+}
+
+footer {
+    background: #2A2A2A;
+    color: #EFEFEF;
+    padding: 20px;
+    text-align: center;
+}
+
+footer a {
+    color: #F22786;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #F280AA;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 200px; 
+    height: auto;
+}

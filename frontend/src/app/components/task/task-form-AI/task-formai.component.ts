@@ -46,24 +46,24 @@ export class TaskFormAIComponent {
         'Zona juegos', 'Zona VIP'
     ],
       2: [
-        '5-20', '10-30', '20-70', 'Más de 70'
+        '5-10', '10-50', '50-100', 'Más de 100'
       ],
       3: [
-        "Promocionar artistas", "generar ingresos", "fomentar cultura",
-        "Celebrar el amor", "crear ambiente romántico", "experiencia memorable",
-        "Reconocer logros", "fortalecer lazos", "celebrar éxitos",
-        "Recaudar fondos", "reconocer a destacados", "fortalecer imagen",
-        "Experiencia divertida", "ambiente temático", "interacción social",
-        "Reconocer logros", "inspirar", "aumentar visibilidad",
-        "Conectar profesionales", "networking", "compartir conocimientos",
-        "Lanzar producto", "aumentar ventas", "crear comunidad",
-        "Fomentar participación ciudadana", "concienciar", "promover estilo de vida",
-        "Celebrar diversidad", "impacto positivo", "conciencia ambiental",
-        "Celebrar tradiciones", "expresión artística", "conmemorar historia",
-        "Promover igualdad", "educación", "talento joven",
-        "Crear espacio seguro", "fomentar colaboración", "celebrar vida",
-        "Crear recuerdos", "inspirar futuras generaciones", "dejar legado",
-        "Celebrar éxito", "crear ambiente de alegría"
+        "Promocionar artistas", "Generar ingresos", "Fomentar cultura",
+        "Celebrar el amor", "Crear ambiente romántico", "Experiencia memorable",
+        "Reconocer logros", "Fortalecer lazos", "Celebrar éxitos",
+        "Recaudar fondos", "Reconocer a destacados", "Fortalecer imagen",
+        "Experiencia divertida", "Ambiente temático", "Interacción social",
+        "Reconocer logros", "Inspirar", "Aumentar visibilidad",
+        "Conectar profesionales", "Networking", "Compartir conocimientos",
+        "Lanzar producto", "Aumentar ventas", "Crear comunidad",
+        "Fomentar participación ciudadana", "Concienciar", "Promover estilo de vida",
+        "Celebrar diversidad", "Impacto positivo", "Conciencia ambiental",
+        "Celebrar tradiciones", "Expresión artística", "Conmemorar historia",
+        "Promover igualdad", "Educación", "Talento joven",
+        "Crear espacio seguro", "Fomentar colaboración", "Celebrar vida",
+        "Crear recuerdos", "Inspirar futuras generaciones", "Dejar legado",
+        "Celebrar éxito", "Crear ambiente de alegría"
     ],
       4:  [
         "Altar simbólico", "Arreglo floral", "Área de descanso", "Área de micrófono abierto", "Área para food trucks",
@@ -78,7 +78,7 @@ export class TaskFormAIComponent {
         "Zona lounge", "Zona maquillaje", "Zona para parrilla"
       ],
       5: [
-        "Sin limite", "Medio presupuesto", "Presupuesto pequeño"
+        "Bastante presupuesto", "Medio presupuesto", "Presupuesto pequeño"
       ]
     };
 

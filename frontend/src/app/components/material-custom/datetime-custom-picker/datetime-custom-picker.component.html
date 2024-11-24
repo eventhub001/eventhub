@@ -12,9 +12,15 @@
   <div class="mb-2">
       <label class="mb-1" for="startTime" >Inicio del evento*</label>
       <input id="startTime" formControlName="startTime" type="time" class="form-control" value="12:00" />
+      <div *ngIf="dateTimeForm.controls['startTime'].invalid && (dateTimeForm.controls['startTime'].dirty || dateTimeForm.controls['startTime'].touched)">
+        <p class="text-danger my-1">La fecha de comienzo es requerida</p>
+      </div>
   </div>
   <div class="mb-2">
     <label class="mb-1" for="endTime">Finalización del evento*</label>
     <input id="startTime" formControlName="endTime" type="time" class="form-control" >
+    <div *ngIf="dateTimeForm.controls['endTime'].invalid && (dateTimeForm.controls['endTime'].dirty || dateTimeForm.controls['endTime'].touched)">
+      <p class="text-danger my-1">La fecha de finalización es requerida</p>
+    </div>
   </div>
 </form>

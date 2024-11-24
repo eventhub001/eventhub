@@ -83,32 +83,4 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
             userRepository.save(regularUser);
         }
     }
-
-
-
-
-//    private void createProducerUsers() {
-//        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-//        if (optionalRole.isEmpty()) {
-//            return;
-//        }
-//
-//        for (int i = 1; i <= 10; i++) {
-//            String email = "producerUser" + i + "@gmail.com";
-//            Optional<User> optionalUser = userRepository.findByEmail(email);
-//
-//            if (optionalUser.isPresent()) {
-//                continue;
-//            }
-//
-//            User regularUser = new User();
-//            regularUser.setName("Producer" + i);
-//            regularUser.setLastname("User" + i);
-//            regularUser.setEmail(email);
-//            regularUser.setPassword(passwordEncoder.encode("produceruser123"));
-//            regularUser.setRole(optionalRole.get());
-//
-//            userRepository.save(regularUser);
-//        }
-//    }
 }

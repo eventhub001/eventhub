@@ -23,13 +23,14 @@ import { EventTaskTemplateService } from '../../services/eventtasktemplate.servi
 import { TaskService } from '../../services/task.service';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { PaginationComponent } from "../pagination/pagination.component";
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-eventcards',
   standalone: true,
   imports: [MatCardModule, MatButtonModule, DatePipe, CommonModule, EventcarddetailsComponent,
     FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent, MatPaginatorModule,
-    ModalComponent, PaginationComponent, PaginationComponent],
+    ModalComponent, PaginationComponent, PaginationComponent, MatButtonModule, MatIcon],
   templateUrl: './eventcards.component.html',
   styleUrl: './eventcards.component.scss'
 })
@@ -195,6 +196,8 @@ export class EventcardsComponent {
             taskTemplate: taskTemplateToSave,
             event: {eventId: eventSaved.eventId}
           }
+
+          console.log("saving event task template using frequency analysis", eventTaskTemplate);
 
           this.eventTaskTemplateService.save(eventTaskTemplate);
 

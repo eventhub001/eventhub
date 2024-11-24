@@ -41,8 +41,8 @@
               </div>
           </mat-card-header>
           <div class="right-toolbar">
-            <img src="../../../assets/img/edit.png" class="clickable icon-layout" (click)="editMode(event)" />
-            <img src="../../../assets/img/trash.png" class="clickable icon-layout" (click)="deleteMode(event)" />
+            <button mat-icon-button color="primary" class="clickable icon-layout" (click)="editMode(event)"><mat-icon>edit</mat-icon></button>
+            <button mat-icon-button color="warn" (click)="deleteMode(event)"><mat-icon>delete</mat-icon></button>
           </div>
       </div>
       <div [hidden]="editEventId !== event.eventId" class="toolbar-top-right">
@@ -58,7 +58,7 @@
       </div>
       <mat-card-actions>
         <mat-card-actions>
-        <button mat-button color="primary" (click)="event.eventId && navigateToTasks(event.eventId)">Gestionar tareas</button>
+        <button mat-button (click)="event.eventId && navigateToTasks(event.eventId)">Gestionar tareas</button>
         </mat-card-actions>
         <button mat-button color="accent" >Buscar recursos</button>
       </mat-card-actions>
