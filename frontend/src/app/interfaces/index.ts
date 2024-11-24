@@ -230,6 +230,7 @@ export interface ICotizacion {
 }
 
 export interface SolicituRecurso {
+  vendor_service?: IVendorService;
   id?: number;
   vendor_service_id?: IVendorService;
   user_id?: IUser;

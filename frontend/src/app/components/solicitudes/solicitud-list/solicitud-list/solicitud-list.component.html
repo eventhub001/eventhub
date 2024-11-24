@@ -20,7 +20,7 @@
       <td>{{item.fechaSolicitud}}</td>
       <td>{{item.cantidad_solicitada}}</td>
       <td>{{item.estado}}</td>
-      <td>{{item.vendor_service_id?.service_name}}</td>
+      <td>{{item.vendor_service?.service_name}}</td>
       <td>
         <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2" type="button"><i class="fas fa-pen"></i></button>
         <button (click)="callDeleteAction.emit(item)" class="btn btn-danger" type="button"><i class="fas fa-trash"></i></button>

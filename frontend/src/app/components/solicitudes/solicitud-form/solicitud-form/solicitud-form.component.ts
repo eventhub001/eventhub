@@ -42,6 +42,7 @@ export class SolicitudFormComponent {
   @Input() solicitudForm!: FormGroup;
   @Output() callSaveMethod: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
   @Output() callUpdateMethod: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
+  // debe llegar como parámetro es decir como un Input la lista de evento y debe existir un select en html que liste los eventos
 
   // Lista de status
   estado = [
@@ -57,9 +58,9 @@ export class SolicitudFormComponent {
       fechaSolicitud: this.solicitudForm.controls['fechaSolicitud'].value,
       cantidad_solicitada: this.solicitudForm.controls['cantidad_solicitada'].value,
       estado: this.solicitudForm.controls['estado'].value,
-      vendor_service_id: { id: IdServicio },
+      vendor_service: { id: IdServicio },
       horaEvento: this.solicitudForm.controls['horaEvento'].value,
-
+      // event: { id: 1 },
     }
 
 

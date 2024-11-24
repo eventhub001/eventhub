@@ -53,6 +53,7 @@ export class SolicitudesComponent {
   }
 
   saveRecurso(recurso: SolicituRecurso) {
+    // antes de guardar la solicitud, se debe asignar el id del usuario que está logueado
     this.solicituRecursoService.save(recurso);
     this.modalService.closeAll();
   }
