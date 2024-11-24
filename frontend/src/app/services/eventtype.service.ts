@@ -10,13 +10,13 @@ import { AlertService } from './alert.service';
 export class EventTypesService extends BaseService<IEventType> {
   protected override source: string = 'event-types';
   private eventTypeListSignal = signal<IEventType[]>([]);
-  
+
   get eventTypes$() {
     return this.eventTypeListSignal;
   }
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 100
   }
   public totalItems: any = [];
   private authService: AuthService = inject(AuthService);
@@ -77,4 +77,14 @@ export class EventTypesService extends BaseService<IEventType> {
       }
     });
   }
+
+
+
+
+
+  updateEventTypes(eventTypes: IEventType[]) {
+    this.eventTypeListSignal.set(eventTypes);
+  }
+
+  
 }

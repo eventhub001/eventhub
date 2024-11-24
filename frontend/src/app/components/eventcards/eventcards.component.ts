@@ -118,7 +118,7 @@ export class EventcardsComponent {
         this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
         this.eventService.getAll();
         this.generateTaskAI(response, event.formresults);
-        
+
       },
       error: (err: any) => {
         this.alertService.displayAlert('error', 'An error occurred adding the event', 'center', 'top', ['error-snackbar']);
@@ -179,7 +179,7 @@ export class EventcardsComponent {
 
   generateTaskAI(eventSaved: IEvent, eventanswer: IEventForm[]) {
     console.log("saving the form answers");
-    
+
     const answer_collection: string = formatForCosineModelCompute(eventanswer);
 
 
@@ -190,7 +190,7 @@ export class EventcardsComponent {
         task_list.forEach((task: any) => {
           const tasksTemplates = this.taskTemplateService.taskTemplates$();
           const taskTemplateToSave: ITaskTemplate = tasksTemplates.find(t => t.taskTemplateId === Number(task["task_template_id"]))!;
-          console.log("tasks loading...")  
+          console.log("tasks loading...")
           const eventTaskTemplate: IEventTaskTemplate = {
             taskTemplate: taskTemplateToSave,
             event: {eventId: eventSaved.eventId}

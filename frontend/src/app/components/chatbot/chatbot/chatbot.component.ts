@@ -1,9 +1,11 @@
+import { VendorcategoryService } from './../../../services/vendorcategory.service';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import { AuthService } from '../../../services/auth.service';
 import { EventsService } from '../../../services/event.service';
-import { IEvent, IEventType, ITask } from '../../../interfaces';
+import { IEvent, IEventType, ITask, IVendor, IVendorService } from '../../../interfaces';
 import { TaskService } from '../../../services/task.service';
 import { EventTypesService } from '../../../services/eventtype.service';
+import { MachineLearningService } from '../../../services/machinelearning.service';
 
 @Component({
   selector: 'app-chatbot',
@@ -20,10 +22,24 @@ export class ChatbotComponent{
   public taskService: TaskService = inject(TaskService);
   public eventTypesService: EventTypesService = inject(EventTypesService);
   private eventData: Partial<IEvent> = {};
+  public vendorService!: IVendorService;
   private isCreatingEvent: boolean = false;
+  isVendorQuestionFlow: boolean = false;
+  machineLearningService: MachineLearningService = new MachineLearningService();
+  userResponses: { eventLocation?: string; eventServices?: string } = {};
 
   constructor() {
   }
+
+
+
+
+
+
+
+
+
+
 
   ngAfterViewInit() {
     // window.addEventListener('dfMessengerLoaded', (response: any) => {
@@ -41,12 +57,21 @@ export class ChatbotComponent{
     const payload = events.map(event => ({
       type: "info",
       title: event.eventName,
-      subtitle: ` Descripción: ${event.eventDescription} \nFecha: ${event.eventStartDate ? new Date(event.eventStartDate).toLocaleDateString() : 'Fecha no disponible'} \nInicio del Evento: ${event.eventStartDate ? new Date(event.eventStartDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Hora no disponible'} \nFinalizacion del Evento: ${event.eventEndDate ? new Date(event.eventEndDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Hora no disponible'}`,
-      actionLink: `http://localhost:4200/app/events`
+      subtitle: `Descripción: ${event.eventDescription} \nFecha: ${event.eventStartDate ? new Date(event.eventStartDate).toLocaleDateString() : 'Fecha no disponible'} \nInicio del Evento: ${event.eventStartDate ? new Date(event.eventStartDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Hora no disponible'} \nFinalización del Evento: ${event.eventEndDate ? new Date(event.eventEndDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Hora no disponible'}`,
+      actionLink: `#event-link` // Usar un identificador genérico
     }));
     dfMessenger.renderCustomCard(payload);
-  }
 
+    // Agregar manejador de eventos para redirigir en la misma página
+    setTimeout(() => {
+      const eventLinks = document.querySelectorAll(`#event-link`);
+      eventLinks.forEach(eventLink => {
+        eventLink.addEventListener('click', () => {
+          window.location.href = `http://localhost:4200/app/events`;
+        });
+      });
+    }, 1000); // Esperar un momento para asegurarse de que los elementos estén en el DOM
+  }
 
 isEventListRequest(userMessage: string): boolean {
   return userMessage.toLowerCase().includes('lista de eventos') ||
@@ -157,8 +182,11 @@ handleUserResponse(userMessage: string, botResponse: string, parameters: any) {
     this.listTasks(userMessage);
   } else if (parameters && parameters.cantidad_personas) {
     this.handleAttendees(parameters.cantidad_personas);
+  } else if (this.isVendorQuestionFlow) {
+    this.handleVendorQuestions(userMessage);
+  } else if (this.isVendorRequest(userMessage)) { // Nueva condición para iniciar el flujo de preguntas sobre vendors
+    this.startVendorQuestionFlow();
   }
-
 }
 
 manualUsuario(userMessage: string): boolean {
@@ -186,8 +214,9 @@ isEventCreationRequest(userMessage: string): boolean {
 startEventCreationFlow() {
   const dfMessenger = document.querySelector('df-messenger') as any;
   dfMessenger.renderCustomText('Por favor, proporciona el nombre del evento.');
-  this.eventData = {}; // Reset event data
-  this.isCreatingEvent = true; // Set the flag to indicate that we are in the event creation flow
+  this.eventData = {};
+  this.isCreatingEvent = true;
+  this.isVendorQuestionFlow = true;
 }
 
 handleEventCreationResponse(userMessage: string) {
@@ -251,8 +280,6 @@ convertToISODate(dateString: string, format: string): string {
   return `${year}-${month}-${day}`;
 }
 
-
-
 convertTo24HourFormat(time: string): string {
   const [timePart, modifier] = time.split(' ');
   let [hours, minutes] = timePart.split(':');
@@ -269,8 +296,8 @@ convertTo24HourFormat(time: string): string {
 }
 
 getEventTypeByName(eventTypeName: string): IEventType | undefined {
-  const eventTypes = this.eventTypesService.eventTypes$;
-  return eventTypes().find(eventType => eventType.eventTypeName?.toLowerCase() === eventTypeName.toLowerCase());
+  const eventTypes = this.eventTypesService.eventTypes$();
+  return eventTypes.find(eventType => eventType.eventTypeName?.toLowerCase() === eventTypeName.toLowerCase());
 }
 
 saveEvent() {
@@ -295,26 +322,101 @@ saveEvent() {
 
 
 
+handleVendorQuestions(userMessage: string) {
+  const dfMessenger = document.querySelector('df-messenger') as any;
+
+  if (this.isVendorRequest(userMessage)) {
+    this.resetVendorQuestionFlow();
+    this.startVendorQuestionFlow();
+    return;
+  }
+
+  if (!this.eventData.eventName) {
+    this.eventData.eventName = userMessage;
+    dfMessenger.renderCustomText('¿Qué tipo de evento desea realizar?');
+  } else if (!this.eventData.eventType) {
+    const eventType = this.getEventTypeByName(userMessage);
+    if (eventType) {
+      this.eventData.eventType = eventType;
+      dfMessenger.renderCustomText('Por favor, proporciona la ubicación del evento.');
+    } else {
+      dfMessenger.renderCustomText('Tipo de evento no válido. Por favor, proporciona un tipo de evento válido.');
+    }
+  } else if (!this.userResponses.eventLocation) {
+    this.userResponses.eventLocation = userMessage;
+    dfMessenger.renderCustomText('¿Qué servicios necesitas para el evento? (e.g., catering, música, decoración)');
+  } else if (!this.userResponses.eventServices) {
+    this.userResponses.eventServices = userMessage;
+    this.showVendorSuggestions();
+  }
+}
+
+showVendorSuggestions() {
+  const dfMessenger = document.querySelector('df-messenger') as any;
+
+  // Combina eventData y userResponses para enviar al método de sugerencias
+  const vendorAnswers = {
+    ...this.eventData,
+    ...this.userResponses
+  };
+
+  // Llama al servicio para obtener las sugerencias de vendors
+  this.machineLearningService.computeVendorData({ vendor_answers: JSON.stringify(vendorAnswers) }).subscribe(response => {
+    console.log('Response from server:', response); // Log the response to inspect its structure
+    const suggestions = response.data.cosine_similarity;
+
+    // Filtrar y organizar la información para evitar duplicados
+    const uniqueVendors = new Map();
+    suggestions.forEach((vendor: any) => {
+      const vendorInfo = vendor.vendor_info;
+      const vendorName = vendorInfo.match(/Vendor: ([^()]+)/)?.[1] || 'Nombre no especificado';
+      const vendorCategory = vendorInfo.match(/Category: ([^()]+)/)?.[1] || 'No especificado';
+      const vendorLocation = vendorInfo.match(/Location: ([^,]+)/)?.[1] || 'No especificado';
+      const vendorAvailable = vendorInfo.match(/Available: b'\\x01'/) ? 'Disponible' : 'No disponible';
+
+      if (!uniqueVendors.has(vendorName)) {
+        uniqueVendors.set(vendorName, {
+          type: "info",
+          title: vendorName,
+          subtitle: `Categoría: ${vendorCategory} \nServicios: ${vendor.service_name || 'No especificado'} \nUbicación: ${vendorLocation} \nDisponibilidad: ${vendorAvailable}`,
+          actionLink: `http://localhost:4200/app/vendors`
+        });
+      }
+    });
+
+    const payload = Array.from(uniqueVendors.values());
+    dfMessenger.renderCustomCard(payload);
+  });
+}
+
+isVendorRequest(userMessage: string): boolean {
+  return userMessage.toLowerCase().includes('quiero hacer un evento');
+}
+
+startVendorQuestionFlow() {
+  const dfMessenger = document.querySelector('df-messenger') as any;
+  this.isVendorQuestionFlow = true;
+  dfMessenger.renderCustomText('¿Qué nombre le gustaría dar al evento?');
+}
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+resetVendorQuestionFlow() {
+  this.eventData = {
+    eventName: '',
+    eventDescription: '',
+    eventType: undefined,
+    eventStartDate: '',
+    eventEndDate: ''
+  };
+  this.userResponses = {
+    eventLocation: '',
+    eventServices: ''
+  };
+}
 
 
 

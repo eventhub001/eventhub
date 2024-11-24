@@ -19,9 +19,6 @@ public class VendorCategory {
     private String categoryName;
     private String description;
 
-    @ElementCollection
-    @Column(name = "keyWords")
-    private List<String> keyWords;
 
     public VendorCategory() {}
 
@@ -50,11 +47,5 @@ public class VendorCategory {
     }
 
 
-    public List<String> getKeyWords() {
-        return keyWords;
-    }
 
-    public void setKeyWords(List<String> keyWords) {
-        this.keyWords = keyWords;
-    }
 }
