@@ -86,5 +86,5 @@ export class EventTypesService extends BaseService<IEventType> {
     this.eventTypeListSignal.set(eventTypes);
   }
 
-  
+
 }

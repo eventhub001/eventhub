@@ -29,6 +29,8 @@ export class ChatbotComponent{
   userResponses: { eventLocation?: string; eventServices?: string } = {};
 
   constructor() {
+    this.eventTypesService.getAll();
+
   }
 
 
@@ -39,11 +41,10 @@ export class ChatbotComponent{
 
 
 
-
-
   ngAfterViewInit() {
-    // window.addEventListener('dfMessengerLoaded', (response: any) => {
-    // });
+    window.addEventListener('dfMessengerLoaded', (response: any) => {
+      this.sendWelcomeMessage();
+    });
 
     // Escucha el evento df-response-received para capturar la respuesta del usuario
     window.addEventListener('df-response-received', (event: any) => {
@@ -184,11 +185,111 @@ handleUserResponse(userMessage: string, botResponse: string, parameters: any) {
     this.handleAttendees(parameters.cantidad_personas);
   } else if (this.isVendorQuestionFlow) {
     this.handleVendorQuestions(userMessage);
-  } else if (this.isVendorRequest(userMessage)) { // Nueva condición para iniciar el flujo de preguntas sobre vendors
+  } else if (this.isVendorRequest(userMessage)) {
     this.startVendorQuestionFlow();
+  } else if (this.isEventDetails(userMessage)) {
+    console.log('Event details detected');
+    this.createEventFromMessage(userMessage);
+  } else {
+    console.log('No matching condition found');
   }
 }
 
+
+sendWelcomeMessage() {
+  const dfMessenger = document.querySelector('df-messenger') as any;
+  const welcomeMessage = `Bienvenido a Eventhub! Si deseas crear un evento puedes brindarme los detalles y te lo creare automaticamente aqui tienes un ejemplo:
+
+  Cumpleaños de Jorge, el dia 11-28-2024 a las 3:00 PM
+  \nBoda de Carlos y Maria, el dia 12-15-2024 a las 12:00 PM`;
+  dfMessenger.renderCustomText(welcomeMessage);
+}
+
+isEventDetails(message: string): boolean {
+  console.log('Checking if message contains event details');
+  const eventDetailsRegex = /(.+), el dia (\d{2}-\d{2}-\d{4}) a las (.+)/;
+  const result = eventDetailsRegex.test(message);
+  console.log('Event details regex test result:', result);
+  return result;
+}
+
+createEventFromMessage(message: string) {
+  console.log('Creating event from message:', message);
+  const dfMessenger = document.querySelector('df-messenger') as any;
+  const eventDetailsRegex = /(.+), el dia (\d{2}-\d{2}-\d{4}) a las (.+)/;
+  const match = message.match(eventDetailsRegex);
+
+  if (match) {
+    const [_, eventName, eventDate, startTime] = match;
+
+    console.log('Event details:', { eventName, eventDate, startTime });
+
+    const eventType = this.getEventTypeByName(eventName.split(' ')[0].trim()); // Asumiendo que el tipo de evento es la primera palabra del nombre del evento
+    if (!eventType) {
+      dfMessenger.renderCustomText('Tipo de evento no válido. Por favor, proporciona un tipo de evento válido.');
+      return;
+    }
+
+    if (this.isValidDate(eventDate, 'MM-DD-YYYY') && this.isValidTime(startTime)) {
+      console.log('Date and time are valid');
+      this.eventData = {
+        eventType,
+        eventName,
+        eventStartDate: this.convertToISODate(eventDate, 'MM-DD-YYYY') + 'T' + this.convertTo24HourFormat(startTime),
+        eventEndDate: this.convertToISODate(eventDate, 'MM-DD-YYYY') + 'T00:00:00', // Hora final por defecto a las 12:00 AM
+        eventDescription: undefined // Asignar undefined si no hay descripción
+      };
+
+      this.saveEvent();
+      dfMessenger.renderCustomText('Genial! Te creare el evento de inmediato. Por favor espera mientras genero el evento.');
+
+      setTimeout(() => {
+        const infoResponse = [
+          {
+            "type": "info",
+            "title": "Tu evento ha sido creado!",
+            "subtitle": `Nombre del Evento: ${eventName}\nFecha: ${eventDate}\nHora Inicial: ${startTime}\nHora Final: 12:00 AM`,
+            "image": {
+              "src": {
+                "rawUrl": "https://example.com/images/logo.png" // Puedes cambiar esta URL a una imagen relevante
+              }
+            },
+            "actionLink": "http://localhost:4200/app/events" // Puedes cambiar este enlace a uno relevante
+          }
+        ];
+        console.log('Rendering custom card with infoResponse:', infoResponse);
+        if (dfMessenger && typeof dfMessenger.renderCustomCard === 'function') {
+          dfMessenger.renderCustomCard(infoResponse);
+        } else {
+          console.error('dfMessenger.renderCustomCard is not a function or dfMessenger is not found');
+        }
+      }, 2000); // 2 segundos de retraso
+
+      setTimeout(() => {
+        dfMessenger.renderCustomText('Puedes acceder a tu lista de eventos dándole click sobre la tarjeta.');
+      }, 4000); // 4 segundos de retraso
+
+      setTimeout(() => {
+        dfMessenger.renderCustomText('Si deseas te puedo sugerir proveedores para tu evento. \nAqui tienes algunos ejemplos de servicios solo escribe los que necesitas y te dare mis recomendaciones (catering, música, decoración)');
+        this.waitForVendorResponse();
+      }, 6000); // 6 segundos de retraso
+    } else {
+      console.log('Invalid date or time:', { eventDate, startTime });
+      dfMessenger.renderCustomText('Por favor, proporciona una fecha y hora válidas.');
+    }
+  } else {
+    dfMessenger.renderCustomText('No pude entender los detalles del evento. Por favor, proporciona los detalles en el formato correcto.');
+  }
+}
+waitForVendorResponse() {
+  window.addEventListener('df-response-received', (event: any) => {
+    const userMessage = event.detail.response.queryResult.queryText;
+    if (!this.userResponses.eventServices) {
+      this.userResponses.eventServices = userMessage;
+      this.showVendorSuggestions();
+    }
+  }, { once: true });
+}
 manualUsuario(userMessage: string): boolean {
   if (userMessage.toLowerCase() === '/ayuda') {
     const dfMessenger = document.querySelector('df-messenger') as any;
@@ -296,9 +397,24 @@ convertTo24HourFormat(time: string): string {
 }
 
 getEventTypeByName(eventTypeName: string): IEventType | undefined {
+  console.log('Buscando tipo de evento:', eventTypeName);
   const eventTypes = this.eventTypesService.eventTypes$();
-  return eventTypes.find(eventType => eventType.eventTypeName?.toLowerCase() === eventTypeName.toLowerCase());
+  console.log('Tipos de eventos disponibles:', eventTypes);
+  if (!eventTypes || eventTypes.length === 0) {
+    console.error('No se encontraron tipos de eventos');
+    return undefined;
+  }
+  const normalizedEventTypeName = eventTypeName.trim().toLowerCase();
+  const eventTypeWords = normalizedEventTypeName.split(' ');
+  console.log('Normalized event type name:', normalizedEventTypeName);
+  return eventTypes.find(eventType => {
+    const normalizedEventType = eventType.eventTypeName?.trim().toLowerCase();
+    if (!normalizedEventType) return false;
+    const eventTypeWordsArray = normalizedEventType.split(' ');
+    return eventTypeWords.every(word => eventTypeWordsArray.includes(word));
+  });
 }
+
 
 saveEvent() {
   const userId = this.authService.getUser()?.id;
@@ -309,12 +425,14 @@ saveEvent() {
 
   const event: IEvent = {
     eventName: this.eventData.eventName!,
-    eventDescription: this.eventData.eventDescription!,
+    eventDescription: this.eventData.eventDescription || undefined, // Asignar null si no hay descripción
     eventType: this.eventData.eventType!,
     eventStartDate: this.eventData.eventStartDate!,
     eventEndDate: this.eventData.eventEndDate!,
     userId: userId
   };
+
+  console.log('Saving event:', event);
 
   this.eventService.save(event);
   this.isCreatingEvent = false; // Reset the flag after saving the event
@@ -353,6 +471,7 @@ handleVendorQuestions(userMessage: string) {
 
 showVendorSuggestions() {
   const dfMessenger = document.querySelector('df-messenger') as any;
+  dfMessenger.renderCustomText('Aquí tienes algunas sugerencias de proveedores para tu evento: ...');
 
   // Combina eventData y userResponses para enviar al método de sugerencias
   const vendorAnswers = {
@@ -372,13 +491,12 @@ showVendorSuggestions() {
       const vendorName = vendorInfo.match(/Vendor: ([^()]+)/)?.[1] || 'Nombre no especificado';
       const vendorCategory = vendorInfo.match(/Category: ([^()]+)/)?.[1] || 'No especificado';
       const vendorLocation = vendorInfo.match(/Location: ([^,]+)/)?.[1] || 'No especificado';
-      const vendorAvailable = vendorInfo.match(/Available: b'\\x01'/) ? 'Disponible' : 'No disponible';
 
       if (!uniqueVendors.has(vendorName)) {
         uniqueVendors.set(vendorName, {
           type: "info",
           title: vendorName,
-          subtitle: `Categoría: ${vendorCategory} \nServicios: ${vendor.service_name || 'No especificado'} \nUbicación: ${vendorLocation} \nDisponibilidad: ${vendorAvailable}`,
+          subtitle: `Categoría: ${vendorCategory} \nServicios: ${vendor.service_name || 'No especificado'} \nUbicación: ${vendorLocation}`,
           actionLink: `http://localhost:4200/app/vendors`
         });
       }
@@ -387,6 +505,10 @@ showVendorSuggestions() {
     const payload = Array.from(uniqueVendors.values());
     dfMessenger.renderCustomCard(payload);
   });
+
+  setTimeout(() => {
+    dfMessenger.renderCustomText('Espero que estas sugerencias te sean útiles.');
+  }, 2000);
 }
 
 isVendorRequest(userMessage: string): boolean {
