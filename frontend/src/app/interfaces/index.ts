@@ -246,3 +246,16 @@ export interface IEventFormQuestion {
   nnControlName: string;
 }
 
+export interface SolicituRecurso {
+  vendor_service?: IVendorService;
+  id?: number;
+  vendor_service_id?: IVendorService;
+  user_id?: IUser;
+  fechaSolicitud?: Date;
+  fechaEvento?: Date;
+  horaEvento?: string; // Hora específica del evento
+  cantidad_solicitada?: number; // Cantidad solicitada
+  estado?: String; // Estado de la solicitud
+  event_event_id?: IEvent;
+}
+

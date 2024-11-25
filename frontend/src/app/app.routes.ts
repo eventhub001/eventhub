@@ -17,6 +17,7 @@ import { LandingPageComponent } from './pages/lading-pages/ladingpage.component'
 import { IndexComponent } from './pages/members/index/index.component';
 import { AboutComponent } from './pages/members/about/about.component';
 import { ContactComponent } from './pages/members/contact/contact.component';
+import { SolicitudesComponent } from './pages/solicitudes/solicitudes.component';
 
 export const routes: Routes = [
   { path: '',
@@ -152,6 +153,19 @@ export const routes: Routes = [
             IRoleType.superAdmin,
             IRoleType.user
           ]
+        }
+      },
+      {
+        path: 'recursos',
+        component: SolicitudesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+          ],
+          name: 'Mis Solicitudes',
+          showInSidebar: true
         }
       },
     ],
