@@ -58,7 +58,7 @@ export class VendorDetailsComponent {
 
   cotizacionForm = this.fb.group({
     id: [''],
-    event: ['', Validators.required],
+    event_event: ['', Validators.required],
     vendor_service_id: ['', Validators.required],
     montoCotizado: ['', Validators.required],
     cantidadRecurso: ['', Validators.required],
@@ -106,8 +106,7 @@ export class VendorDetailsComponent {
     this.solicitudForm.controls['horaEvento'].setValue(recurso.horaEvento ? recurso.horaEvento : '');
     this.solicitudForm.controls['cantidad_solicitada'].setValue(recurso.cantidad_solicitada ? JSON.stringify(recurso.cantidad_solicitada) : '');
     this.solicitudForm.controls['estado'].setValue(recurso.estado ? JSON.stringify(recurso.estado) : '');
-    this.solicitudForm.controls['event_event_id'].setValue(recurso.event_event_id ? JSON.stringify(recurso.event_event_id) : '');
-
+    this.cotizacionForm.controls['vendor_service_id'].setValue(recurso.event_event_id && recurso.event_event_id.id ? recurso.event_event_id.id?.toString() : null);
     this.modalService.displayModal('md', this.addRecursosModal);
   }
 
@@ -161,7 +160,7 @@ export class VendorDetailsComponent {
   callEditio(cotizacion: ICotizacion) {
     console.log('Abriendo el formulario de edición para:', cotizacion);
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? cotizacion.id.toString() : '');
-    this.cotizacionForm.controls['event'].setValue(cotizacion.event?.eventId ? cotizacion.event.eventId.toString() : '');
+    this.cotizacionForm.controls['event_event'].setValue(cotizacion.event_event && cotizacion.event_event.id ? cotizacion.event_event.id?.toString() : null);
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id && cotizacion.vendor_service_id.id ? cotizacion.vendor_service_id.id.toString() : null);
     this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? cotizacion.montoCotizado.toString() : '');
     this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? cotizacion.cantidadRecurso.toString() : '');

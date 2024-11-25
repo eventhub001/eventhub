@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th scope="col">ID</th>
+      <th scope="col">Evento</th>
       <th scope="col">Fecha Evento</th>
       <th scope="col">Hora Evento</th>
       <th scope="col">Fecha Solicitud</th>
@@ -15,6 +16,7 @@
     @for (item of recursos; track item.id) {
     <tr>
       <th scope="row">{{item.id}}</th>
+      <td>{{item.event_event?.eventName}}</td>
       <td>{{item.fechaEvento}}</td>
       <td>{{item.horaEvento}}</td>
       <td>{{item.fechaSolicitud}}</td>

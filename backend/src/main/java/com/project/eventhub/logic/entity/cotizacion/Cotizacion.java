@@ -22,6 +22,8 @@ public class Cotizacion {
 
     private String estado; // "Enviada", "Aceptada", "Rechazada"
 
+    // Getters and Setters
+
     public Long getId() {
         return id;
     }

@@ -96,7 +96,7 @@ onPaginationChange(): void {
 
 cotizacionForm = this.fb.group({
   id: [''],
-  event: ['', Validators.required],
+  event_event: ['', Validators.required],
   service: ['', Validators.required],
   quotedAmount: ['', Validators.required],
   quantity: ['', Validators.required],

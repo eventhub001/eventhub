@@ -4,18 +4,20 @@
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="vendor_service_id">Eventos</label>
-    <select id="vendor_service_id" formControlName="vendor_service_id" class="form-select">
-      <ng-container *ngFor="let evento of eventos">
-        <ng-container *ngIf="evento.available">
-          <option [value]="evento.id">{{evento.name}}</option>
+    <label class="mb-1" for="event_event_id">Eventos</label>
+    <select id="event_event_id" formControlName="event_event_id" class="form-select">
+      <ng-container *ngFor="let item of eventos">
+        <ng-container *ngIf="item.eventType">
+          <option [value]="item.id">{{item.eventName}}</option>
         </ng-container>
       </ng-container>
     </select>
-    <div *ngIf="solicitudForm.controls['vendor_service_id'].invalid && (solicitudForm.controls['vendor_service_id'].dirty || solicitudForm.controls['vendor_service_id'].touched)">
+    @if (solicitudForm.controls['vendor_service_id'].invalid && (solicitudForm.controls['vendor_service_id'].dirty || solicitudForm.controls['vendor_service_id'].touched)) {
       <p class="text-danger my-1">Recurso es requerido</p>
-    </div>
+    }
   </div>
+
+
 
   <div class="mb-2">
     <label class="mb-1" for="fechaEvento">Fecha de Evento</label>

@@ -28,8 +28,8 @@ export class CotizacionesComponent {
 
   cotizacionForm = this.fb.group({
     id: [''],
-    event: ['', Validators.required],
     vendor_service_id: ['', Validators.required],
+    event_event: ['', Validators.required],
     montoCotizado: ['', Validators.required],
     cantidadRecurso: ['', Validators.required],
     estado: ['', Validators.required]
@@ -58,7 +58,7 @@ export class CotizacionesComponent {
 
   callEdition(cotizacion: ICotizacion) {
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? JSON.stringify(cotizacion.id) : '');
-    this.cotizacionForm.controls['event'].setValue(cotizacion.event ? JSON.stringify(cotizacion.event) : '');
+    this.cotizacionForm.controls['event_event'].setValue(cotizacion.event_event ? JSON.stringify(cotizacion.event_event) : '');
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id ? JSON.stringify(cotizacion.vendor_service_id) : '');
     this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? JSON.stringify(cotizacion.montoCotizado) : '');
     this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? JSON.stringify(cotizacion.cantidadRecurso) : '');

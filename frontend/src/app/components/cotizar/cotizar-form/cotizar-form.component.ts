@@ -1,3 +1,4 @@
+import { IEvent } from './../../../interfaces/index';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -28,6 +29,7 @@ export class CotizarFormComponent {
     this.getVendorDetails();
   }
   @Input() servicios: IVendorService[] = [];
+  @Input() eventos: IEvent[] = [];
   vendor: IVendor | undefined;
   @Input() cotizacionForm!: FormGroup;
   @Input() vendorId!: number;
@@ -37,12 +39,13 @@ export class CotizarFormComponent {
 
   callSave() {
     let IdService: number = this.cotizacionForm.controls['service'].value;
+    let IdEvent: number = this.cotizacionForm.controls['eventos'].value;
     let cotizacion: ICotizacion = {
-      event: this.cotizacionForm.controls['event'].value,
       montoCotizado: this.cotizacionForm.controls['montoCotizado'].value,
       cantidadRecurso: this.cotizacionForm.controls['cantidadRecurso'].value,
       estado: this.cotizacionForm.controls['estado'].value,
       vendor_service_id: { id: IdService },
+      event_event_id: {id: IdEvent}
     };
 
     if(this.cotizacionForm.controls['id'].value) {

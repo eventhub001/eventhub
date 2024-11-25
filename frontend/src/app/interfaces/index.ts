@@ -53,6 +53,7 @@ export interface ILoginResponse {
     eventTypeName?: string;     // Name of the event type
   }
   export interface IEvent {
+    id?: number;               // Primary key, optional since it's auto-generated
     eventId?: number;               // Primary key, optional since it's auto-generated
     userId?: number;            // Foreign key referencing the user associated with the event
     eventName?: string;         // Name of the event
@@ -221,8 +222,10 @@ export interface Asset {
 
 export interface ICotizacion {
   id?: number;
-  event?: IEvent;
+  vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
+  event_event?: IEvent;
+  event_event_id?: IEvent;
   montoCotizado?: number;
   cantidadRecurso?: number;
   user?: IUser;
@@ -230,19 +233,21 @@ export interface ICotizacion {
 }
 
 export interface SolicituRecurso {
-  vendor_service?: IVendorService;
   id?: number;
+  vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
+  event_event?: IEvent;
+  event_event_id?: IEvent;
   user_id?: IUser;
   fechaSolicitud?: Date;
   fechaEvento?: Date;
   horaEvento?: string; // Hora específica del evento
   cantidad_solicitada?: number; // Cantidad solicitada
   estado?: String; // Estado de la solicitud
-  event_event_id?: IEvent;
 }
 
 export interface IEventForm {
+  id?: number; // Optional for new forms
   taskFormId?: number; // Optional because it might be undefined for new forms
   event: IEvent; // Assuming User entity has a numeric ID
   question: IEventFormQuestion;

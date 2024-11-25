@@ -17,4 +17,10 @@ export class CotizacionListComponent {
   @Output() callDeleteAction: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   public AuthService: AuthService = inject(AuthService);
 
+  statusOptions = [
+    { id: 'enviada', nombre: 'Enviada' },
+    { id: 'aceptada', nombre: 'Aceptada' },
+    { id: 'rechazada', nombre: 'Rechazada' }
+  ];
+
 }
