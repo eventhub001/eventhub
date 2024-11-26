@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
+import { Size } from '../components/evenmodeller3d/model-objects/3dobjects-utils';
 import * as zim from 'zimjs';
 
 export interface ILoginResponse {
@@ -218,9 +218,9 @@ export interface Asset {
     content: THREE.Object3D;
     size: Size;
 
-
     clone: () => Asset;
-}
+    rotate: (x: number, y: number, z: number) => void;
+  }
 
 export interface AssetImg {
   id: number;

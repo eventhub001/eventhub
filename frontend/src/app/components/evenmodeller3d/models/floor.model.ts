@@ -1,7 +1,7 @@
 import { ThreeDObject } from "./threeobject.model";
-import { Position } from "../modelobjects/3dtypes";
+import { Position } from "../model-objects/3dtypes";
 import * as THREE from 'three';
-import { AxisOrientation, Size } from "../modelobjects/3dobjects";
+import { AxisOrientation, Size } from "../model-objects/3dobjects-utils";
 import { HttpClient } from "@angular/common/http";
 import { AssetTexture } from "../../../interfaces";
 import { TextureHandler } from "../../../services/modelsHandler";

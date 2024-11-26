@@ -156,7 +156,7 @@ export class EventGrid {
         return indexpos;
     }
 
-    private getPosMatrix(x: number, y: number, z: number) {
+    private getPosMatrix(x: number, y: number, z: number) : THREE.Vector3 {
 
         if (this.model === undefined) {
             throw new Error("Grid model is not defined. Please make sure to create the grid model first.");
@@ -170,6 +170,14 @@ export class EventGrid {
         );
 
         return positionPoint;
+    }
+
+    public precomputeAssetPosition(threeobject: Asset, x: number, y: number, z: number) {
+        const positionAsset = ThreeCalculationUtils.getAbsolutePosition(threeobject.content);
+        const positionPoint = this.getPosMatrix(x, y, z);
+
+        for (let i = 0; i < positionAsset.length; i++) {
+        }
     }
 
     public get(x: number, y: number, z: number) {

@@ -22,7 +22,7 @@ public class ModelsSeeder implements ApplicationListener<ContextRefreshedEvent> 
 
     private void createModels() {
         Model model = new Model();
-        model.setModelPath("table.glb");
+        model.setModelPath("table1.1.glb");
         modelRepository.save(model);
     }
 }

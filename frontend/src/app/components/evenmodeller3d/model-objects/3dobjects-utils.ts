@@ -101,6 +101,34 @@ export class DebuggingUtils {
     }
 }
 
+export function checkCollisionCustom(from: THREE.Object3D, to: THREE.Object3D): boolean {
+
+    console.log(from.uuid + ", " + to.uuid);
+    // Get the bounding box corners based on scale and position
+    console.log(from.position, to.position);
+    return true;
+//     const fromPosition = new THREE.Vector3();
+//     const toPosition = new THREE.Vector3();
+
+//     const fromScale = from.scale;
+//     const toScale = to.scale;
+
+//     // Define the min and max bounds for each object
+//     const fromMin = fromPosition.clone().sub(fromScale.clone().multiplyScalar(0.5));
+//     const fromMax = fromPosition.clone().add(fromScale.clone().multiplyScalar(0.5));
+
+//     const toMin = toPosition.clone().sub(toScale.clone().multiplyScalar(0.5));
+//     const toMax = toPosition.clone().add(toScale.clone().multiplyScalar(0.5));
+
+//     // Check for overlap in all three axes
+//     const xCollision = fromMax.x >= toMin.x && fromMin.x <= toMax.x;
+//     const yCollision = fromMax.y >= toMin.y && fromMin.y <= toMax.y;
+//     const zCollision = fromMax.z >= toMin.z && fromMin.z <= toMax.z;
+
+//     return xCollision && yCollision && zCollision;
+// }
+}
+
 export class ModelThreeDObject {
 
     boundingBox!: THREE.Box3;

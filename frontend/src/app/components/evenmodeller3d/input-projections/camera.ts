@@ -1,20 +1,9 @@
 import * as THREE from 'three';
+import { arrowToAxis } from './movement';
+import { arrowsToRotation } from './rotation';
 
-export interface directionToProjection {
-    ['up']: {x: number, y: number, z: number},
-    ['down']: {x: number, y: number, z: number},
-    ['left']: {x: number, y: number, z: number},
-    ['right']: {x: number, y: number, z: number}
-}
 
-export function isSameDirectionToProjection(a: directionToProjection, b: directionToProjection): boolean {
-    return a['up'].x === b['up'].x && a['up'].y === b['up'].y && a['up'].z === b['up'].z &&
-        a['down'].x === b['down'].x && a['down'].y === b['down'].y && a['down'].z === b['down'].z &&
-        a['left'].x === b['left'].x && a['left'].y === b['left'].y && a['left'].z === b['left'].z &&
-        a['right'].x === b['right'].x && a['right'].y === b['right'].y && a['right'].z === b['right'].z
-}
-
-export function fixProjectionMapping(directionToProjection: directionToProjection, cameraPosition: THREE.Vector3, lookDirection: THREE.Vector3): directionToProjection {
+export function fixProjectionMapping(directionToProjection: arrowToAxis, cameraPosition: THREE.Vector3, lookDirection: THREE.Vector3): arrowToAxis {
     const debugging = false; 
 
     const angleFromX = angleOfVector(projectVector(cameraPosition).normalize(), new THREE.Vector3(0, 0, 1));
@@ -35,8 +24,8 @@ export function fixProjectionMapping(directionToProjection: directionToProjectio
         return {
             ['up']: { x: 0, y: 0, z: 1 },
             ['down']: { x: 0, y: 0, z: -1 },
-            ['left']: { x: -1, y: 0, z: 0 },
-            ['right']: { x: 1, y: 0, z: 0 }
+            ['left']: { x: 1, y: 0, z: 0 },
+            ['right']: { x: -1, y: 0, z: 0 }
         }
     }
     // looking to -X
@@ -55,12 +44,10 @@ export function fixProjectionMapping(directionToProjection: directionToProjectio
         return {
             ['up']: { x: 1, y: 0, z: 0 },
             ['down']: { x: -1, y: 0, z: 0 },
-            ['left']: { x: 0, y: 0, z: 1 },
-            ['right']: { x: 0, y: 0, z: -1 }
+            ['left']: { x: 0, y: 0, z: -1 },
+            ['right']: { x: 0, y: 0, z: 1 }
         }
     }
-
-
 
     else {
         return directionToProjection;
@@ -79,4 +66,39 @@ function projectVector(cameraPosition: THREE.Vector3) {
 function angleOfVector(a: THREE.Vector3, b: THREE.Vector3) {
     const angle = a.angleTo(b) * 180 / Math.PI;
     return angle;
+}
+
+
+export function fixRotationMapping(arrowToAxis: arrowToAxis): arrowsToRotation {
+    const result: arrowsToRotation= {['up']: 0, ['down']: 0, ['left']: 0, ['right']: 0};
+
+    const upArrow = arrowToAxis['up']; 
+    if (upArrow.x === 0 && upArrow.y === 0 && upArrow.z === 1) {
+        result['up'] = 90;
+        result['down'] = 270;
+        result['left'] = 0;
+        result['right'] = 180;
+    } else if (upArrow.x === 0 && upArrow.y === 0 && upArrow.z === -1) {
+        result['up'] = 270;
+        result['down'] = 90;
+        result['left'] = 180;
+        result['right'] = 0;
+    }
+    else if (upArrow.x === 1 && upArrow.y === 0 && upArrow.z === 0) {
+        result['up'] = 0;
+        result['down'] = 180;
+        result['left'] = 270;
+        result['right'] = 90;
+    } else if (upArrow.x === -1 && upArrow.y === 0 && upArrow.z === 0) {
+        result['up'] = 180;
+        result['down'] = 0;
+        result['left'] = 90;
+        result['right'] = 270;
+    }
+
+    return result;
+}
+
+export function arrowsToAxisAsAngle(arrowToAxis: arrowToAxis): 0 | 90 | 180 | 270 {
+    return 0;
 }

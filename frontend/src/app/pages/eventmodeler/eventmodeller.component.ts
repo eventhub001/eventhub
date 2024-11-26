@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, effect, inject, Input, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
-import { TestComponent } from '../../components/evenmodeller3d/test.component';
+import { TestComponent } from '../../components/evenmodeller3d/3dsimulator.component';
 import { AssetModel } from '../../interfaces';
 import { CommonModule } from '@angular/common';
 import { ModelService } from '../../services/model.service';
@@ -20,27 +20,5 @@ export class EventModellerComponent {
 
   constructor() {
     this.modelService.getAll();
-  }
-
-
-
-  loadModelData(): void {
-    this.modelService.getAll();
-  }
-
-  loadModelImages(imageFilenames: string[]): void {
-    const loadPromises = imageFilenames.map(filename =>
-      this.modelService.getImg(filename)
-    );
-
-    Promise.all(loadPromises)
-      .then(blobs => {
-        console.log("Images loaded:", blobs);
-        return blobs;
-      })
-      .catch(error => {
-        console.error("Error loading images:", error);
-        this.isLoading = false;
-      });
   }
 }

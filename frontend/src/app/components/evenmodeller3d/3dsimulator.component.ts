@@ -3,32 +3,38 @@ import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { DebuggingUtils } from './modelobjects/3dobjects';
-import { Side } from './modelobjects/3dtypes';
-import { MetricType, EventGrid } from './modelobjects/events';
+import { DebuggingUtils } from './model-objects/3dobjects-utils';
+import { Side } from './model-objects/3dtypes';
+import { MetricType, EventGrid } from './model-objects/grid';
 import { Floor } from './models/floor.model';
 import { Chair } from './models/chair.model';
-import { ChairSet, Event3DManager, Direction } from './modelobjects/event3dmanager';
+import { ChairSet, Event3DManager, Direction, Set } from './model-objects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { Asset, AssetImg, AssetModel } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModelService } from '../../services/model.service';
-import { directionToProjection, fixProjectionMapping, isSameDirectionToProjection } from './projections/camera';
+import { fixProjectionMapping, fixRotationMapping } from './input-projections/camera';
 import * as UICommand from '../ui3d/commands/commands';
 import { Ui3DComponent } from '../ui3d/ui3d.component';
+import { SELECTIONTYPE } from '../ui3d/menus/arrows';
+import { arrowToAxis, isSameArrowsToAxis } from './input-projections/movement';
+import { arrowsToRotation, isSameArrowsToRotation } from './input-projections/rotation';
+import { ThreeDObject } from './models/threeobject.model';
+import { GridAdditionError } from './model-objects/exceptions';
+import { AlertService } from '../../services/alert.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 @Component({
-  selector: 'app-test',
+  selector: 'app-3dsimulator',
   standalone: true,
   imports: [HttpClientModule, Ui3DComponent, CommonModule],
   providers: [HttpClientModule],
-  templateUrl: './test.component.html',
-  styleUrl: './test.component.scss'
+  templateUrl: './3dsimulator.component.html',
+  styleUrl: './3dsimulator.component.scss'
 })
 export class TestComponent {
 
@@ -44,6 +50,7 @@ export class TestComponent {
   pointer! : THREE.Vector2;
   intersector!: THREE.Raycaster;
   selectionsBox: THREE.Box3Helper[] = [];
+  alertService: any = inject(AlertService);
 
   selectedAsset: ({asset: Asset, position: {col: number; floor: number; row: number}})[] = [];
   selectedFloor: THREE.Object3D | null = null;
@@ -55,63 +62,106 @@ export class TestComponent {
 
   mousePosition: {x: number, y: number} = {x: 0, y: 0};
 
-  arrowToProjection: directionToProjection = {
+  arrowToProjection: arrowToAxis = {
     ['up']: { x: 0, y: 0, z: -1 },
     ['down']: { x: 0, y: 0, z: 1 },
     ['left']: { x: -1, y: 0, z: 0 },
     ['right']: { x: 1, y: 0, z: 0 }
   };
+  
+  arrowsToRotation: arrowsToRotation = {
+    ['up']: 270,
+    ['down']: 90,
+    ['left']: 180,
+    ['right']: 0
+}
 
-  arrowToProjectionSignal: WritableSignal<directionToProjection> = signal<directionToProjection>(this.arrowToProjection, {equal: isSameDirectionToProjection});
-  get arrowToProjection$() {
-    return this.arrowToProjectionSignal;
+  arrowsToProjectionSignal: WritableSignal<arrowToAxis> = signal<arrowToAxis>(this.arrowToProjection, {equal: isSameArrowsToAxis});
+  arrowsToRotationSignal: WritableSignal<arrowsToRotation> = signal<arrowsToRotation>(this.arrowsToRotation, {equal: isSameArrowsToRotation});
+  get arrowsToProjection$() {
+    return this.arrowsToProjectionSignal;
+  }
+
+  get arrowsToRotation$() {
+    return this.arrowsToRotationSignal;
   }
   // debugging properties. Must remove later.
   defaultChair!: Chair;
+  models: ThreeDObject[] = []; 
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
-    // effect(() => {
-    //   console.log(this.arrowToProjectionSignal);
-    // })
+
   }
 
   public addComponent(addtion: UICommand.addtion) {
     
     if (addtion.id) {
-      console.log("Row: " + this.selectedFloor?.userData["x"]);
-      console.log("Col: " + this.selectedFloor?.userData["z"]);
-      this.eventManager.add(this.defaultChair, this.selectedFloor?.userData["x"], 0, this.selectedFloor?.userData["z"]);
+
+      const model = this.models.find(model => model.id == addtion.id);
+      try {
+        this.eventManager.computeSpatialObjectOccupancy(model!, this.selectedFloor?.userData["x"], 0, this.selectedFloor?.userData["z"], this.scene);
+      }
+
+      catch (e) {
+        if (e instanceof GridAdditionError) {
+          this.alertService.displayAlert("error", "No se puede colocar el inmobiliario en la posición seleccionada. Por favor, seleccione otra posición.", "center", "top", ["error-snackbar"]);
+        }
+
+        console.error("Unhandled error:", e);
+        this.alertService.displayAlert(
+          "error",
+          "An unexpected error occurred. Please try again.",
+          "center",
+          "top",
+          ["error-snackbar"]
+        );
+      }
       this.eventManager.render(this.scene);
-      return;
-    }
 
-    console.log("Row: " + addtion.z);
-    console.log("Col: " + addtion.x);
-
-    if (addtion.x == null || addtion.z == null) {
-      throw new Error('Invalid addtion operation. Please select a row and a column.');
+      if (addtion.x === null || addtion.z === null) {
+        throw new Error('Invalid addtion operation. Please select a row and a column.');
+      }
+    // this.eventManager.add(this.defaultChair, addtion.x!, 0, addtion.z!);
+    // this.eventManager.render(this.scene);
     }
-    this.eventManager.add(this.defaultChair, addtion.x!, 0, addtion.z!);
-    this.eventManager.render(this.scene);
 
   }
 
-  public moveComponent(move: UICommand.move) {
+  public handleDirectionComponent(direction: UICommand.directional) {
 
-    console.log("Row: " + move.z);
-    console.log("Col: " + move.x);
+    console.log(direction);
+    if (direction.direction == SELECTIONTYPE.ROTATE) {
+      console.log("Rotating asset from UI selection");
+      this.eventManager.rotate(this.selectedAsset[0], direction.x, 0, direction.z);
+      this.eventManager.render(this.scene);
+      this.updateSelection(this.selectedAsset[0].asset.content);
+      return;
+    }
 
-    this.eventManager.move(this.selectedAsset[0], move.x, 0, move.z);
+    try {
+      this.eventManager.move(this.selectedAsset[0], direction.x, 0, direction.z);
+    }
+    catch (e) {
+      if (e instanceof GridAdditionError) {
+        this.alertService.displayAlert("error", "No se puede colocar el inmobiliario en la posición seleccionada. Por favor, seleccione otra posición.", "center", "top", ["error-snackbar"]);
+      }
+    }
+
+    this.eventManager.render(this.scene);
+    this.updateSelection(this.selectedAsset[0].asset.content);
+  }
+
+  public deleteSelectedComponent() {
+
+    this.eventManager.delete(this.selectedAsset[0], this.scene); 
     this.eventManager.render(this.scene);
 
-    this.updateSelection(this.selectedAsset[0].asset.content);
+    this.clearSelection();
   }
 
   addRenderingHelpers() {
     // add rendering helpers here
     this.orbitCamera = new OrbitControls(this.camera, this.renderer.domElement);
-    const axesHelper = new THREE.AxesHelper(5);
-    //this.scene.add(axesHelper);
   }
 
   setupComponents() {
@@ -135,7 +185,7 @@ export class TestComponent {
     this.scene.add(light2);
     this.scene.add(light2.target);
     
-    this.camera = new THREE.PerspectiveCamera( 50, getWindow().innerWidth / getWindow().innerHeight, 0.1, 500 );
+    this.camera = new THREE.PerspectiveCamera( 50, getWindow().innerWidth / getWindow().innerHeight * 1.4, 0.1, 500 );
 
     this.camera.position.y = 5;
     this.camera.position.z = 5;
@@ -144,7 +194,7 @@ export class TestComponent {
     this.renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.setSize( getWindow().innerWidth / 1.8, getWindow().innerHeight / 1.2);
+    this.renderer.setSize( getWindow().innerWidth / 1.1, getWindow().innerHeight / 1.2);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -186,6 +236,17 @@ export class TestComponent {
       {front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(0, 0, 1), top: new THREE.Vector3(0, 1, 0)}
     );
 
+    const table = await Chair.createFromModel(
+      token!,
+      2,
+      {width: 4.2711153278258065, height:1.3832655070864464, depth: 3.9711153278258065},
+      {x: 0, y: 0, z: 0},
+      this.http,
+      {front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(0, 0, 1), top: new THREE.Vector3(0, 1, 0)}
+    );
+
+    this.models.push(chair, table);
+
     this.defaultChair = chair;
 
     DebuggingUtils.showLights(floor.content);
@@ -193,21 +254,21 @@ export class TestComponent {
     this.scene.add(this.grid.model);
     this.scene.add(this.grid.floorGrid);
 
-    this.set = new ChairSet("left", this.grid, chair);
+    this.set = new Set("left", this.grid, chair);
 
-    this.set.add({
-      col: chair.x,
-      floor: chair.y,
-      row: chair.z,
-      grid: this.grid,
-      direction1: Direction.FRONT});
+    // this.set.add({
+    //   col: chair.x,
+    //   floor: chair.y,
+    //   row: chair.z,
+    //   grid: this.grid,
+    //   direction1: Direction.FRONT});
 
-    this.set.add({
-      col: chair.x + 2,
-      floor: chair.y,
-      row: chair.z,
-      grid: this.grid,
-      direction1: Direction.FRONT});
+    // this.set.add({
+    //   col: chair.x + 2,
+    //   floor: chair.y,
+    //   row: chair.z,
+    //   grid: this.grid,
+    //   direction1: Direction.FRONT});
 
     this.intersector = new THREE.Raycaster();
     this.pointer = new THREE.Vector2(); 
@@ -219,7 +280,6 @@ export class TestComponent {
     this.eventManager.render(this.scene);
 
     DebuggingUtils.showBoundingBox(floor.content, this.scene);
-    const box = new THREE.Box3().setFromObject(floor.content);
 
     this.scene.add(floor.content);
 
@@ -228,7 +288,8 @@ export class TestComponent {
       this.camera.updateProjectionMatrix();
       const direction: THREE.Vector3 = this.camera.getWorldDirection(new THREE.Vector3());
       const projectionArrowMapping = fixProjectionMapping(this.arrowToProjection, this.camera.position, direction);
-      this.arrowToProjectionSignal.set(projectionArrowMapping);
+      this.arrowsToProjectionSignal.set(projectionArrowMapping);
+      this.arrowsToRotationSignal.set(fixRotationMapping(projectionArrowMapping));
 
       this.renderer.render(this.scene, this.camera);
       this.orbitCamera.update();
@@ -289,7 +350,7 @@ export class TestComponent {
     this.selectionsBox.push(boxHelper);
   }
 
-  clearBoundingBoxes(selectionBox?: string) {
+  clearBoundingBoxes() {
     this.selectionsBox.forEach((box) => {
       this.scene.remove(box);
     });
@@ -304,11 +365,11 @@ export class TestComponent {
 
   updateSelection(mode: THREE.Object3D) {
     if (mode.name === "floor") {
-      console.log("selecting floor");
       const mesh = mode as THREE.Mesh;
       const material = mesh.material as THREE.MeshBasicMaterial;
       material.color = new THREE.Color(0xff0000);
       mode.visible = true;
+      mesh.receiveShadow = true;
 
       if (this.selectedFloor) {
         this.selectedFloor.visible = false;
@@ -335,5 +396,10 @@ export class TestComponent {
     if (direction.x < 1.001) {
       console.log("horizontal+");
     }
+  }
+
+  clearSelection() {
+    this.selectedAsset = [];
+    this.clearBoundingBoxes();
   }
 }

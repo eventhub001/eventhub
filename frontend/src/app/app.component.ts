@@ -1,5 +1,5 @@
 import { AfterContentInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core'
-import { TestComponent } from './components/evenmodeller3d/test.component'
+import { TestComponent } from './components/evenmodeller3d/3dsimulator.component'
 import { RouterOutlet } from '@angular/router'
 import { CommonModule } from '@angular/common'
 

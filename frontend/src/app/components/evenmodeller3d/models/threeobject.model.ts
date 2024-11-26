@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { Position } from '../modelobjects/3dtypes';
-import { AxisOrientation, Size } from '../modelobjects/3dobjects';
-import { inferOpositeAxis } from '../modelobjects/vectorutils';
+import { Position } from '../model-objects/3dtypes';
+import { AxisOrientation, Size } from '../model-objects/3dobjects-utils';
+import { inferOpositeAxis } from '../model-objects/vectorutils';
 import { constant } from 'lodash';
 import { Asset, Orientation } from '../../../interfaces';
 
@@ -28,7 +28,7 @@ export class ThreeDObject implements Asset {
         url?: string) {
         
         this.orientation = {
-            front: new THREE.Vector3(0, 0, 1),
+            front: new THREE.Vector3(1, 0, 0),
             back: new THREE.Vector3(0, 0, -1),
             left: new THREE.Vector3(-1, 0, 0),
             right: new THREE.Vector3(1, 0, 0),
@@ -58,7 +58,6 @@ export class ThreeDObject implements Asset {
     }
 
     public fixOrientation() {
-
         if (this.content === undefined) {
             throw new Error('Content is not defined. Cannot fix orientation.');
         }
@@ -67,29 +66,65 @@ export class ThreeDObject implements Asset {
             throw new Error('Top vector is not defined.');
         }
 
-        const currentUp = new THREE.Vector3(0, 1, 0); // Default up vector in THREE.js
+        const currentUp = new THREE.Vector3(0, 1, 0);
         const up = this.initialOrientation.top.clone().normalize();
         this.rotateWithQuaternion(new THREE.Quaternion(), currentUp, up);
 
-        // now the front.
         const currentFront = new THREE.Vector3(0, 0, 1);
         const front = this.initialOrientation.front.clone().normalize();
         this.rotateWithQuaternion(new THREE.Quaternion(), currentFront, front);
-        
     }
 
-    rotate(x_axis: number) {
-        // 1. change the sides values.
+    // rotate(x_axis:  (0 | 90 | 180 | 270)) {
 
-        const front = this.initialOrientation.front.clone();
+    //     if (x_axis === 0) {
+    //         return;
+    //     }
 
-        if (x_axis === 1) {
-            this.initialOrientation.front.cross(new THREE.Vector3(0, 1, 0));
+    //     this.resetOrientation();
+
+    //     const front = this.orientation.front.clone();
+    //     const orientationFrontCopy = this.orientation.front.clone();
+
+    //     orientationFrontCopy.cross(new THREE.Vector3(0, 1, 0));
+
+    //     const quaternion = new THREE.Quaternion();
+
+    //     // I am aware this is not the most effective way, but it works and the system is handling with very good performance.
+
+    //     const rotations: number = Number(x_axis / 90);
+
+    //     for (let i = 1; i < rotations + 1; i++) {
+    //         console.log("rotating once");
+    //         this.rotateWithQuaternion(quaternion, front, orientationFrontCopy);
+    //     }
+
+    //     this.orientation = {
+    //         front: orientationFrontCopy,
+    //         back: inferOpositeAxis(orientationFrontCopy),
+    //         left: inferOpositeAxis(orientationFrontCopy.clone().cross(new THREE.Vector3(0, 1, 0))),
+    //         right: orientationFrontCopy.clone().cross(new THREE.Vector3(0, 1, 0)),
+    //         top: new THREE.Vector3(0, 1, 0),
+    //         bottom: new THREE.Vector3(0, -1, 0)
+    //     }
+    
+    // }
+
+    rotate(x: number, y: number, z: number) {
+        const quat = new THREE.Quaternion();
+        const from = new THREE.Vector3(this.orientation.front.x, this.orientation.front.y, this.orientation.front.z);
+        const to = new THREE.Vector3(x, y, z).normalize();
+        console.log("orientation", this.orientation.front);
+        console.log(from, to);
+        this.rotateWithQuaternion(quat, from, to);
+        this.orientation = {
+            front: to,
+            back: inferOpositeAxis(to),
+            left: inferOpositeAxis(to.clone().cross(new THREE.Vector3(0, 1, 0))),
+            right: to.clone().cross(new THREE.Vector3(0, 1, 0)),
+            top: new THREE.Vector3(0, 1, 0),
+            bottom: new THREE.Vector3(0, -1, 0)
         }
-
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromUnitVectors(front, this.initialOrientation.front);
-        this.content.applyQuaternion(quaternion);
     }
 
     public resize() {
@@ -118,6 +153,7 @@ export class ThreeDObject implements Asset {
 
     public clone(): Asset {
         const newContent = this.content.clone();
+        newContent.position.set(this.content.position.x, this.content.position.y, this.content.position.z);
         
         newContent.traverse((child) => {
             if (child instanceof THREE.Mesh) {
@@ -131,6 +167,15 @@ export class ThreeDObject implements Asset {
     private rotateWithQuaternion(Quaternion: THREE.Quaternion, from: THREE.Vector3, to: THREE.Vector3) {
         const quaternion = new THREE.Quaternion();
         quaternion.setFromUnitVectors(from, to);
-        this.content.applyQuaternion(Quaternion);
+        this.content.applyQuaternion(quaternion);
+    }
+
+    private resetOrientation() {
+        // now the front.
+        const currentFront = new THREE.Vector3(0, 0, 1);
+        const front = this.orientation.front.clone();
+        
+        this.rotateWithQuaternion(new THREE.Quaternion(), front, currentFront);
+        this.orientation = this.initialOrientation;
     }
 }

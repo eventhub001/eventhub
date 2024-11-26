@@ -1,2 +1,2 @@
 cd ML Models
-python model_pi.py
+python main_pi.py

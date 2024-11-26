@@ -1,17 +1,14 @@
-import { Direction } from "../../evenmodeller3d/modelobjects/event3dmanager"
+import { Direction } from "../../evenmodeller3d/model-objects/event3dmanager"
+import { SELECTIONTYPE } from "../menus/arrows"
 
 export type addtion = {
     x?: number,
     z?: number,
     id?: number
 }
-export type move = {
+export type directional = {
+    direction: SELECTIONTYPE,
     x: number,
     y: number,
     z: number
-}
-
-export type rotate = {
-    direction: Direction.LEFT | Direction.RIGHT,
-    angle: (90 | 180 | 270 | -90 | -180 | -270)
 }

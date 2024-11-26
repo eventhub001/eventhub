@@ -12,12 +12,15 @@
 <div class="container">
     <canvas class="main-three" #mainThreeCv (click)="selectAsset($event)" (mousedown)="mouseDown($event)"></canvas>
     <div *ngIf="isLoading">Loading...</div>
-    <div *ngIf="!isLoading">
+    <div *ngIf="!isLoading" style="position: absolute; right: 0px; top: 0px">
         <app-ui3d
         (AdditionAction)="addComponent($event)"
-        (MoveAction)="moveComponent($event)"
+        (MoveAction)="handleDirectionComponent($event)"
+        (RotationAction)="handleDirectionComponent($event)"
+        (DeleteAction)="deleteSelectedComponent()"
         [images]="images"
-        [arrowDirectionToProjection]="arrowToProjection$()"
+        [arrowToAxis]="arrowsToProjection$()"
+        [arrowToRotation]="arrowsToRotation$()"
         [modelMetadata]="modelMetadata"
         ></app-ui3d>
     </div>

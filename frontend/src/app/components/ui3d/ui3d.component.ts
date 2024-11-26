@@ -4,10 +4,13 @@ import { MatrixUI } from './matriz/matriz'
 import { settings, SetUpUI } from './settings/settings'
 import * as UICommands from './commands/commands'
 import { blobsToImages, blobToImage } from './loader/blobloader'
-import { AssetSelectorComponent } from './selectors/assetselector'
-import { ArrowsMenu, DIRECTION, MOVE_DIRECTION } from './arrows/arrows'
+import { AssetSelectorComponent } from './menus/assetselector'
+import { ArrowsMenu, DIRECTION, MOVE_DIRECTION, SELECTIONTYPE } from './menus/arrows'
 import { AssetBitmap, AssetImg, AssetModel } from '../../interfaces'
-import { directionToProjection } from '../evenmodeller3d/projections/camera'
+import { SelectionArrowsPad } from './menus/selectionarrowspad'
+import { arrowToAxis } from '../evenmodeller3d/input-projections/movement'
+import { arrowsToRotation } from '../evenmodeller3d/input-projections/rotation'
+import { DeleteActionPad } from './menus/delete'
 @Component({
     selector: 'app-ui3d',
     standalone: true,
@@ -18,15 +21,23 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     frame: Frame | undefined
     @Input() modelMetadata: AssetModel[] = [];
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
-    @Output() MoveAction: EventEmitter<UICommands.move> = new EventEmitter<UICommands.move>()
+    @Output() MoveAction: EventEmitter<UICommands.directional> = new EventEmitter<UICommands.directional>()
+    @Output() RotationAction: EventEmitter<UICommands.directional> = new EventEmitter<UICommands.directional>()
     @Output() AddtionFromModelSelectedAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
-    @Input() arrowDirectionToProjection!: directionToProjection;
+    @Output() DeleteAction: EventEmitter<boolean> = new EventEmitter<boolean>()
+    @Input() arrowToAxis!: arrowToAxis;
+    @Input() arrowToRotation!: arrowsToRotation;
     matriz?: MatrixUI;
     settings: settings;
     modelImgs: AssetBitmap[] = [];
     @Input() images: AssetImg[] = [];
+    width: number = 300;
+    height: number = 800;
     stage: Stage | undefined;
-    
+
+    selectionArrowsPad: SelectionArrowsPad | undefined;
+    arrowSelection: ArrowsMenu | undefined;
+    deletePad: DeleteActionPad | undefined;
     constructor() {
         this.settings = SetUpUI.setUpUI(
             350, 600, 20, 15, 3, 21, 10, 3);
@@ -36,6 +47,17 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
         this.frame?.dispose()
     }
 
+    ngOnChanges() {
+        if (this.arrowToRotation && this.arrowSelection && this.selectionArrowsPad) {
+            if (this.selectionArrowsPad?.currentSelection === SELECTIONTYPE.MOVE) {
+                return;
+            }
+            console.log("this.arrowToRotation", this.arrowToRotation);
+            this.arrowSelection!.changeArrowsRotationText(this.arrowToRotation);
+            this.arrowSelection!.createLabels(SELECTIONTYPE.ROTATE);
+        }
+    }   
+
     async ngAfterContentInit() {
         // hardcoded have to change of course with the setting parameters.
         const divisionwidth = 0.0476;
@@ -43,22 +65,20 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
 
         this.frame = new Frame({
             scaling: "zim",
-            width: 400,
-            height: 800,
-            color: lighter,
+            width: this.width,
+            height: this.height,
             outerColor: blue,
             mouseMoveOutside: true, // so Pen and Dial work better
             ready: async () => {
 
-                const pen = new Pen({ min: 10, max: 60 }, series(pink, white))
+                const PADDING = 20;
+
+                const pen = new Pen({ min: 10, max: 60 })
                     .addTo()
                     .bot()
 
                 this.stage = new Stage("1");
 
-                new MotionController(pen, "pressmove")
-
-                console.log(this.settings);
                 // const imgs = await blobToImage(this.images[0].blob);
                 const imgs: AssetBitmap[] = await Promise.all(
                     this.images.map(async (img) => {
@@ -66,35 +86,50 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                     return {id: id, bitmap: bitmap};
                 }));
 
-                this.matriz = new MatrixUI(this.settings.width, this.settings.height, this.settings.x, this.settings.y);
-
-                const assetSelector = new AssetSelectorComponent(imgs, 10, 300, 5);
-
+                const assetSelector = new AssetSelectorComponent(imgs, 10, 400, 5);
                 assetSelector.onBitmapClick = (id: number) => {
                     this.AdditionAction.emit({
                         id: id
                     });
                 }
+                this.arrowSelection = new ArrowsMenu(PADDING, PADDING + 20, 300, 300);
 
-                const arrowSelection = new ArrowsMenu(0, 0, 300, 300);
+                this.selectionArrowsPad = new SelectionArrowsPad(this.width / 2, this.height * 0.9, 100, 40);
 
-                arrowSelection.arrowsOnClick = (dir: DIRECTION) => {
-                    console.log("working on arrows", dir);
-                    this.MoveAction.emit(this.arrowDirectionToProjection[dir]);
+                this.deletePad = new DeleteActionPad(this.width / 2, this.height * 0.8, 100, 40);
+
+                this.deletePad.deleteButtonOnClick = () => this.DeleteAction.emit(true);
+                this.selectionArrowsPad.rotationButtonOnClick = () => {
+                    this.arrowSelection!.createLabels(SELECTIONTYPE.ROTATE);
+                    this.arrowSelection!.arrowsColor = "#6659c5";
+                    this.arrowSelection!.changeArrowsColor("#6659c5");
+                    this.selectionArrowsPad!.currentSelection = SELECTIONTYPE.ROTATE
+                };
+                this.selectionArrowsPad.moveButtonOnClick = () => {
+                    this.arrowSelection!.createLabels(SELECTIONTYPE.MOVE);
+                    this.arrowSelection!.arrowsColor = "#f2622e";
+                    this.arrowSelection!.changeArrowsColor("#f2622e");
+                    this.selectionArrowsPad!.currentSelection = SELECTIONTYPE.MOVE
+                };
+
+                this.arrowSelection!.arrowsOnClick = (dir: DIRECTION) => {
+                    if (this.selectionArrowsPad!.currentSelection === SELECTIONTYPE.MOVE) {
+                        this.MoveAction.emit({
+                            direction: SELECTIONTYPE.MOVE,
+                            ...this.arrowToAxis[dir]
+                        });
+                    }
+                    else if (this.selectionArrowsPad!.currentSelection === SELECTIONTYPE.ROTATE) {
+                        this.RotationAction.emit({
+                            direction: SELECTIONTYPE.ROTATE,
+                            ...this.arrowToAxis[dir]
+                        });
+                    }
                 }
-
-                this.matriz.onCellClick = (row: number, col: number) => {
-                    console.log(`Cell clicked at row: ${row}, col: ${col}`);
-                    this.AdditionAction.emit({
-                        x: col,
-                        z: row
-                    });
-                }
-
             } 
         }) 
 
-    } 
+    }
 
     async imgAssetToBitmap(asset: AssetImg) : Promise<AssetBitmap> {
         const id = asset.id;

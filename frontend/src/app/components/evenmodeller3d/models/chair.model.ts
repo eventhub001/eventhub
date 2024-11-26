@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
-import { AxisOrientation, ModelThreeDObject, Size } from "../modelobjects/3dobjects";
-import { Position, Side } from "../modelobjects/3dtypes";
+import { AxisOrientation, ModelThreeDObject, Size } from "../model-objects/3dobjects-utils";
+import { Position, Side } from "../model-objects/3dtypes";
 import { ThreeDObject } from "./threeobject.model";
 import * as THREE from 'three';
 import {ModelHandler} from "../../../services/modelsHandler";
@@ -43,16 +43,4 @@ export class Chair extends ThreeDObject {
 
         return newchair;
     }
-
-    // public override clone(): Chair {
-    //     const newContent = this.content.clone();
-        
-    //     newContent.traverse((child) => {
-    //         if (child instanceof THREE.Mesh) {
-    //             child.material = child.material.clone();
-    //         }
-    //     });
-
-    //     return new Chair(this.id, this.url!, this.size, this.content.clone(), {x: this.x, y: this.y, z: this.z});
-    // }
 }

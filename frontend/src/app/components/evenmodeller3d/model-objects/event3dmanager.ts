@@ -1,11 +1,13 @@
 import { EventType } from "@angular/router";
 import { ThreeDObject } from "../models/threeobject.model";
-import { EventGrid } from "./events";
+import { EventGrid } from "./grid";
 import { Chair } from "../models/chair.model";
 import { NMatrix } from "./matrices";
 import { Side } from "./3dtypes";
 import * as THREE from 'three';
-import { Asset } from "../../../interfaces";
+import { Asset, AssetModel } from "../../../interfaces";
+import { GridAdditionError } from "./exceptions";
+import { checkCollisionCustom } from "./3dobjects-utils";
 
 export class Event3DManager {
 
@@ -24,11 +26,10 @@ export class Event3DManager {
         // verify if there a set created
         this.sets.forEach((set) => {
             if (set.hasAssetInPosition(col, floor, row)) {
-                throw new Error("There is already an asset is the position selected");
+                throw new GridAdditionError("There is already an asset is the position selected");
             }
 
             else {
-
                 newasset.x = col;
                 newasset.y = floor;
                 newasset.z = row;
@@ -44,34 +45,102 @@ export class Event3DManager {
     
     move(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number) {
         let allowedPosition = true;
-        
 
-        // verify if there a set created
         this.sets.forEach((set) => {
             if (set.hasAssetInPosition(selectedAsset.position.col + col, selectedAsset.position.floor + floor, selectedAsset.position.row + row)) {
-                throw new Error("There is already an asset is the position selected");
+                throw new GridAdditionError("There is already an asset is the position selected");
             }
         });
+
+        const foundSet = this.findSetByAsset(selectedAsset);
+
+        console.log("foundSet", foundSet);
+        if (foundSet === undefined) {
+            console.log("Set not found.");
+            throw new Error("Set not found.");
+        }
 
         if (allowedPosition) {
             console.log("selectedAsset", selectedAsset);
-            this.moveAsset(selectedAsset, selectedAsset.position.col + col, selectedAsset.position.floor + floor, selectedAsset.position.row + row);
+            // this.computeSpatialObjectOccupancy(selectedAsset.asset, selectedAsset.position.col + col, selectedAsset.position.floor + floor, selectedAsset.position.row + row, scene);
+            this.moveAsset(selectedAsset, selectedAsset.position.col + col, selectedAsset.position.floor + floor, selectedAsset.position.row + row, foundSet);
         }
     }
 
-    moveAsset(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number) {
-        console.log("asset", asset);
-        console.log("col", col, "floor", floor, "row", row);
-
+    findSetByAsset(asset: {asset: Asset, position: {col: number; floor: number; row: number}}) : Set | undefined {
+        let foundSet: Set | undefined = undefined;
         this.sets.forEach((set) => {
-            if (!set.hasAssetInPosition(col, floor, row)) {
-                set.move(asset, col, floor, row);
+            if (set.hasAssetInPosition(asset.position.col, asset.position.floor, asset.position.row)) {
+                console.log("returning set from findSetByAsset");
+                console.log(set);
+                foundSet = set;
             }
+        })
 
-            else {
-                throw new Error("There is already an asset is the position selected");
+        if (foundSet !== undefined) {
+            return foundSet;
+        }
+
+        return undefined;
+    }
+
+    rotate(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}, x: number, y: number, z: number) {
+        // calculate if the asset can be rotated. That means to check the space the new asset will take
+        selectedAsset.asset.rotate(x, y, z);
+    }
+
+    delete(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}, scene: THREE.Scene) {
+        this.sets.forEach((set) => {
+            if (set.hasAssetInPosition(selectedAsset.position.col, selectedAsset.position.floor, selectedAsset.position.row)) {
+                console.log("found asset in set, ready to delete in position: ", selectedAsset.position);
+                set.delete(selectedAsset);
+                // remove the set if it is empty
+                if (set.getAssets().length === 0) {
+                    this.sets.splice(this.sets.indexOf(set), 1);
+                }
+                scene.remove(selectedAsset.asset.content);
             }
         });
+    }
+
+    moveAsset(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number, currentset: Set) {
+
+        if (!currentset) {
+            throw new Error("Set not found.");
+        }
+
+        console.log("currentset", currentset.name);
+        currentset.move(asset, col, floor, row);
+
+        const positionedAsset = this.getAsset(col, floor, row);
+        if (!positionedAsset) {
+            throw new Error("Asset not found.");
+        }
+
+        this.sets.forEach((set) => {
+            const assets = set.getAssets();
+            for (let i = 0; i < assets.length; i++) {
+
+                if (assets[i].content.uuid === positionedAsset.content.uuid) {
+                    continue;
+                }
+                
+                const from = new THREE.Box3().setFromObject(assets[i].content);
+                const to = new THREE.Box3().setFromObject(positionedAsset.content);
+
+                if (from.intersectsBox(to)) {
+                    console.log(assets[i].content, " intersects with ", positionedAsset.content);
+                    console.log(positionedAsset);
+                    // this.delete({asset: positionedAsset, position: {col, floor, row}}, scene);
+                    // this.add(asset.asset, asset.position.col, asset.position.floor, asset.position.row);
+                    currentset.move({asset: positionedAsset, position: {col: col, floor: floor, row: row}}, asset.position.col, asset.position.floor, asset.position.row);
+                    throw new GridAdditionError("There is an interception between the assets");
+                }
+                else {
+                    console.log("Not intersecting");
+                }
+            }
+        })
     }
 
     hasAssetInPosition(col: number, floor: number, row: number) {
@@ -107,6 +176,7 @@ export class Event3DManager {
     // debug function. Delete when no needed.
     public render(scene: THREE.Scene) {
         // render all the assets in the scene.
+        console.log("total sets: ", this.sets.length);
         for (let i = 0; i < this.sets.length; i++) {
             const set = this.sets[i];
             console.log(set);
@@ -117,22 +187,65 @@ export class Event3DManager {
                         for (let k = 0; k < arr[i][j].length; k++) {
                             if (arr[i][j][k] !== null) {
                                 // render the asset
-                                console.log(`[${i}][${j}][${k}] = ${arr[i][j][k]!.content}`);
-                                set.placeAsset(arr[i][j][k]!, i, j, k, this.grid, scene);
+                                console.log(`[${i}][${j}][${k}] = ${arr[i][j][k]!.content.uuid}`);
+                                // set.placeAsset(arr[i][j][k]!, i, j, k, this.grid, scene);
+                                set.render(arr[i][j][k]!, scene);
                             }
                         }
                     }
                 }
             }
         }
+        console.log("computed rendering");
     }
 
+    public computeSpatialObjectOccupancy(asset: Asset, col: number, floor: number, row: number, scene: THREE.Scene) {
+        // create just the bounding box of the content.
+        this.add(asset, col, floor, row);
+        const positionedAsset = this.getAsset(col, floor, row);
+        if (!positionedAsset) {
+            throw new Error("Asset not found.");
+        }
+
+        this.sets.forEach((set) => {
+            const assets = set.getAssets();
+            for (let i = 0; i < assets.length; i++) {
+
+                if (assets[i].content.uuid === positionedAsset.content.uuid) {
+                    continue;
+                }
+                
+                const from = new THREE.Box3().setFromObject(assets[i].content);
+                const to = new THREE.Box3().setFromObject(positionedAsset.content);
+
+                if (from.intersectsBox(to)) {
+                    console.log(assets[i].content, " intersects with ", positionedAsset.content);
+                    this.delete({asset: positionedAsset, position: {col, floor, row}}, scene);
+                    throw new GridAdditionError("There is an interception between the assets");
+                }
+                else {
+                    console.log("Placing asset");
+                }
+            }
+        })
+    }
     
+    getAsset(col: number, floor: number, row: number) {
+        for (let i = 0; i < this.sets.length; i++) {
+            const set = this.sets[i];
+            const asset = set.getAsset(col, floor, row);
+            if (asset) {
+                return asset;
+            }
+        }
+        return null;
+    }
+
     getAssetsAsObjects(): THREE.Object3D[] {
         const objects: THREE.Object3D[] = [];
         for (let i = 0; i < this.sets.length; i++) {
             const set = this.sets[i];
-            objects.push(...set.getAssets())
+            objects.push(...set.getAssets().map((asset) => asset.content));
         }
         return objects;
     }
@@ -145,11 +258,8 @@ export class Event3DManager {
                 return {asset: asset.asset, position: {col: asset.position.col, floor: asset.position.floor, row: asset.position.row}};
             }
         }
-
         return null;
     }
-
-    // the idea is manager all the assets in the scene.
 }
 
 export enum Direction {
@@ -186,28 +296,29 @@ export interface Set {
         direction2?: Direction;
         gap?: number;
     }): void;
+    delete(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}): void;
 
-    placeAsset(asset: Asset, x: number, y: number, z: number, grid: EventGrid, scene: THREE.Scene): void;
-
+    placeAsset(asset: Asset, x: number, y: number, z: number, grid: EventGrid): void;
     hasAssetInPosition(x: number, y: number, z: number): boolean;
-
-    getAssets(): THREE.Object3D[];
-
+    getAssets(): Asset[];
     findAsset(uuid: string): {asset: Asset, position: {col: number; floor: number; row: number}} | null;
-}
+}   
 
 export class Set implements Set {
     name: string;
     matrix: NMatrix<Asset>;
-    sideMatrix: NMatrix<{loc1: Side; loc2: Side}>; 
+    sideMatrix: NMatrix<{loc1: Side; loc2: Side}> | undefined; 
+    grid: EventGrid;
 
     constructor(name: string, grid: EventGrid, initialAsset?: Asset) {
         this.name = name;
+        this.grid = grid;
         this.matrix = new NMatrix<Asset>(grid.cols, grid.floor, grid.rows, null);
         if (initialAsset) {
             this.matrix.matrix[initialAsset.x][initialAsset.y][initialAsset.z] = initialAsset;
+            this.sideMatrix = new NMatrix<{loc1: Side; loc2: Side}>(grid.cols, grid.floor, grid.rows, {loc1: Side.CENTER, loc2: Side.BOTTOM});   
+            this.placeAsset(initialAsset, initialAsset.x, initialAsset.y, initialAsset.z, grid);
         }
-        this.sideMatrix = new NMatrix<{loc1: Side; loc2: Side}>(grid.cols, grid.floor, grid.rows, {loc1: Side.CENTER, loc2: Side.BOTTOM});
     }
 
     public add(oldasset: {
@@ -239,8 +350,6 @@ export class Set implements Set {
             let indx = newasset.x;
             let indz = newasset.z;
 
-
-
             ({ indx, indz } = updateNewPosition(oldasset.direction1!, indx, indz));
             
             if (oldasset.direction2)
@@ -259,13 +368,23 @@ export class Set implements Set {
             this.matrix.matrix[indx][newasset.y][indz]!.x = indx;
             this.matrix.matrix[indx][newasset.y][indz]!.z = indz;
 
+            console.log("newasset, indx, newasset.y, indz");
+            console.log(newasset, indx, newasset.y, indz);
+            this.placeAsset(newasset, indx, newasset.y, indz, oldasset.grid);
+
             return this.getAsset(indx, newasset.y, indz);
         }
     }
 
-    move(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, x: number, y: number, z: number) {
+    delete(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}) {
+        this.matrix.matrix[selectedAsset.position.col][selectedAsset.position.floor][selectedAsset.position.row] = null;
+    }
+
+    move(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number) {
+        console.log("removing: ", asset.position.col, asset.position.floor, asset.position.row);
         this.matrix.matrix[asset.position.col][asset.position.floor][asset.position.row] = null;
-        this.matrix.matrix[x][y][z] = asset.asset;
+        this.matrix.matrix[col][floor][row] = asset.asset;
+        this.placeAsset(asset.asset, col, floor, row);
         
     }
 
@@ -273,8 +392,11 @@ export class Set implements Set {
         return this.matrix.matrix[x][y][z];
     }
 
-    public placeAsset(asset: Asset, x: number, y: number, z: number, grid: EventGrid, scene: THREE.Scene) {
-        grid.placeAssetTo(asset, x, y, z, this.sideMatrix.matrix[x][y][z]!.loc1, this.sideMatrix.matrix[x][y][z]!.loc2);
+    public placeAsset(asset: Asset, x: number, y: number, z: number) {
+        this.grid.placeAssetTo(asset, x, y, z, this.sideMatrix!.matrix[x][y][z]!.loc1, this.sideMatrix!.matrix[x][y][z]!.loc2);
+    }
+
+    public render(asset: Asset, scene: THREE.Scene) {
         scene.add(asset.content);
     }
 
@@ -291,11 +413,11 @@ export class Set implements Set {
         return occupiedByAsset;
     }
 
-    public getAssets(): THREE.Object3D[] {
-        const objects: THREE.Object3D[] = [];
+    public getAssets(): Asset[] {
+        const objects: Asset[] = [];
         this.matrix.forEach((value, _i, _j, _k) => {
             if (value !== null) {
-                objects.push(value.content);
+                objects.push(value);
             }
         });
         return objects;
@@ -334,8 +456,11 @@ export class ChairSet extends Set {
     }
 
     // remove the scene from the parameters. The final rendering should be set in another function. 
-    public override placeAsset(asset: Asset, x: number, y: number, z: number, grid: EventGrid, scene: THREE.Scene) {
-        grid.placeAssetTo(asset, x, y, z, this.sideMatrix.matrix[x][y][z]!.loc1, this.sideMatrix.matrix[x][y][z]!.loc2);
+    public override placeAsset(asset: Asset, x: number, y: number, z: number) {
+        this.grid.placeAssetTo(asset, x, y, z, this.sideMatrix!.matrix[x][y][z]!.loc1, this.sideMatrix!.matrix[x][y][z]!.loc2);
+    }
+
+    public override render(asset: Asset, scene: THREE.Scene) {
         scene.add(asset.content);
     }
 
@@ -353,7 +478,7 @@ export class ChairSet extends Set {
         if (result!.size.width > (oldasset.grid.width / oldasset.grid.cols) || result!.size.depth > (oldasset.grid.depth / oldasset.grid.rows)) {
 
             if (oldasset.col === 0 && (oldasset.direction1 === Direction.FRONT || oldasset.direction2 === Direction.FRONT)) {
-                this.sideMatrix.change({loc1: Side.BOTTOM, loc2: Side.BACK});
+                this.sideMatrix!.change({loc1: Side.BOTTOM, loc2: Side.BACK});
             }
 
             const assetwidth = result!.size.width;
@@ -375,6 +500,8 @@ export class ChairSet extends Set {
             result!.z = z;
 
             this.matrix.matrix[x][oldasset.floor][z] = result!.clone();
+
+            // this.placeAsset(result!, x, oldasset.floor, z, oldasset.grid);
 
             return result;
         }
