@@ -64,7 +64,7 @@ export class VendorListComponent {
 
   cotizacionForm = this.fb.group({
     id: [''],
-    event: ['', Validators.required],
+    event_event_id: ['', Validators.required],
     vendor_service_id: ['', Validators.required],
     montoCotizado: ['', Validators.required],
     cantidadRecurso: ['', Validators.required],
@@ -176,7 +176,7 @@ export class VendorListComponent {
   callEdition(cotizacion: ICotizacion) {
     console.log('Abriendo el formulario de edición para:', cotizacion);
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? cotizacion.id.toString() : '');
-    this.cotizacionForm.controls['event'].setValue(cotizacion.event?.eventId ? cotizacion.event.eventId.toString() : '');
+    this.cotizacionForm.controls['event_event_id'].setValue(cotizacion.event_event_id && cotizacion.event_event_id ? cotizacion.event_event_id.toString() : null);
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id && cotizacion.vendor_service_id ? cotizacion.vendor_service_id.toString() : null);
     this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? cotizacion.montoCotizado.toString() : '');
     this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? cotizacion.cantidadRecurso.toString() : '');

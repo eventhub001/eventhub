@@ -11,7 +11,13 @@ import { NotificationDialogComponent } from '../../../chat/chat/notification-dia
 @Component({
   selector: 'app-vendor1-details',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent, NotificationDialogComponent],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    CommonModule,
+    ChatComponent,
+    NotificationDialogComponent
+  ],
   templateUrl: './vendor-details.component.html',
   styleUrl: './vendor-details.component.scss'
 })

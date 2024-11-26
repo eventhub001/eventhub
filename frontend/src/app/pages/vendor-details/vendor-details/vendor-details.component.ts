@@ -16,6 +16,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ModalComponent } from "../../../components/modal/modal.component";
 import { CotizarFormComponent } from "../../../components/cotizar/cotizar-form/cotizar-form.component";
 import { CotizacionService } from '../../../services/Cotizacion.Service';
+import { EventsService } from '../../../services/event.service';
 
 @Component({
   selector: 'app-vendor-details',
@@ -39,6 +40,7 @@ export class VendorDetailsComponent {
   public modalService: ModalService = inject(ModalService);
   public authService: AuthService = inject(AuthService);
   public VendorService: VendorService = inject(VendorService);
+  public eventService: EventsService = inject(EventsService);
   public fb: FormBuilder = inject(FormBuilder);
   @ViewChild('addRecursosModal') public addRecursosModal: any;
   @ViewChild('addCotizacionesModal') public addCotizacionesModal: any;
@@ -53,7 +55,7 @@ export class VendorDetailsComponent {
     horaEvento: ['', Validators.required],
     cantidad_solicitada: ['', Validators.required],
     estado: ['', Validators.required],
-    event_event_id: ['', Validators.required],
+    event_id: ['', Validators.required],
   });
 
   cotizacionForm = this.fb.group({
@@ -76,6 +78,7 @@ export class VendorDetailsComponent {
     } else {
       console.error('No user found in localStorage');
     }
+    this.eventService.getAllByUser();
 
     this.solicituRecursoService.search.page = 1;
   // this.solicituRecursoService.getAllRecursosByUserId(this.userId);
@@ -106,7 +109,6 @@ export class VendorDetailsComponent {
     this.solicitudForm.controls['horaEvento'].setValue(recurso.horaEvento ? recurso.horaEvento : '');
     this.solicitudForm.controls['cantidad_solicitada'].setValue(recurso.cantidad_solicitada ? JSON.stringify(recurso.cantidad_solicitada) : '');
     this.solicitudForm.controls['estado'].setValue(recurso.estado ? JSON.stringify(recurso.estado) : '');
-    this.cotizacionForm.controls['vendor_service_id'].setValue(recurso.event_event_id && recurso.event_event_id.id ? recurso.event_event_id.id?.toString() : null);
     this.modalService.displayModal('md', this.addRecursosModal);
   }
 

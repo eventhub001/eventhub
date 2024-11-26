@@ -35,7 +35,7 @@ export class SolicitudesComponent {
     horaEvento: ['', Validators.required],
     cantidad_solicitada: ['', Validators.required],
     estado: ['', Validators.required],
-    event_event_id: ['', Validators.required],
+    event_id: ['', Validators.required],
   });
 
   constructor() {
@@ -67,7 +67,7 @@ export class SolicitudesComponent {
     this.solicitudForm.controls['horaEvento'].setValue(recurso.horaEvento ? recurso.horaEvento : '');
     this.solicitudForm.controls['cantidad_solicitada'].setValue(recurso.cantidad_solicitada ? JSON.stringify(recurso.cantidad_solicitada) : '');
     this.solicitudForm.controls['estado'].setValue(recurso.estado ? JSON.stringify(recurso.estado) : '');
-    this.solicitudForm.controls['event_event_id'].setValue(recurso.event_event_id ? JSON.stringify(recurso.event_event_id) : '');
+    this.solicitudForm.controls['event_id'].setValue(recurso.event_id ? JSON.stringify(recurso.event_id) : '');
 
     this.modalService.displayModal('md', this.addRecursosModal);
   }

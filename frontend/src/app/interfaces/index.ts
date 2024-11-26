@@ -1,6 +1,7 @@
 
 import * as THREE from 'three';
 import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
+import { S } from '@fullcalendar/core/internal-common';
 
 export interface ILoginResponse {
     accessToken: string;
@@ -226,6 +227,7 @@ export interface ICotizacion {
   vendor_service_id?: IVendorService;
   event_event?: IEvent;
   event_event_id?: IEvent;
+  event?:String;
   montoCotizado?: number;
   cantidadRecurso?: number;
   user?: IUser;
@@ -237,7 +239,8 @@ export interface SolicituRecurso {
   vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
   event_event?: IEvent;
-  event_event_id?: IEvent;
+  event_id?: IEvent;
+  event?: IEvent;
   user_id?: IUser;
   fechaSolicitud?: Date;
   fechaEvento?: Date;

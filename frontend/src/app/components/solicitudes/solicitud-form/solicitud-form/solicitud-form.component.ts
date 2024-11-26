@@ -2,11 +2,12 @@ import { VendorServiceService } from './../../../../services/vendor-service.serv
 import { UserService } from './../../../../services/user.service';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { SolicituRecursoService } from '../../../../services/SolicituRecurso.Service';
-import { IEvent, IVendor, IVendorService, SolicituRecurso } from '../../../../interfaces';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VendorService } from '../../../../services/vendor.service';
 import { CommonModule } from '@angular/common';
 import * as e from 'cors';
+import { IEvent, IVendor, IVendorService, SolicituRecurso, } from '../../../../interfaces';
+import { EventsService } from '../../../../services/event.service';
 
 @Component({
   selector: 'app-solicitud-form',
@@ -23,7 +24,8 @@ export class SolicitudFormComponent {
   public SolicituRecursoService: SolicituRecursoService = inject(SolicituRecursoService);
   public VendorServiceService: VendorServiceService = inject(VendorServiceService);
   public UserService: UserService = inject(UserService);
-  service: VendorService = inject(VendorService)
+  service: VendorService = inject(VendorService);
+  event: EventsService = inject(EventsService)
   fb: any;
 
 
@@ -40,7 +42,7 @@ export class SolicitudFormComponent {
   }
 
   @Input() servicios: IVendorService[] = [];
-  @Input() eventos: IEvent[] = [];
+  @Input() events: IEvent[] = [];
   vendor: IVendor | undefined;
   @Input() solicitudForm!: FormGroup;
   @Output() callSaveMethod: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
@@ -56,14 +58,14 @@ export class SolicitudFormComponent {
 
   callSave() {
     let IdServicio: number = this.solicitudForm.controls['vendor_service_id'].value;
-    let IdEvent: number = this.solicitudForm.controls['event_event_id'].value;
+    let IdEvent: number = this.solicitudForm.controls['event_id'].value;
     let solicitud: SolicituRecurso = {
       fechaEvento: this.solicitudForm.controls['fechaEvento'].value,
       fechaSolicitud: this.solicitudForm.controls['fechaSolicitud'].value,
       cantidad_solicitada: this.solicitudForm.controls['cantidad_solicitada'].value,
       estado: this.solicitudForm.controls['estado'].value,
       vendor_service: { id: IdServicio },
-      event_event:{ id: IdEvent},
+      event_id:{ id: IdEvent},
       horaEvento: this.solicitudForm.controls['horaEvento'].value,
       //event: { id: 1 },
     }
@@ -84,7 +86,7 @@ export class SolicitudFormComponent {
   ngOnInit(): void {
     this.solicitudForm = this.fb.group({
       vendor_service_id: ['', Validators.required],
-      event_event_id: ['', Validators.required],
+      event_id: ['', Validators.required],
 
     });
   }
