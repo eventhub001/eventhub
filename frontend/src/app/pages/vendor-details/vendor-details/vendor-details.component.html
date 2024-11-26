@@ -17,6 +17,7 @@
                 [solicitudForm]="solicitudForm"
                 (callSaveMethod)="saveRecurso($event)"
                 (callUpdateMethod)="updatRecurso($event)"
+                [events]="eventService.events$()"
               />
             </div>
           </app-modal>
