@@ -16,6 +16,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:4200/");
         config.addAllowedOrigin("http://localhost:59872/");
         config.addAllowedOrigin("http://127.0.0.1:5000/");
+        config.addAllowedOrigin("http://127.0.0.1:5000/ml-model/compute/event/suggestions");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);

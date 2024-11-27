@@ -130,9 +130,31 @@ export class EventsService extends BaseService<IEvent> {
   }
 
 
+  getEventsForCurrentWeek() {
+    this.findAllWithParamsAndCustomSource(`week`, { page: this.search.page, size: this.search.size }).subscribe({
+      next: (response: any) => {
+        this.search = { ...this.search, ...response.meta };
+        this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
+        this.eventListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    });
+  }
 
-
-
+  getEventsForTomorrow() {
+    this.findAllWithParamsAndCustomSource(`tomorrow`, { page: this.search.page, size: this.search.size }).subscribe({
+      next: (response: any) => {
+        this.search = { ...this.search, ...response.meta };
+        this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
+        this.eventListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    });
+  }
 
 
 

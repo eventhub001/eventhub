@@ -30,7 +30,12 @@ export class MachineLearningService extends BaseService<IEventForm> {
   }
 
   public computeVendorData(data: { vendor_answers: string }): Observable<IComputeResponse> {
-    return this.http.post<IComputeResponse>(`${this.source}/compute/vendor`, data);
+    return this.http.post<IComputeResponse>(`${this.source}/compute/vendor/suggestions`, data);
   }
 
+
+  public computeEventSuggestionsData(data: { suggestions_answers: string }): Observable<IComputeResponse> {
+    return this.http.post<IComputeResponse>(`${this.source}/compute/event/suggestions`, data);
+  }
 }
+

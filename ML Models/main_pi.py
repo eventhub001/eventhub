@@ -7,7 +7,7 @@ import pandas as pd
 import json
 
 app = Flask(__name__)
-CORS(app, resources={r"/ml-model/*": {"origins": "http://localhost:4200/*"}})
+CORS(app, resources={r"/ml-model/*": {"origins": "http://localhost:4200"}})
 
 
 def flat_question_and_answers(event_form: pd.DataFrame, event_form_question: pd.DataFrame):
@@ -60,7 +60,7 @@ def compute():
 
     model.cosine_similarity()
 
-    result = model.get_top_n(5)
+    result = model.get_top_n(10)
     frequency_templates = get_templates(result)
     frequency_templates = frequency_templates[frequency_templates["count"] >= 0.3]
     frequency_templates_json = frequency_templates.to_dict(orient="records")
@@ -152,7 +152,7 @@ def get_vendor_templates(vendors: pd.DataFrame):
     return (frequency / total_vendors).reset_index(name='frequency')
 
 # Route to process EventForm and return computed JSON
-@app.route('/ml-model/compute/vendor', methods=['POST'])
+@app.route('/ml-model/compute/vendor/suggestions', methods=['POST'])
 def compute_vendor():
     if request.content_type != 'application/json':
         return jsonify({"status": "Unsupported Media Type"}), 415
@@ -182,7 +182,7 @@ def compute_vendor():
 
     model.cosine_similarity()
 
-    result = model.get_top_n(15)    
+    result = model.get_top_n(5)    
 
     # Print result for debugging
     print("Result DataFrame:")
@@ -209,6 +209,126 @@ def compute_vendor():
         "data": response_data
     }), 200
 
+
+
+
+def flat_suggestions_info(suggestions_template: pd.DataFrame):
+    if 'id' not in suggestions_template.columns or 'labels' not in suggestions_template.columns:
+        raise KeyError("Las columnas necesarias no existen en los DataFrames proporcionados")
+    
+    suggestions_template["id"] = suggestions_template["id"].astype(str)
+    suggestions_template["labels"] = suggestions_template["labels"].astype(str)
+    
+    # Eliminar duplicados
+    suggestions_template = suggestions_template.drop_duplicates(subset=['id', 'labels', 'suggestions'])
+    
+    suggestions_info_wrapped = suggestions_template.groupby('id').apply(
+        lambda x: pd.Series({
+            'suggestions_info': ', '.join(
+                f"{row['suggestions']}"
+                for _, row in x.iterrows()),
+            'labels': ', '.join(x['labels'].unique())
+        })
+    ).reset_index()
+    
+    return suggestions_info_wrapped  # Return the aggregated DataFrame
+
+
+def get_suggestions_templates(suggestions: pd.DataFrame):
+    # Print the structure of the suggestions DataFrame
+    print("Suggestions DataFrame:")
+    print(suggestions)
+
+    # Check if 'id' column exists
+    if "id" not in suggestions.columns:
+        raise KeyError("The 'id' column is missing from the suggestions DataFrame")
+
+    total_suggestions = len(suggestions["id"])
+
+    # Split the 'labels' column into individual labels
+    suggestions = suggestions.assign(labels=suggestions['labels'].str.split(', ')).explode('labels')
+
+    # Eliminar duplicados
+    suggestions_task = suggestions[["id", "labels"]]
+    suggestions_task = suggestions_task.drop_duplicates(subset=['id', 'labels'])
+    
+    frequency = suggestions_task['labels'].value_counts().sort_values(ascending=False)
+
+    # Print frequency for debugging
+    print("Frequency of labels:")
+    print(frequency)
+
+    # Get top 10
+    return (frequency / total_suggestions).reset_index(name='frequency')
+
+
+@app.route('/ml-model/compute/event/suggestions', methods=['POST'])
+def compute_suggestions():
+    if request.content_type != 'application/json':
+        return jsonify({"status": "Unsupported Media Type"}), 415
+    
+    # Check if a token is provided in headers
+    token = request.headers.get("Authorization")[7:]
+    
+    if not token or not is_user_logged_in(token) or type(is_user_logged_in(token)) == dict:
+        return jsonify({"status": "Unauthorized"}), 401
+
+    try:
+        request_data = request.get_json()
+        if request_data is None:
+            raise ValueError("No JSON data provided")
+    except (ValueError, TypeError) as e:
+        return jsonify({"status": "Bad Request", "message": str(e)}), 400
+
+    suggestions_template = select_table("suggestions_template")
+    
+    # Ensure the 'suggestions' column exists
+    if 'suggestions' not in suggestions_template.columns:
+        return jsonify({"status": "Internal Server Error", "message": "'suggestions' column not found in suggestions_template"}), 500
+
+    # Filter suggestions based on provided labels
+    labels = request_data["suggestions_answers"].split(", ")
+    filtered_suggestions = suggestions_template[suggestions_template["labels"].apply(lambda x: any(label in x for label in labels))]
+
+    # Use the recommendation model
+    suggestions_training_data = flat_suggestions_info(filtered_suggestions)
+    model = CosineRecommendationSystem(suggestions_training_data)
+    
+    model.tokenize("suggestions_info")
+
+    model.transform(request_data["suggestions_answers"])
+
+    model.cosine_similarity()
+
+    result = model.get_top_n(5)    
+
+    # Print result for debugging
+    print("Result DataFrame:")
+    print(result)
+
+    frequency_templates = get_suggestions_templates(result)
+    frequency_templates = frequency_templates[frequency_templates["frequency"] >= 0.3]
+
+    # Print frequency_templates for debugging
+    print("Frequency Templates:")
+    print(frequency_templates)
+
+    frequency_templates_json = frequency_templates.to_dict(orient="records")
+
+    result_json = result.to_dict(orient="records")
+
+    # Extract only the unique suggestions from the result
+    suggestions_list = list(set(result["suggestions_info"].tolist()))
+
+    response_data = {
+        "suggestions": suggestions_list,
+        "frequency_analysis": frequency_templates_json
+    }
+
+    return jsonify({
+        "status": "success",
+        "data": response_data
+    }), 200
 
 # Run the Flask app
 if __name__ == "__main__":

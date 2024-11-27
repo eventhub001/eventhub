@@ -16,7 +16,7 @@ export class EventTypesService extends BaseService<IEventType> {
   }
   public search: ISearch = {
     page: 1,
-    size: 100
+    size: 264
   }
   public totalItems: any = [];
   private authService: AuthService = inject(AuthService);
