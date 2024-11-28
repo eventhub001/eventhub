@@ -3,7 +3,7 @@ import { Position } from "../model-objects/3dtypes";
 import * as THREE from 'three';
 import { AxisOrientation, Size } from "../model-objects/3dobjects-utils";
 import { HttpClient } from "@angular/common/http";
-import { AssetTexture } from "../../../interfaces";
+import { AssetMetadata, AssetTexture } from "../../../interfaces";
 import { TextureHandler } from "../../../services/modelsHandler";
 
 export class Floor extends ThreeDObject {
@@ -15,66 +15,75 @@ export class Floor extends ThreeDObject {
         depth: number,
         position: Position,
         url?: string,
-        sides: AxisOrientation = { front: new THREE.Vector3(1, 0, 0), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) },
-        content?: THREE.Object3D) {
+        sides: AxisOrientation = { front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) },
+        content?: THREE.Object3D,
+        texture?: THREE.Texture) {
         
         let model: THREE.Mesh;
         if (content !== undefined) {
             model = content as THREE.Mesh;
         }
-        else {  
-            model = content || new THREE.Mesh(
-                new THREE.PlaneGeometry(width, depth),
-                new THREE.MeshPhongMaterial({ color: 0x00ff00 })
-            );
+        else {
+            if (texture) {
+                model = new THREE.Mesh(
+                    new THREE.PlaneGeometry(width, depth),
+                    new THREE.MeshPhongMaterial({ map: texture })
+                );
+            }
+
+            else {
+                model = content || new THREE.Mesh(
+                    new THREE.PlaneGeometry(width, depth),
+                    new THREE.MeshPhongMaterial({ color: 0x00ff00 })
+                );
+            }
         }
 
-        //model.rotateOnAxis(sides.top, Math.PI / 2);
-        model.rotateOnAxis(sides.right, -(Math.PI / 2));
-
-        super(0, position, {width: width, height: 0, depth: depth}, model, sides, url);
+        super(0, {width: width, height: 0.1, depth: depth}, model, position, sides, url, texture);
+        
+        model.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
         
         this.width = width;
         this.depth = depth;
 
-        //this.fixOrientation();
+        if (texture) {
+            this.loadTexture();
+        }
     }
 
-    // public override clone(): Floor {
-    //     const newContent = this.content.clone();
-        
-    //     newContent.traverse((child) => {
-    //         if (child instanceof THREE.Mesh) {
-    //             child.material = child.material.clone();
-    //         }
-    //     });
+    private loadTexture() {
+        if (this.texture) {
+            this.content.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.material.map = this.texture;
+                }
+            })
+        }
+    }
 
-    //     return new Floor(this.width, this.depth, {x: this.x, y: this.y, z: this.z}, this.url, this.initialOrientation, newContent);
+    // public static async createFromModel(
+    //     width: number,
+    //     height: number,
+    //     token: string,
+    //     floorid: number,
+    //     position: Position,
+    //     http: HttpClient,
+    //     sides: AxisOrientation = { front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) }) : Promise<Floor> {
+    //     const model: AssetMetadata = await TextureHandler.getTextureMetadata(token, floorid, http);
+    //      const chair: Blob = await TextureHandler.loadTextureBlob(token, model.modelTexturePath, http);
+        
+    //      const chairTexture = await TextureHandler.parseTextureBlob(chair);
+
+    //     const modelMesh = new THREE.Mesh(
+    //         new THREE.PlaneGeometry(width, height),
+    //         new THREE.MeshPhongMaterial({ map: chairTexture })
+    //     );
+
+    //     modelMesh.receiveShadow = true;
+
+    //     const newchair = new Floor(width, height, position, model.modelPath, sides, modelMesh);
+    //     //newchair.resize();
+
+    //     return newchair;
     // }
-
-    public static async createFromModel(
-        width: number,
-        height: number,
-        token: string,
-        floorid: number,
-        position: Position,
-        http: HttpClient,
-        sides: AxisOrientation = { front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) }) : Promise<Floor> {
-        const model: AssetTexture = await TextureHandler.getTextureMetadata(token, floorid, http);
-        const chair: Blob = await TextureHandler.loadTextureBlob(token, model.texture_path, http);
-        
-        const chairTexture = await TextureHandler.parseTextureBlob(chair);
-
-        const modelMesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(width, height),
-            new THREE.MeshPhongMaterial({ map: chairTexture })
-        );
-
-        modelMesh.receiveShadow = true;
-
-        const newchair = new Floor(width, height, position, model.texture_path, sides, modelMesh);
-        //newchair.resize();
-
-        return newchair;
-    }
 }

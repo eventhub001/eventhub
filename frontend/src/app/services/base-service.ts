@@ -19,6 +19,10 @@ export class BaseService<T> {
     return this.http.get<IResponse<T>>(`${this.source}/${customUrlSource}`);
   }
 
+  public findBlobCustomSource(customUrlSource: string): Observable<Blob> {
+    return this.http.get(`${this.source}/${customUrlSource}`, { responseType: 'blob' });
+  }
+
   public findAll(): Observable<IResponse<T[]>> {
     return this.http.get<IResponse<T[]>>(this.source);
   }

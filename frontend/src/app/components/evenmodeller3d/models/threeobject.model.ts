@@ -11,6 +11,7 @@ export class ThreeDObject implements Asset {
     x: number;
     y: number;
     z: number;
+    texture: THREE.Texture | undefined;
     content: THREE.Object3D;
     initialOrientation: Orientation;
     orientation: Orientation;
@@ -18,14 +19,14 @@ export class ThreeDObject implements Asset {
 
     constructor(
         id: number,
-        position: Position,
         size: Size,
         content: THREE.Object3D,
+        position: Position,
         orientation: AxisOrientation = {
             front: new THREE.Vector3(0, 0, 1),
             right: new THREE.Vector3(1, 0, 0),
             top: new THREE.Vector3(0, 1, 0) },
-        url?: string) {
+        url?: string, texture: THREE.Texture | undefined = undefined) {
         
         this.orientation = {
             front: new THREE.Vector3(1, 0, 0),
@@ -35,7 +36,10 @@ export class ThreeDObject implements Asset {
             top: new THREE.Vector3(0, 1, 0),
             bottom: new THREE.Vector3(0, -1, 0)
         };
-        
+
+        if (texture !== undefined) {
+            this.texture = texture;
+        }
         const back = inferOpositeAxis(orientation.front);
         const left = inferOpositeAxis(orientation.right);
         const bottom = inferOpositeAxis(orientation.top);
@@ -74,41 +78,6 @@ export class ThreeDObject implements Asset {
         const front = this.initialOrientation.front.clone().normalize();
         this.rotateWithQuaternion(new THREE.Quaternion(), currentFront, front);
     }
-
-    // rotate(x_axis:  (0 | 90 | 180 | 270)) {
-
-    //     if (x_axis === 0) {
-    //         return;
-    //     }
-
-    //     this.resetOrientation();
-
-    //     const front = this.orientation.front.clone();
-    //     const orientationFrontCopy = this.orientation.front.clone();
-
-    //     orientationFrontCopy.cross(new THREE.Vector3(0, 1, 0));
-
-    //     const quaternion = new THREE.Quaternion();
-
-    //     // I am aware this is not the most effective way, but it works and the system is handling with very good performance.
-
-    //     const rotations: number = Number(x_axis / 90);
-
-    //     for (let i = 1; i < rotations + 1; i++) {
-    //         console.log("rotating once");
-    //         this.rotateWithQuaternion(quaternion, front, orientationFrontCopy);
-    //     }
-
-    //     this.orientation = {
-    //         front: orientationFrontCopy,
-    //         back: inferOpositeAxis(orientationFrontCopy),
-    //         left: inferOpositeAxis(orientationFrontCopy.clone().cross(new THREE.Vector3(0, 1, 0))),
-    //         right: orientationFrontCopy.clone().cross(new THREE.Vector3(0, 1, 0)),
-    //         top: new THREE.Vector3(0, 1, 0),
-    //         bottom: new THREE.Vector3(0, -1, 0)
-    //     }
-    
-    // }
 
     rotate(x: number, y: number, z: number) {
         const quat = new THREE.Quaternion();
@@ -161,7 +130,7 @@ export class ThreeDObject implements Asset {
             }
         });
 
-        return new ThreeDObject(this.id, { x: this.x, y: this.y, z: this.z }, this.size, newContent, this.initialOrientation, this.url);
+        return new ThreeDObject(this.id, this.size, newContent, { x: this.x, y: this.y, z: this.z }, this.initialOrientation, this.url);
     }
 
     private rotateWithQuaternion(Quaternion: THREE.Quaternion, from: THREE.Vector3, to: THREE.Vector3) {

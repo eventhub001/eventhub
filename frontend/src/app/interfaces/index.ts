@@ -180,21 +180,46 @@ export interface ILoginResponse {
     superAdmin = 'ROLE_SUPER_ADMIN'
   }
 
-export interface AssetModel {
-    modelPath: string;
-    modelImgPath: string;
-    id: number;
-    posx: number;
-    posy: number;
-    posz: number;
-    width: number;
-    height: number;
+export interface AssetMetadata {
+  modelPath: string;
+  modelImgPath: string;
+  modelTexturePath: string;
+  id: number;
+  x: number;
+  y: number;
+  z: number;
+  width: number;
+  height: number;
+  depth: number;
+  frontx: number;
+  fronty: number;
+  frontz: number;
+  backx: number;
+  backy: number;
+  backz: number;
+  leftx: number;
+  lefty: number;
+  leftz: number;
+  rightx: number;
+  righty: number;
+  rightz: number;
+  topx: number;
+  topy: number;
+  topz: number;
+  bottomx: number;
+  bottomy: number;
+  bottomz: number;
+}
+
+export interface AssetTextureMetadata {
+  id: number;
+  texturePath: string;
 }
 
 export interface AssetTexture {
-    texture_path: string;
     id: number;
-}
+    blob: Blob;
+  }
 
 export type Orientation = {
     front: THREE.Vector3,
@@ -216,6 +241,7 @@ export interface Asset {
     orientation: Orientation;
     // this can be a composed object, the event should have N amounnts of assets to add.
     content: THREE.Object3D;
+    texture: THREE.Texture | undefined;
     size: Size;
 
     clone: () => Asset;
@@ -223,6 +249,11 @@ export interface Asset {
   }
 
 export interface AssetImg {
+  id: number;
+  blob: Blob;
+}
+
+export interface AssetModel {
   id: number;
   blob: Blob;
 }

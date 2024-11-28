@@ -3,10 +3,10 @@ import { HttpClient } from "@angular/common/http";
 import * as THREE from 'three';
 import { ModelThreeDObject } from "../components/evenmodeller3d/model-objects/3dobjects-utils";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { AssetModel, AssetTexture } from "../interfaces";
+import { AssetMetadata, AssetTexture } from "../interfaces";
 
 export class ModelHandler {
-    public static async getModelMetadata(token: string, id: number, http: HttpClient) : Promise<AssetModel> {
+    public static async getModelMetadata(token: string, id: number, http: HttpClient) : Promise<AssetMetadata> {
         // TODO: Load model from server
         const url = `http://localhost:8080/models/${id}`;
         // bearer token
@@ -14,7 +14,7 @@ export class ModelHandler {
 
         const headers = { Authorization: `Bearer ${bearer}` };
 
-        const blob = await firstValueFrom(http.get<AssetModel>(url, { headers, responseType: 'json' }));
+        const blob = await firstValueFrom(http.get<AssetMetadata>(url, { headers, responseType: 'json' }));
 
         return blob;
     }
@@ -94,6 +94,8 @@ export class TextureHandler {
     }
 
     public static async parseTextureBlob(blob: Blob): Promise<THREE.Texture> {
+        console.log('Parsing texture blob...');
+        console.log(blob);
         const loader = new THREE.TextureLoader();
 
         return new Promise<THREE.Texture>((resolve, reject) => {
@@ -101,7 +103,6 @@ export class TextureHandler {
 
             reader.onload = () => {
                 const imageUrl = reader.result as string;
-
                 // Load texture from the Blob URL
                 loader.load(
                     imageUrl,

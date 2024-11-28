@@ -22,14 +22,14 @@ public class Texture {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    private String texture_path;
+    private String texturePath;
 
-    public String getTexture_path() {
-        return texture_path;
+    public String getTexturePath() {
+        return texturePath;
     }
 
-    public void setTexture_path(String model_path) {
-        this.texture_path = model_path;
+    public void setTexturePath(String model_path) {
+        this.texturePath = model_path;
     }
 
     public Long getId() {

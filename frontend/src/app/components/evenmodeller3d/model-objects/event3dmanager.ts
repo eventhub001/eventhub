@@ -1,11 +1,11 @@
 import { EventType } from "@angular/router";
 import { ThreeDObject } from "../models/threeobject.model";
 import { EventGrid } from "./grid";
-import { Chair } from "../models/chair.model";
+import { DefaultThreeDObject } from "../models/default.model";
 import { NMatrix } from "./matrices";
 import { Side } from "./3dtypes";
 import * as THREE from 'three';
-import { Asset, AssetModel } from "../../../interfaces";
+import { Asset, AssetMetadata } from "../../../interfaces";
 import { GridAdditionError } from "./exceptions";
 import { checkCollisionCustom } from "./3dobjects-utils";
 
@@ -306,6 +306,7 @@ export interface Set {
 
 export class Set implements Set {
     name: string;
+    assets: Asset[] = [];
     matrix: NMatrix<Asset>;
     sideMatrix: NMatrix<{loc1: Side; loc2: Side}> | undefined; 
     grid: EventGrid;
@@ -318,6 +319,7 @@ export class Set implements Set {
             this.matrix.matrix[initialAsset.x][initialAsset.y][initialAsset.z] = initialAsset;
             this.sideMatrix = new NMatrix<{loc1: Side; loc2: Side}>(grid.cols, grid.floor, grid.rows, {loc1: Side.CENTER, loc2: Side.BOTTOM});   
             this.placeAsset(initialAsset, initialAsset.x, initialAsset.y, initialAsset.z, grid);
+            this.assets.push(initialAsset);
         }
     }
 
@@ -371,6 +373,8 @@ export class Set implements Set {
             console.log("newasset, indx, newasset.y, indz");
             console.log(newasset, indx, newasset.y, indz);
             this.placeAsset(newasset, indx, newasset.y, indz, oldasset.grid);
+
+            this.assets.push(newasset);
 
             return this.getAsset(indx, newasset.y, indz);
         }
@@ -446,7 +450,7 @@ export class Set implements Set {
 
 export class ChairSet extends Set {
 
-    constructor(name: string, grid: EventGrid, initialChair?: Chair) {
+    constructor(name: string, grid: EventGrid, initialChair?: DefaultThreeDObject) {
         if (initialChair) {
             super(name, grid, initialChair);
         }

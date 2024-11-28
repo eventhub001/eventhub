@@ -63,4 +63,10 @@ public class ModelRestController {
     public Model getModelPath(@PathVariable Long id) {
         return modelRepository.findById(id).orElseThrow(RuntimeException::new);
     }
+
+    @GetMapping("files/texture/{texture_name}")
+    public FileSystemResource getTextureFile(@PathVariable("texture_name") String fileName) {
+        // temporal storage, since this will be stored in AWS storage, or in a VM.
+        return new FileSystemResource(new File("src\\main\\resources\\" + fileName));
+    }
 }

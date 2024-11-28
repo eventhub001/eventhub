@@ -55,11 +55,6 @@ def compute():
 
     # Modelo de AI. Aqui se pasa la tabla que queremos usar para entrenar.
     model = CosineRecommendationSystem(training_data)
-    # Aqui se pasa la columna que usaremos para entrenar.
-    # tabla de proveedores:
-    # id de vendor | vendor details
-    #      1       | Descripcion: Vendor etc, etc, Es de Cartago, de categoria De bodas.
-    #      2       | Descripcion: Vendor etc, etc, Es de Cartago, de categoria De bodas. 
 
     model.tokenize("form answers")
 

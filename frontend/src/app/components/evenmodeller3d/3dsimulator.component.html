@@ -11,14 +11,15 @@
 </style>
 <div class="container">
     <canvas class="main-three" #mainThreeCv (click)="selectAsset($event)" (mousedown)="mouseDown($event)"></canvas>
-    <div *ngIf="isLoading">Loading...</div>
-    <div *ngIf="!isLoading" style="position: absolute; right: 0px; top: 0px">
+    <div *ngIf="isUILoading">Loading...</div>
+    <div *ngIf="!isUILoading" style="position: absolute; right: 0px; top: 0px">
         <app-ui3d
         (AdditionAction)="addComponent($event)"
         (MoveAction)="handleDirectionComponent($event)"
         (RotationAction)="handleDirectionComponent($event)"
         (DeleteAction)="deleteSelectedComponent()"
         [images]="images"
+        [models]="models"
         [arrowToAxis]="arrowsToProjection$()"
         [arrowToRotation]="arrowsToRotation$()"
         [modelMetadata]="modelMetadata"

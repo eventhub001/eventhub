@@ -17,12 +17,12 @@ public class TextureSeeder implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        this.createTextures();
+//        this.createTextures();
     }
 
     private void createTextures() {
         Texture model = new Texture();
-        model.setTexture_path("floor.texture.default.jpg");
+        model.setTexturePath("floor.texture.default.jpg");
         modelRepository.save(model);
     }
 }

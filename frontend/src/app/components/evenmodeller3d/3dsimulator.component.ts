@@ -7,13 +7,13 @@ import { DebuggingUtils } from './model-objects/3dobjects-utils';
 import { Side } from './model-objects/3dtypes';
 import { MetricType, EventGrid } from './model-objects/grid';
 import { Floor } from './models/floor.model';
-import { Chair } from './models/chair.model';
+import { DefaultThreeDObject } from './models/default.model';
 import { ChairSet, Event3DManager, Direction, Set } from './model-objects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { Asset, AssetImg, AssetModel } from '../../interfaces';
+import { Asset, AssetImg, AssetMetadata, AssetModel, AssetTexture } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { ModelService } from '../../services/model.service';
+import { ModelMetadataService } from '../../services/model-metadata.service';
 import { fixProjectionMapping, fixRotationMapping } from './input-projections/camera';
 import * as UICommand from '../ui3d/commands/commands';
 import { Ui3DComponent } from '../ui3d/ui3d.component';
@@ -23,6 +23,8 @@ import { arrowsToRotation, isSameArrowsToRotation } from './input-projections/ro
 import { ThreeDObject } from './models/threeobject.model';
 import { GridAdditionError } from './model-objects/exceptions';
 import { AlertService } from '../../services/alert.service';
+import { ModelHandler, TextureHandler } from '../../services/modelsHandler';
+import { TextureService } from '../../services/texture.service';
 
 @Injectable({
   providedIn: 'root'
@@ -39,9 +41,16 @@ import { AlertService } from '../../services/alert.service';
 export class TestComponent {
 
   @ViewChild("mainThreeCv", {static: false}) mainThreeCv!: ElementRef<HTMLCanvasElement>;	
-  @Input() modelMetadata: AssetModel[] = [];
+  @Input() modelMetadata: AssetMetadata[] = [];
   @Input() images: AssetImg[] = [];
-  modelService: ModelService = inject(ModelService);
+  @Input() models: AssetModel[] = [];
+  @Input() textures: AssetTexture[] = [];
+  modelHandler!: ModelHandler;
+  isUILoading: boolean = true;
+  is3DLoading: boolean = true;
+
+  modelService: ModelMetadataService = inject(ModelMetadataService);
+  textureService: TextureService = inject(TextureService);
   renderer!: THREE.WebGLRenderer;
   scene!: THREE.Scene;
   camera!: THREE.PerspectiveCamera;
@@ -58,7 +67,6 @@ export class TestComponent {
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
   set!: ChairSet;
-  isLoading: boolean = true;
 
   mousePosition: {x: number, y: number} = {x: 0, y: 0};
 
@@ -86,8 +94,8 @@ export class TestComponent {
     return this.arrowsToRotationSignal;
   }
   // debugging properties. Must remove later.
-  defaultChair!: Chair;
-  models: ThreeDObject[] = []; 
+  defaultChair!: DefaultThreeDObject;
+  modelsMenu: ThreeDObject[] = []; 
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
 
@@ -97,7 +105,7 @@ export class TestComponent {
     
     if (addtion.id) {
 
-      const model = this.models.find(model => model.id == addtion.id);
+      const model = this.modelsMenu.find(model => model.id == addtion.id);
       try {
         this.eventManager.computeSpatialObjectOccupancy(model!, this.selectedFloor?.userData["x"], 0, this.selectedFloor?.userData["z"], this.scene);
       }
@@ -121,8 +129,6 @@ export class TestComponent {
       if (addtion.x === null || addtion.z === null) {
         throw new Error('Invalid addtion operation. Please select a row and a column.');
       }
-    // this.eventManager.add(this.defaultChair, addtion.x!, 0, addtion.z!);
-    // this.eventManager.render(this.scene);
     }
 
   }
@@ -198,15 +204,24 @@ export class TestComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes["images"]) {
-      if (this.images.length > 0) {
-        this.isLoading = false;
-        console.log('finished loading');
+    if (changes["textures"] && this.textures.length > 0) {
+      if (this.textures.length === this.textureService.search.totalElements) {
+        this.is3DLoading = false;
+        console.log("finished loading textures with length: " + this.textures.length);
+        console.log(this.textures);
+        this.loadModeler();
       }
+    }
+    
+    if (this.images.length > 0 && this.models.length > 0 && this.images.length === this.modelService.search.totalElements) {
+      this.isUILoading = false;
+      console.log('finished loading images');
     }
   }
 
-  async ngAfterViewInit() {
+
+  async loadModeler() {
+    console.log("loading world");
     //new zim.Frame(zim.FIT, 800, 600, "#ff0000", 1);
     this.setupComponents();
 
@@ -214,38 +229,39 @@ export class TestComponent {
 
     // resize canvas on half the size
     this.addRenderingHelpers();
-
     
-    const token = this.authService.getAccessToken();
+    // const token = this.authService.getAccessToken();
+    const floorTexture = await TextureHandler.parseTextureBlob(this.textures[0].blob!);
 
-    const floor = await Floor.createFromModel(20, 15,
-      token!,
-      1,
-      {x: 0, y: 0, z: 0},
-      this.http,
-      {front: new THREE.Vector3(1, 0, 0), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0)});
+    const floor = new Floor(20, 15, {x: 0, y: 0, z: 0}, "", undefined, undefined, floorTexture);
 
     DebuggingUtils.showSide(floor, Side.TOP, this.scene);
 
-    const chair = await Chair.createFromModel(
-      token!,
-      1,
-      {width: 1.2711153278258065, height:2.3832655070864464, depth: 1.0580182533765168},
-      {x: 0, y: 0, z: 0},
-      this.http,
-      {front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(0, 0, 1), top: new THREE.Vector3(0, 1, 0)}
-    );
+    const chairData = this.modelMetadata[0];
+    const chairModel = await ModelHandler.parseGLBFile(this.models.find(model => model.id === chairData.id)?.blob!);
 
-    const table = await Chair.createFromModel(
-      token!,
-      2,
-      {width: 4.2711153278258065, height:1.3832655070864464, depth: 3.9711153278258065},
-      {x: 0, y: 0, z: 0},
-      this.http,
-      {front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(0, 0, 1), top: new THREE.Vector3(0, 1, 0)}
-    );
+    const chair = new DefaultThreeDObject(
+      chairData.id,
+      chairData.modelPath,
+      {width: chairData!.width, height:chairData!.height, depth: chairData!.depth},
+      chairModel,
+      {x: chairData.x, y: chairData.y, z: chairData.z},
+      {front: new THREE.Vector3(chairData.frontx, chairData.fronty, chairData.frontz), right: new THREE.Vector3(chairData.rightx, chairData.righty, chairData.rightz), top: new THREE.Vector3(chairData.topx, chairData.topy, chairData.topz)},
+    )
 
-    this.models.push(chair, table);
+    const tableData = this.modelMetadata[1];
+    const tableModel = await ModelHandler.parseGLBFile(this.models.find(model => model.id === tableData.id)?.blob!);
+
+    const table = new DefaultThreeDObject(
+      tableData.id,
+      tableData.modelPath,
+      {width: tableData!.width, height:tableData!.height, depth: tableData!.depth},
+      tableModel,
+      {x: tableData.x, y: tableData.y, z: tableData.z},
+      {front: new THREE.Vector3(tableData.frontx, tableData.fronty, tableData.frontz), right: new THREE.Vector3(tableData.rightx, tableData.righty, tableData.rightz), top: new THREE.Vector3(tableData.topx, tableData.topy, tableData.topz)}
+    )
+
+    this.modelsMenu.push(chair, table);
 
     this.defaultChair = chair;
 
@@ -255,20 +271,6 @@ export class TestComponent {
     this.scene.add(this.grid.floorGrid);
 
     this.set = new Set("left", this.grid, chair);
-
-    // this.set.add({
-    //   col: chair.x,
-    //   floor: chair.y,
-    //   row: chair.z,
-    //   grid: this.grid,
-    //   direction1: Direction.FRONT});
-
-    // this.set.add({
-    //   col: chair.x + 2,
-    //   floor: chair.y,
-    //   row: chair.z,
-    //   grid: this.grid,
-    //   direction1: Direction.FRONT});
 
     this.intersector = new THREE.Raycaster();
     this.pointer = new THREE.Vector2(); 

@@ -6,7 +6,7 @@ import * as UICommands from './commands/commands'
 import { blobsToImages, blobToImage } from './loader/blobloader'
 import { AssetSelectorComponent } from './menus/assetselector'
 import { ArrowsMenu, DIRECTION, MOVE_DIRECTION, SELECTIONTYPE } from './menus/arrows'
-import { AssetBitmap, AssetImg, AssetModel } from '../../interfaces'
+import { AssetBitmap, AssetImg, AssetMetadata, AssetModel } from '../../interfaces'
 import { SelectionArrowsPad } from './menus/selectionarrowspad'
 import { arrowToAxis } from '../evenmodeller3d/input-projections/movement'
 import { arrowsToRotation } from '../evenmodeller3d/input-projections/rotation'
@@ -19,7 +19,10 @@ import { DeleteActionPad } from './menus/delete'
 })
 export class Ui3DComponent implements OnDestroy, AfterContentInit {
     frame: Frame | undefined
-    @Input() modelMetadata: AssetModel[] = [];
+    @Input() modelMetadata: AssetMetadata[] = [];
+    @Input() images: AssetImg[] = [];
+    @Input() models: AssetModel[] = [];
+
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
     @Output() MoveAction: EventEmitter<UICommands.directional> = new EventEmitter<UICommands.directional>()
     @Output() RotationAction: EventEmitter<UICommands.directional> = new EventEmitter<UICommands.directional>()
@@ -30,7 +33,6 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     matriz?: MatrixUI;
     settings: settings;
     modelImgs: AssetBitmap[] = [];
-    @Input() images: AssetImg[] = [];
     width: number = 300;
     height: number = 800;
     stage: Stage | undefined;
