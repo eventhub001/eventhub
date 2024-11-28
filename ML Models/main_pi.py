@@ -222,6 +222,8 @@ def flat_suggestions_info(suggestions_template: pd.DataFrame):
     # Eliminar duplicados
     suggestions_template = suggestions_template.drop_duplicates(subset=['id', 'labels', 'suggestions'])
     
+    print(suggestions_template)
+    
     suggestions_info_wrapped = suggestions_template.groupby('id').apply(
         lambda x: pd.Series({
             'suggestions_info': ', '.join(
@@ -286,12 +288,12 @@ def compute_suggestions():
     if 'suggestions' not in suggestions_template.columns:
         return jsonify({"status": "Internal Server Error", "message": "'suggestions' column not found in suggestions_template"}), 500
 
-    # Filter suggestions based on provided labels
-    labels = request_data["suggestions_answers"].split(", ")
-    filtered_suggestions = suggestions_template[suggestions_template["labels"].apply(lambda x: any(label in x for label in labels))]
+    # aqui esta filtrando los datos con base a los labels.
+    # el problema es que eso deberia hacerlo el CosineRecommendationSystem de todos modos.
 
     # Use the recommendation model
-    suggestions_training_data = flat_suggestions_info(filtered_suggestions)
+    suggestions_training_data = flat_suggestions_info(suggestions_template) # porque filtramos antes del entrenamiento, no hace falta hacer esto.
+    print("expected output", suggestions_training_data)
     model = CosineRecommendationSystem(suggestions_training_data)
     
     model.tokenize("suggestions_info")

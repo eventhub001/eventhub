@@ -297,14 +297,13 @@ showVendorSuggestions() {
     suggestions.forEach((vendor: any) => {
       const vendorInfo = vendor.vendor_info;
       const vendorName = vendorInfo.match(/Vendor: ([^()]+)/)?.[1] || 'Nombre no especificado';
-      const vendorCategory = vendorInfo.match(/Category: ([^()]+)/)?.[1] || 'No especificado';
       const vendorLocation = vendorInfo.match(/Location: ([^,]+)/)?.[1] || 'No especificado';
 
       if (!uniqueVendors.has(vendorName)) {
         uniqueVendors.set(vendorName, {
           type: "info",
           title: vendorName,
-          subtitle: `Categoría: ${vendorCategory} \nServicios: ${vendor.service_name || 'No especificado'} \nUbicación: ${vendorLocation}`,
+          subtitle: `Servicios: ${vendor.service_name || 'No especificado'} \nUbicación: ${vendorLocation}`,
           actionLink: `http://localhost:4200/app/vendors`
         });
       }
@@ -325,82 +324,81 @@ showVendorSuggestions() {
 
 }
 
-crearEvento(parameters: any) {
-  const dfMessenger = document.querySelector('df-messenger') as any;
-  if (!this.eventData.eventType && parameters.EventType) {
-    const eventType = this.getEventTypeByName(parameters.EventType);
-    if (eventType) {
-      this.eventData.eventType = eventType;
-    }
-    return;
-  }
-  if (!this.eventData.eventName && parameters.nombre_evento) {
-    this.eventData.eventName = Array.isArray(parameters.nombre_evento) ? parameters.nombre_evento[0] : parameters.nombre_evento;
-    return;
-  }
-  if (!this.eventData.eventDescription && parameters.descripcion_evento) {
-    this.eventData.eventDescription = parameters.descripcion_evento;
-    return;
-  }
-  if (parameters.fecha_evento) {
-    const formattedDate = this.convertFromISOToMMDDYYYY(parameters.fecha_evento);
-    if (this.isValidDate(formattedDate, 'MM-DD-YYYY')) {
-      this.eventData.eventStartDate = this.convertToISODate(formattedDate, 'MM-DD-YYYY');
-    }
-    return;
-  }
-if (this.eventData.eventStartDate && !this.eventData.eventStartDate.includes('T') && parameters.hora_inicio) {
-  const formattedTime = this.convertFromISOTo12HourFormat(parameters.hora_inicio);
-  if (this.isValidTime(formattedTime)) {
-    const time24 = this.convertTo24HourFormat(formattedTime);
-    this.eventData.eventStartDate += `T${time24}:00`;
-  }
-  return;
-}
-
-if (!this.eventData.eventEndDate && parameters.hora_final) {
-  const formattedTime = this.convertFromISOTo12HourFormat(parameters.hora_final);
-  if (this.isValidTime(formattedTime)) {
-    const time24 = this.convertTo24HourFormat(formattedTime);
-    this.eventData.eventEndDate = `${this.eventData.eventStartDate?.split('T')[0]}T${time24}:00`;
-    this.saveEvent();
-    setTimeout(() => {
-      dfMessenger.renderCustomText('Generando Evento...');
-    }, 1000);
-    setTimeout(() => {
-      dfMessenger.renderCustomText('Listo! Tu evento se ha creado.');
-    }, 2000);
-
-    setTimeout(() => {
-      const infoResponse = [
-        {
-          "type": "info",
-          "title": "Tu evento ha sido creado!",
-          "subtitle": `Nombre del Evento: ${this.eventData.eventName}\nDescripcion: ${this.eventData.eventDescription} \nFecha: ${this.convertFromISOToMMDDYYYY(this.eventData.eventStartDate!)}`,
-          "actionLink": "http://localhost:4200/app/events"
+    crearEvento(parameters: any) {
+      const dfMessenger = document.querySelector('df-messenger') as any;
+      if (!this.eventData.eventType && parameters.EventType) {
+        const eventType = this.getEventTypeByName(parameters.EventType);
+        if (eventType) {
+          this.eventData.eventType = eventType;
         }
-      ];
-      console.log('Rendering custom card with infoResponse:', infoResponse);
-      if (dfMessenger && typeof dfMessenger.renderCustomCard === 'function') {
-        dfMessenger.renderCustomCard(infoResponse);
-      } else {
-        console.error('dfMessenger.renderCustomCard is not a function or dfMessenger is not found');
+        return;
       }
-    }, 4000);
+      if (!this.eventData.eventName && parameters.nombre_evento) {
+        this.eventData.eventName = Array.isArray(parameters.nombre_evento) ? parameters.nombre_evento[0] : parameters.nombre_evento;
+        return;
+      }
+      if (!this.eventData.eventDescription && parameters.descripcion_evento) {
+        this.eventData.eventDescription = parameters.descripcion_evento;
+        return;
+      }
+      if (parameters.fecha_evento) {
+        const formattedDate = this.convertFromISOToMMDDYYYY(parameters.fecha_evento);
+        if (this.isValidDate(formattedDate, 'MM-DD-YYYY')) {
+          this.eventData.eventStartDate = this.convertToISODate(formattedDate, 'MM-DD-YYYY');
+        }
+        return;
+      }
+    if (this.eventData.eventStartDate && !this.eventData.eventStartDate.includes('T') && parameters.hora_inicio) {
+      const formattedTime = this.convertFromISOTo12HourFormat(parameters.hora_inicio);
+      if (this.isValidTime(formattedTime)) {
+        const time24 = this.convertTo24HourFormat(formattedTime);
+        this.eventData.eventStartDate += `T${time24}:00`;
+      }
+      return;
+    }
 
-    setTimeout(() => {
-      dfMessenger.renderCustomText('Puedes acceder a tu lista de eventos dándole click sobre la tarjeta anterior.');
-    }, 4000);
+    if (!this.eventData.eventEndDate && parameters.hora_final) {
+      const formattedTime = this.convertFromISOTo12HourFormat(parameters.hora_final);
+      if (this.isValidTime(formattedTime)) {
+        const time24 = this.convertTo24HourFormat(formattedTime);
+        this.eventData.eventEndDate = `${this.eventData.eventStartDate?.split('T')[0]}T${time24}:00`;
+        this.saveEvent();
+        setTimeout(() => {
+          dfMessenger.renderCustomText('Generando Evento...');
+        }, 1000);
+        setTimeout(() => {
+          dfMessenger.renderCustomText('Listo! Tu evento se ha creado.');
+        }, 2000);
 
-    setTimeout(() => {
-      dfMessenger.renderCustomText(this.defaultWelcomeMessage());
-    }, 4000);
+        setTimeout(() => {
+          const infoResponse = [
+            {
+              "type": "info",
+              "title": "Tu evento ha sido creado!",
+              "subtitle": `Nombre del Evento: ${this.eventData.eventName}\nDescripcion: ${this.eventData.eventDescription} \nFecha: ${this.convertFromISOToMMDDYYYY(this.eventData.eventStartDate!)}`,
+              "actionLink": "http://localhost:4200/app/events"
+            }
+          ];
+          console.log('Rendering custom card with infoResponse:', infoResponse);
+          if (dfMessenger && typeof dfMessenger.renderCustomCard === 'function') {
+            dfMessenger.renderCustomCard(infoResponse);
+          } else {
+            console.error('dfMessenger.renderCustomCard is not a function or dfMessenger is not found');
+          }
+        }, 4000);
 
-  }
-  return;
-}
+        setTimeout(() => {
+          dfMessenger.renderCustomText('Puedes acceder a tu lista de eventos dándole click sobre la tarjeta anterior.');
+        }, 4000);
 
-}
+        setTimeout(() => {
+          dfMessenger.renderCustomText(this.defaultWelcomeMessage());
+        }, 4000);
+
+      }
+      return;
+    }
+    }
 
 showEventsForTomorrow() {
   const dfMessenger = document.querySelector('df-messenger') as any;
@@ -509,7 +507,6 @@ eventSuggestions() {
       const suggestionSubtitle = suggestion;
       uniqueSuggestions.set(suggestionTitle, {
         type: "info",
-        title: suggestionTitle,
         subtitle: suggestionSubtitle,
         actionLink: `http://localhost:4200/app/events`
       });
@@ -535,7 +532,7 @@ defaultWelcomeMessage() {
     'Tengo disponibles estas funcionalidades:\n\n' +
     'Puedo ayudarte a crear un evento. 🎉\n\n' +
     'Puedo darte sugerencias de proveedores de nuestra base de datos. 🛠️\n\n' +
-    'Puedo decirte si tienes un evento agendado para esta semana o para hoy. 📅\n\n' +
+    'Puedo decirte si tienes un evento agendado para esta semana o para mañana. 📅\n\n' +
     'Puedo darte sugerencias de planes para tu evento. 💡\n\n' +
     '¿Tienes alguna pregunta o necesitas ayuda? No dudes en preguntar. 🤔\n\n' +
     '¡Estoy aquí para ayudarte! 😊');
@@ -554,5 +551,15 @@ waitForEventSuggestionsResponse() {
   this.vendorResponseListener = listener;
   window.addEventListener('df-response-received', this.vendorResponseListener, { once: true });
 }
+
+
+
+
+
+
+
+
+
+
 
 }
