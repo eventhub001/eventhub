@@ -288,10 +288,7 @@ def compute_suggestions():
     if 'suggestions' not in suggestions_template.columns:
         return jsonify({"status": "Internal Server Error", "message": "'suggestions' column not found in suggestions_template"}), 500
 
-    # aqui esta filtrando los datos con base a los labels.
-    # el problema es que eso deberia hacerlo el CosineRecommendationSystem de todos modos.
-
-    # Use the recommendation model
+    
     suggestions_training_data = flat_suggestions_info(suggestions_template) # porque filtramos antes del entrenamiento, no hace falta hacer esto.
     print("expected output", suggestions_training_data)
     model = CosineRecommendationSystem(suggestions_training_data)
