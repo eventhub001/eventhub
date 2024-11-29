@@ -1,11 +1,13 @@
 import { IEvent } from './../../../interfaces/index';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CotizacionService } from '../../../services/Cotizacion.Service';
 import { UserService } from '../../../services/user.service';
 import { ICotizacion, IVendor, IVendorService } from '../../../interfaces';
 import { VendorService } from '../../../services/vendor.service';
+import { EventsService } from '../../../services/event.service';
+import { VendorServiceService } from '../../../services/vendor-service.service';
 
 @Component({
   selector: 'app-cotizacion-form',
@@ -20,32 +22,48 @@ import { VendorService } from '../../../services/vendor.service';
 export class CotizarFormComponent {
 
   public cotizacionService: CotizacionService = inject(CotizacionService);
+  public VendorServiceService: VendorServiceService = inject(VendorServiceService);
   public UserService: UserService = inject(UserService);
   service: VendorService = inject(VendorService)
+  eventsService: EventsService = inject(EventsService)
+  fb: any;
 
   constructor() {
     this.cotizacionService.search.page = 1;
+    this.VendorServiceService.getAll();
     // this.cotizacionService.getAll();
     this.getVendorDetails();
+    this.events= this.eventsService.events$();
+    this.VendorServiceService = inject(VendorServiceService);
+    this.UserService = inject(UserService);
+    this.service = inject(VendorService);
+
   }
+
   @Input() servicios: IVendorService[] = [];
-  @Input() eventos: IEvent[] = [];
-  vendor: IVendor | undefined;
+  @Input() events: IEvent[] = [];
   @Input() cotizacionForm!: FormGroup;
   @Input() vendorId!: number;
   @Output() callSaveMethod: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   @Output() callUpdateMethod: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   selectedVendor: IVendor | null = null;
+  vendor: IVendor | undefined;
+
+  statusOptions = [
+    { id: 'enviada', nombre: 'Enviada' },
+    { id: 'aceptada', nombre: 'Aceptada' },
+    { id: 'rechazada', nombre: 'Rechazada' }
+  ];
 
   callSave() {
-    let IdService: number = this.cotizacionForm.controls['service'].value;
-    let IdEvent: number = this.cotizacionForm.controls['eventos'].value;
+    let IdService: number = this.cotizacionForm.controls['vendor_service_id'].value;
+    let IdEvent: number = this.cotizacionForm.controls['event_id'].value;
     let cotizacion: ICotizacion = {
       montoCotizado: this.cotizacionForm.controls['montoCotizado'].value,
       cantidadRecurso: this.cotizacionForm.controls['cantidadRecurso'].value,
       estado: this.cotizacionForm.controls['estado'].value,
-      vendor_service_id: { id: IdService },
-      event_event_id: {id: IdEvent}
+      vendor_service: { id: IdService },
+      event_id: {id: IdEvent}
     };
 
     if(this.cotizacionForm.controls['id'].value) {
@@ -60,13 +78,13 @@ export class CotizarFormComponent {
     }
   }
 
-  statusOptions = [
-    { id: 'enviada', nombre: 'Enviada' },
-    { id: 'aceptada', nombre: 'Aceptada' },
-    { id: 'rechazada', nombre: 'Rechazada' }
-  ];
+  ngOnInit(): void {
+    this.cotizacionForm = this.fb.group({
+      vendor_service_id: ['', Validators.required],
+      event_id: ['', Validators.required],
 
-
+    });
+  }
 
   showVendor(vendor: IVendor) {
     this.selectedVendor = vendor; // Set the selected event to show details

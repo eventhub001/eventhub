@@ -56,7 +56,7 @@ public class CotizacionRestController {
     }
 
     @GetMapping("/user/{userId}/cotizaciones")
-    public ResponseEntity<?> getAllByUserCotizaciones(
+    public ResponseEntity<?> getAllbyUserCotizaciones(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,

@@ -60,7 +60,7 @@ export class VendorDetailsComponent {
 
   cotizacionForm = this.fb.group({
     id: [''],
-    event_event: ['', Validators.required],
+    event_id: ['', Validators.required],
     vendor_service_id: ['', Validators.required],
     montoCotizado: ['', Validators.required],
     cantidadRecurso: ['', Validators.required],
@@ -78,7 +78,7 @@ export class VendorDetailsComponent {
     } else {
       console.error('No user found in localStorage');
     }
-    this.eventService.getAllByUser();
+    this.eventService.getAllByUserId(this.userId);
 
     this.solicituRecursoService.search.page = 1;
   // this.solicituRecursoService.getAllRecursosByUserId(this.userId);
@@ -103,7 +103,7 @@ export class VendorDetailsComponent {
   callEdition(recurso: SolicituRecurso) {
     this.solicitudForm.controls['id'].setValue(recurso.id ? JSON.stringify(recurso.id) : '');
     this.solicitudForm.controls['vendor_service_id'].setValue(recurso.vendor_service_id?.service_name ? JSON.stringify(recurso.vendor_service_id.service_name) : '');
-    this.solicitudForm.controls['user_id'].setValue(recurso.user_id ? JSON.stringify(recurso.user_id) : '');
+    this.solicitudForm.controls['user_id'].setValue(recurso.user?.id ? JSON.stringify(recurso.user.id) : '');
     this.solicitudForm.controls['fechaSolicitud'].setValue(recurso.fechaSolicitud ? recurso.fechaSolicitud.toISOString().substring(0, 10) : '');
     this.solicitudForm.controls['fechaEvento'].setValue(recurso.fechaEvento ? recurso.fechaEvento.toISOString().substring(0, 10) : '');
     this.solicitudForm.controls['horaEvento'].setValue(recurso.horaEvento ? recurso.horaEvento : '');
@@ -162,7 +162,7 @@ export class VendorDetailsComponent {
   callEditio(cotizacion: ICotizacion) {
     console.log('Abriendo el formulario de edición para:', cotizacion);
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? cotizacion.id.toString() : '');
-    this.cotizacionForm.controls['event_event'].setValue(cotizacion.event_event && cotizacion.event_event.id ? cotizacion.event_event.id?.toString() : null);
+    this.cotizacionForm.controls['event_id'].setValue(cotizacion.event_id && cotizacion.event_id.id ? cotizacion.event_id.id?.toString() : null);
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id && cotizacion.vendor_service_id.id ? cotizacion.vendor_service_id.id.toString() : null);
     this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? cotizacion.montoCotizado.toString() : '');
     this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? cotizacion.cantidadRecurso.toString() : '');

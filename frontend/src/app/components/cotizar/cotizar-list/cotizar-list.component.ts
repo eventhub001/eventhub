@@ -1,5 +1,6 @@
+import { CotizacionService } from './../../../services/Cotizacion.Service';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { ICotizacion } from '../../../interfaces';
+import { ICotizacion, IEvent } from '../../../interfaces';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -12,10 +13,12 @@ import { AuthService } from '../../../services/auth.service';
 export class CotizacionListComponent {
 
   @Input() title: string = '';
-  @Input() cotizaciones: ICotizacion[] = [];
+  @Input() recursos: ICotizacion[] = [];
+  @Input() eventos: IEvent[] = [];
   @Output() callModalAction: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   @Output() callDeleteAction: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   public AuthService: AuthService = inject(AuthService);
+  public CotizacionService: CotizacionService = inject(CotizacionService);
 
   statusOptions = [
     { id: 'enviada', nombre: 'Enviada' },

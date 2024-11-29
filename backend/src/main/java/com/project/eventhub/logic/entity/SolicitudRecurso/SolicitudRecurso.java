@@ -17,8 +17,9 @@ public class SolicitudRecurso {
     @ManyToOne
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Event event; // Relación con Recurso solicitado
+
 
     private String estado;
     private String fechaSolicitud;

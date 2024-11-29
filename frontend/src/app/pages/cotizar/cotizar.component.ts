@@ -9,6 +9,7 @@ import { ModalService } from '../../services/modal.service';
 import { Component, inject, ViewChild } from '@angular/core';
 import { ICotizacion } from '../../interfaces';
 import { CotizarFormComponent } from "../../components/cotizar/cotizar-form/cotizar-form.component";
+import { EventsService } from '../../services/event.service';
 
 @Component({
   selector: 'app-cotizaciones',
@@ -17,23 +18,24 @@ import { CotizarFormComponent } from "../../components/cotizar/cotizar-form/coti
   templateUrl: './cotizar.component.html',
   styleUrl: './cotizar.component.scss'
 })
+
 export class CotizacionesComponent {
 
+  @ViewChild('addCotizacionesModal') public addCotizacionesModal: any;
   public cotizacionService: CotizacionService = inject(CotizacionService);
   public modalService: ModalService = inject(ModalService);
   public authService: AuthService = inject(AuthService);
-  @ViewChild('addCotizacionesModal') public addCotizacionesModal: any;
+  public eventService: EventsService = inject(EventsService);
   public fb: FormBuilder = inject(FormBuilder);
   userId: number = 0;
 
   cotizacionForm = this.fb.group({
     id: [''],
     vendor_service_id: ['', Validators.required],
-    event_event_id: ['', Validators.required],
+    event_id: ['', Validators.required],
     montoCotizado: ['', Validators.required],
     cantidadRecurso: ['', Validators.required],
     estado: ['', Validators.required]
-
   });
 
 
@@ -46,9 +48,11 @@ export class CotizacionesComponent {
     } else {
       console.error('No user found in localStorage');
     }
+
     this.loadingUserIdFromLocalStorage();
     this.cotizacionService.search.page = 1;
     this.cotizacionService.getAllCotizacionesByUserId(this.userId);
+    this.eventService.getAllByUserId(this.userId);
   }
 
   saveCotizacion(cotizacion: ICotizacion) {
@@ -58,7 +62,7 @@ export class CotizacionesComponent {
 
   callEdition(cotizacion: ICotizacion) {
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? JSON.stringify(cotizacion.id) : '');
-    this.cotizacionForm.controls['event_event_id'].setValue(cotizacion.event_event_id ? JSON.stringify(cotizacion.event_event_id) : '');
+    this.cotizacionForm.controls['event_id'].setValue(cotizacion.event_id ? JSON.stringify(cotizacion.event_id) : '');
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id ? JSON.stringify(cotizacion.vendor_service_id) : '');
     this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? JSON.stringify(cotizacion.montoCotizado) : '');
     this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? JSON.stringify(cotizacion.cantidadRecurso) : '');

@@ -10,7 +10,8 @@
       <app-cotizacion-list
         (callModalAction)="callEdition($event)"
         (callDeleteAction)="cotizacionService.delete($event)"
-        [cotizaciones]="cotizacionService.cotizacion$()"
+        [recursos]="cotizacionService.cotizacion$()"
+        [eventos]="eventService.events$()"
       />
     </div>
     @if(cotizacionService.cotizacion$().length) {

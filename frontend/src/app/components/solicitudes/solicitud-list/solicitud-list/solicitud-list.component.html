@@ -13,10 +13,10 @@
     </tr>
   </thead>
   <tbody>
-    @for (item of recursos; track item.id) {
+    @for (item of recursos; track item.id; let i = $index) {
     <tr>
       <th scope="row">{{item.id}}</th>
-      <td>{{item.event_event?.eventName}}</td>
+      <td>{{eventos[i]?.eventName}}</td>
       <td>{{item.fechaEvento}}</td>
       <td>{{item.horaEvento}}</td>
       <td>{{item.fechaSolicitud}}</td>
@@ -24,8 +24,8 @@
       <td>{{item.estado}}</td>
       <td>{{item.vendor_service?.service_name}}</td>
       <td>
-        <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2" type="button"><i class="fas fa-pen"></i></button>
-        <button (click)="callDeleteAction.emit(item)" class="btn btn-danger" type="button"><i class="fas fa-trash"></i></button>
+        <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2 cursor-pointer" type="button"><i class="fas fa-pen"></i></button>
+        <button (click)="callDeleteAction.emit(item)" class="btn btn-danger cursor-pointer" type="button"><i class="fas fa-trash"></i></button>
       </td>
     </tr>
   } @empty {

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { SolicituRecurso } from '../../../../interfaces';
+import { IEvent, SolicituRecurso } from '../../../../interfaces';
 import { AuthService } from '../../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 
@@ -16,14 +16,15 @@ export class SolicitudListComponent {
 
   @Input() title: string  = '';
   @Input() recursos: SolicituRecurso[] = [];
+  @Input() eventos: IEvent[] = [];
   @Output() callModalAction: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
   @Output() callDeleteAction: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
   public AuthService: AuthService = inject(AuthService);
 
   estado = [
-    { id: 1, nombre: 'Pendiente' },
-    { id: 2, nombre: 'Aprobado' },
-    { id: 3, nombre: 'Rechazado' }
+    { id: 'pendiente', nombre: 'Pendiente' },
+    { id: 'aprobado', nombre: 'Aprobado' },
+    { id: 'rechazado', nombre: 'Rechazado' }
   ];
 
 }

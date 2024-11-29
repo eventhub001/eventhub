@@ -225,9 +225,7 @@ export interface ICotizacion {
   id?: number;
   vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
-  event_event?: IEvent;
-  event_event_id?: IEvent;
-  event?:String;
+  event_id?: IEvent;
   montoCotizado?: number;
   cantidadRecurso?: number;
   user?: IUser;
@@ -238,10 +236,9 @@ export interface SolicituRecurso {
   id?: number;
   vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
-  event_event?: IEvent;
   event_id?: IEvent;
   event?: IEvent;
-  user_id?: IUser;
+  user?: IUser;
   fechaSolicitud?: Date;
   fechaEvento?: Date;
   horaEvento?: string; // Hora específica del evento

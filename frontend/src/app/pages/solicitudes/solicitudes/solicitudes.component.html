@@ -11,6 +11,7 @@
         (callModalAction)="callEdition($event)"
         (callDeleteAction)="solicituRecursoService.delete($event)"
         [recursos]="solicituRecursoService.solicitudRecurso$()"
+        [eventos]="eventService.events$()"
       />
     </div>
     @if(solicituRecursoService.solicitudRecurso$().length) {

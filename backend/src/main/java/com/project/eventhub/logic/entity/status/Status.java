@@ -9,7 +9,7 @@ public class Status {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String status; // Ejemplo: "PENDIENTE", "APROBADA", etc.
+    private String status; // Ejemplo: "PENDIENTE", "APROBADA", "RECHAZADA".
 
     @Column(nullable = false)
     private String descripcion; // Ejemplo: "Pendiente de aprobación", "Solicitud aprobada"

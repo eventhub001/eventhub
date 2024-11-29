@@ -9,7 +9,7 @@ import { map, Observable, catchError, throwError } from 'rxjs';
 })
 export class CotizacionService extends BaseService<ICotizacion> {
 
-  protected override source: string = 'cotizaciones';
+  protected override source: string = 'api/cotizaciones';
   private cotizacionListSignal = signal<ICotizacion[]>([]);
   private alertService = inject(AlertService);
 
@@ -30,6 +30,7 @@ export class CotizacionService extends BaseService<ICotizacion> {
         this.search = {...this.search, ...response.meta};
         this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages : 0}, (_, i) => i+1);
         this.cotizacionListSignal.set(response.data);
+        console.log('cotizaciones', response.data);
       },
       error: (err: any) => {
         console.error('error', err);

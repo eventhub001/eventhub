@@ -1,3 +1,4 @@
+import { EventsService } from './../../../../services/event.service';
 import { VendorServiceService } from './../../../../services/vendor-service.service';
 import { UserService } from './../../../../services/user.service';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
@@ -6,8 +7,7 @@ import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VendorService } from '../../../../services/vendor.service';
 import { CommonModule } from '@angular/common';
 import * as e from 'cors';
-import { IEvent, IVendor, IVendorService, SolicituRecurso, } from '../../../../interfaces';
-import { EventsService } from '../../../../services/event.service';
+import { IEvent, IUser, IVendor, IVendorService, SolicituRecurso, } from '../../../../interfaces';
 
 @Component({
   selector: 'app-solicitud-form',
@@ -25,7 +25,8 @@ export class SolicitudFormComponent {
   public VendorServiceService: VendorServiceService = inject(VendorServiceService);
   public UserService: UserService = inject(UserService);
   service: VendorService = inject(VendorService);
-  event: EventsService = inject(EventsService)
+  eventsService: EventsService = inject(EventsService)
+  user_id: number | undefined = this.getUserIdFromLocalStorage();
   fb: any;
 
 
@@ -34,6 +35,7 @@ export class SolicitudFormComponent {
     this.SolicituRecursoService.search.page = 1;
     this.VendorServiceService.getAll();
   // this.SolicituRecursoService.getAll();
+    this.events= this.eventsService.events$();
     this.getVendorDetails();
     this.SolicituRecursoService = inject(SolicituRecursoService);
     this.VendorServiceService = inject(VendorServiceService);
@@ -51,36 +53,43 @@ export class SolicitudFormComponent {
 
   // Lista de status
   estado = [
-    { id: 1, nombre: 'Pendiente' },
-    { id: 2, nombre: 'Aprobado' },
-    { id: 3, nombre: 'Rechazado' }
+    { id: 'pendiente', nombre: 'Pendiente' },
+    { id: 'aprobado', nombre: 'Aprobado' },
+    { id: 'rechazado', nombre: 'Rechazado' }
   ];
 
   callSave() {
     let IdServicio: number = this.solicitudForm.controls['vendor_service_id'].value;
     let IdEvent: number = this.solicitudForm.controls['event_id'].value;
     let solicitud: SolicituRecurso = {
+      user: {id:this.user_id} as IUser,
       fechaEvento: this.solicitudForm.controls['fechaEvento'].value,
       fechaSolicitud: this.solicitudForm.controls['fechaSolicitud'].value,
       cantidad_solicitada: this.solicitudForm.controls['cantidad_solicitada'].value,
       estado: this.solicitudForm.controls['estado'].value,
       vendor_service: { id: IdServicio },
-      event_id:{ id: IdEvent},
+      event:{ id: IdEvent},
       horaEvento: this.solicitudForm.controls['horaEvento'].value,
       //event: { id: 1 },
     }
-
-
+    console.log(solicitud);
     if(this.solicitudForm.controls['id'].value) {
       solicitud.id = this.solicitudForm.controls['id'].value;
     }
-
-
     if(solicitud.id) {
       this.callUpdateMethod.emit(solicitud);
     } else {
       this.callSaveMethod.emit(solicitud);
     }
+  }
+
+  getUserIdFromLocalStorage(): number | undefined {
+    const authUser = localStorage.getItem("auth_user");
+    if (authUser) {
+      const user = JSON.parse(authUser);
+      return user.id ? Number(user.id) : undefined;
+    }
+    return undefined;
   }
 
   ngOnInit(): void {
