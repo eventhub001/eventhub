@@ -304,7 +304,7 @@ showVendorSuggestions() {
           type: "info",
           title: vendorName,
           subtitle: `Servicios: ${vendor.service_name || 'No especificado'} \nUbicación: ${vendorLocation}`,
-          actionLink: `http://localhost:4200/app/vendors`
+          actionLink: `http://localhost:4200/app/vendor`
         });
       }
     });
@@ -435,7 +435,7 @@ showEventsForTomorrow() {
     }
   }, 2000);
   setTimeout(() => {
-    dfMessenger.renderCustomText('Esta es tu lista de eventos de mañana.');
+    dfMessenger.renderCustomText('Esta es tu lista de eventos para mañana.');
   }, 6000);
   setTimeout(() => {
     dfMessenger.renderCustomText(this.defaultWelcomeMessage());
@@ -508,7 +508,6 @@ eventSuggestions() {
       uniqueSuggestions.set(suggestionTitle, {
         type: "info",
         subtitle: suggestionSubtitle,
-        actionLink: `http://localhost:4200/app/events`
       });
     });
     const payload = Array.from(uniqueSuggestions.values());
