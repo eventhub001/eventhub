@@ -1,30 +1,12 @@
-// .chat-container {
-//   max-width: 400px;
-//   margin: 20px auto;
-// }
-
-// .messages {
-//   max-height: 300px;
-//   overflow-y: auto;
-//   margin-bottom: 10px;
-// }
-
-// .message {
-//   margin: 5px 0;
-// }
-
-// .message-input {
-//   width: 100%;
-// }
-
 
 * {
     box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
   }
 
   body {
     background-color: #edeff2;
-    font-family: "Calibri", "Roboto", sans-serif;
+    font-family: "Montserrat", sans-serif;
   }
 
   .chat_window {
@@ -106,18 +88,17 @@
   }
 
   .messages .message.left .text_wrapper {
-    background-color: #ffe6cb;
-    margin-left: 20px;
+    background-color: #FFFFFF; // Color de fondo para mensajes recibidos
   }
 
   .messages .message.left .text_wrapper::after,
   .messages .message.left .text_wrapper::before {
     right: 100%;
-    border-right-color: #ffe6cb;
+    border-right-color: #FFFFFF; // Color de borde para mensajes recibidos
   }
 
   .messages .message.left .text {
-    color: #c48843;
+    color: #000000; // Color del texto para mensajes recibidos
   }
 
   .messages .message.right .avatar {
@@ -126,7 +107,7 @@
   }
 
   .messages .message.right .text_wrapper {
-    background-color: #00a884;
+    background-color: #E1FFC7; // Color de fondo para mensajes enviados
     margin-right: 20px;
     float: right;
   }
@@ -134,11 +115,11 @@
   .messages .message.right .text_wrapper::after,
   .messages .message.right .text_wrapper::before {
     left: 100%;
-    border-left-color: #00a884;
+    border-left-color: #E1FFC7; // Color de borde para mensajes enviados
   }
 
   .messages .message.right .text {
-    color: #ffffff;
+    color: #000000; // Color del texto para mensajes enviados
   }
 
   .messages .message.appeared {
@@ -156,8 +137,9 @@
     display: inline-block;
     padding: 15px;
     border-radius: 8px;
-    width: calc(100% - 220px);
+    width: auto;
     min-width: 100px;
+    max-width: 60%;
     position: relative;
     word-wrap: break-word; /* Permite el ajuste de texto */
     white-space: pre-wrap; /* Permite el ajuste de texto y respeta los saltos de línea */
@@ -254,4 +236,58 @@
 
   .message_template {
     display: none;
+  }
+
+
+  .hidden {
+    display: none;
+  }
+
+  .chat_toggle_button {
+    position: relative;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000; // Asegúrate de que el botón esté siempre visible
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 25px; // Bordes redondeados
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Sombra para darle profundidad
+      transition: background-color 0.3s, transform 0.3s; // Transiciones suaves
+      background-color: #007bff; // Color de fondo inicial
+      color: #fff; // Color del texto
+
+      &:hover {
+        background-color: #0056b3; // Color de fondo al pasar el mouse
+        transform: translateY(-2px); // Efecto de elevación al pasar el mouse
+        color: #fff; // Asegúrate de que el texto sea visible
+      }
+
+      &:active {
+        background-color: #004494; // Color de fondo al hacer clic
+        transform: translateY(0); // Efecto de presionado
+        color: #fff; // Asegúrate de que el texto sea visible
+      }
+    }
+  }
+
+  .bottom_wrapper .send_message .text {
+    font-size: 18px;
+    font-weight: 300;
+    display: inline-block;
+    line-height: 48px;
+  }
+
+  .message_template {
+    display: none;
+  }
+
+
+  .timestamp {
+    font-size: 0.75em; /* Hace que el texto sea más pequeño */
+    color: gray; /* Color gris para la hora */
+    text-align: right; /* Alinea el texto a la derecha */
+    display: block; /* Asegura que el texto ocupe toda la línea */
+    margin-top: 5px; /* Añade un pequeño margen superior */
   }

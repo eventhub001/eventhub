@@ -33,3 +33,4 @@ export class EventcarddetailsComponent {
     return new DatePipe('en-US').transform(arg0, 'MM/dd/yyyy');
   }
 }
+

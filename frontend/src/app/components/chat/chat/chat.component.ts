@@ -37,6 +37,7 @@ export class ChatComponent {
   vendorUserid: number = 0;
   receiver: string = '';
   messageList: any[] = [];
+  isChatHidden: boolean = false;
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
   constructor(private chatService: ChatService,  private route: ActivatedRoute, private snackBar: MatSnackBar) {
@@ -62,7 +63,8 @@ export class ChatComponent {
       const chatMessage = {
         message: this.messageInput,
         user: { id: this.userId },
-        roomId: this.vendorId
+        roomId: this.vendorId,
+        timestamp: new Date().toISOString()
       };
 
       console.log('Sending message:', chatMessage);
@@ -71,10 +73,10 @@ export class ChatComponent {
       const storedMessages = localStorage.getItem('chat_messages');
       const messages = storedMessages ? JSON.parse(storedMessages) : [];
 
-        messages.push({
-          ...chatMessage,
-          message_side: 'sender'
-        });
+      messages.push({
+        ...chatMessage,
+        message_side: 'sender'
+      });
 
       localStorage.setItem('chat_messages', JSON.stringify(messages));
 
@@ -195,6 +197,21 @@ export class ChatComponent {
     } catch(err) { }
   }
 
+
+  toggleChat() {
+    this.isChatHidden = !this.isChatHidden;
+  }
+
+
+
+  getUserColor(userName: string): string {
+    let hash = 0;
+    for (let i = 0; i < userName.length; i++) {
+      hash = userName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = `hsl(${hash % 360}, 70%, 50%)`;
+    return color;
+  }
 }
 
 

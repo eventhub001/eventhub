@@ -3,8 +3,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IEvent, IEventForm, IEventFormQuestion, IEventType } from '../../../interfaces';
 import { AuthService } from '../../../services/auth.service';
-import { EventDeleteConfirmationComponent } from "../delete-event-confirmation/delete-event-confirmation.component";
-import { NgbDatepicker, NgbDatepickerModule, NgbInputDatepicker, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import {  DateTimeCustomPickerComponent } from "../../material-custom/datetime-custom-picker/datetime-custom-picker.component";
 import { TaskFormAIComponent } from "../../task/task-form-AI/task-formai.component";
@@ -16,7 +14,6 @@ import { TaskFormAIComponent } from "../../task/task-form-AI/task-formai.compone
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    EventDeleteConfirmationComponent,
     FormsModule, DateTimeCustomPickerComponent,
     TaskFormAIComponent
 ],

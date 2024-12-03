@@ -25,16 +25,16 @@ h5{
 
 
 .disponible {
-  background-color: #BBDEFB;
+  background-color: #C8E6C9;
   mat-card-header {
-    background-color: #BBDEFB;
+    background-color: #C8E6C9;
   }
 }
 
 .no-disponible {
-  background-color: #E0E0E0;
+  background-color: #FFCDD2;
   mat-card-header {
-    background-color: #E0E0E0;
+    background-color: #FFCDD2;
   }
 }
 
@@ -46,3 +46,6 @@ h5{
   padding-right: 1000px;
 }
 
+*{
+  font-family: 'Montserrat', sans-serif;
+}

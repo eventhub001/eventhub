@@ -28,6 +28,7 @@ public class WebSocketController {
 
     @Autowired
     private ChatRepository chatRepository;
+
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/{roomId}")
     @PostMapping
@@ -60,9 +61,11 @@ public class WebSocketController {
         // Save the message to the repository
         messageRepository.save(message);
 
-        return new Chat(chat.getMessage(), chat.getUser(), chat.getRoomId());
-    }
+        // Set the timestamp
+        chat.setTimestamp(LocalDateTime.now());
 
+        return new Chat(chat.getMessage(), chat.getUser(), chat.getRoomId(), chat.getTimestamp());
+    }
 
 
 

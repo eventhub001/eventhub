@@ -13,7 +13,6 @@ import { EventDeleteConfirmationComponent } from './delete-event-confirmation/de
 import { ModalComponent } from '../modal/modal.component';
 import { Router } from '@angular/router';
 import { EventFormQuestionService } from '../../services/eventformquestions.service';
-import { EventcarddetailsComponent } from './eventcarddetails/eventcarddetails.component';
 import { EventFormService } from '../../services/evenform.service';
 import { AlertService } from '../../services/alert.service';
 import { MachineLearningService } from '../../services/machinelearning.service';
@@ -28,7 +27,7 @@ import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-eventcards',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, DatePipe, CommonModule, EventcarddetailsComponent,
+  imports: [MatCardModule, MatButtonModule, CommonModule,
     FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent, MatPaginatorModule,
     ModalComponent, PaginationComponent, PaginationComponent, MatButtonModule, MatIcon],
   templateUrl: './eventcards.component.html',
@@ -169,13 +168,16 @@ export class EventcardsComponent {
   // date parsing functions
   asTime(arg0: string): string {
     const date = new Date(arg0);
-    const hours = date.getHours().toString().padStart(2, '0'); // Format hours to 2 digits
+    let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0'); // Format minutes to 2 digits
-    return `${hours}:${minutes}`;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const strHours = hours.toString().padStart(2, '0'); // Format hours to 2 digits
+    return `${strHours}:${minutes} ${ampm}`;
   }
-
   asDate(arg0: string) {
-    return new DatePipe('en-US').transform(arg0, 'MM/dd/yyyy');
+    return new DatePipe('en-US').transform(arg0, 'dd/MM/yyyy');
   }
 
   generateTaskAI(eventSaved: IEvent, eventanswer: IEventForm[]) {

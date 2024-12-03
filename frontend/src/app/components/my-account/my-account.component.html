@@ -1,10 +1,12 @@
-<div class="media profile-media d-flex align-items-center">
-  <i class="fa-regular fa-user"></i>
-  <div class="media-body"><span>{{userName}} <i class="fa-solid fa-chevron-down"></i></span>
-    <!-- <p class="mb-0 font-roboto">Admin </p> -->
+<div class="media profile-media d-flex align-items-center p-2 ">
+  <i class="fa-regular fa-user fa-lg" style="color: #80A2A6;"></i>
+  <div class="media-body ml-2">
+    <span class="font-weight-bold">{{userName}} <i class="fa-solid fa-chevron-down text-secondary"></i></span>
   </div>
 </div>
-<ul class="profile-dropdown onhover-show-div">
-  <li routerLink="profile"><i class="fa-solid fa-user-tie"></i><span>Perfil</span></li>
-  <li (click)="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Cerrar sesión</span></li>
+<ul class="profile-dropdown onhover-show-div list-group mt-2 shadow-sm rounded overflow-hidden p-0">
+  <li class="list-group-item list-group-item-action d-flex align-items-center" (click)="logout()">
+    <i class="fa-solid fa-arrow-right-from-bracket" style="margin-right: 10px; color: #F2622E;"></i>
+    <span>Cerrar sesión</span>
+  </li>
 </ul>

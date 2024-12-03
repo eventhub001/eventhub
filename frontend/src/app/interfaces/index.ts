@@ -66,7 +66,7 @@ export interface ILoginResponse {
     userId?: IUser;
     message?: string;
     roomId?: number;
-    // timestamp?: string;
+    timestamp?: string;
 
   }
 

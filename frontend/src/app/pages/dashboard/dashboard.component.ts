@@ -3,11 +3,11 @@ import { CalendarioEventosComponent } from '../../components/calendario-eventos/
 import { EventsService } from '../../services/event.service';
 import { TaskService } from '../../services/task.service';
 import { IEvent, ITask } from '../../interfaces';
-import { EventcarddetailsComponent } from "../../components/eventcards/eventcarddetails/eventcarddetails.component";
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../components/modal/modal.component';
 import { ModalService } from '../../services/modal.service';
 import { TaskDetailsComponent } from "../../components/task/task-details/task-details.component";
+import { EventcarddetailsComponent } from '../../components/eventcards/eventcarddetails/eventcarddetails.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +24,7 @@ export class DashboardComponent {
   taskSelected: ITask | undefined = undefined;
   @ViewChild('showEventModal') showEventModal: any;
   @ViewChild('showTaskModal') showTaskModal: any;
-  
+
   constructor() {
     this.eventService.search.size = 1000;
     this.eventService.getAll();

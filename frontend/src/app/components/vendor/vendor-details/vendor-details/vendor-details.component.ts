@@ -1,17 +1,16 @@
 import { Component, inject, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { IUser, IVendor, IVendorService } from '../../../../interfaces';
+import {  IVendor, IVendorService } from '../../../../interfaces';
 import { CommonModule } from '@angular/common';
 import { VendorService } from '../../../../services/vendor.service';
 import { UserService } from '../../../../services/user.service';
-import { ChatComponent } from "../../../chat/chat/chat.component";
 import { ChatService } from '../../../../services/chat.service';
 import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-vendor1-details',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent],
+  imports: [MatCardModule, MatButtonModule, CommonModule],
   templateUrl: './vendor-details.component.html',
   styleUrl: './vendor-details.component.scss'
 })

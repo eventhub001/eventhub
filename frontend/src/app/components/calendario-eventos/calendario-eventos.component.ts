@@ -6,14 +6,13 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import { ICalendarEvent, IEvent, ITask, ITaskProgress } from '../../interfaces';
 import { EventCalendarBuilder } from './event-calendar.builder';
-import { EventcarddetailsComponent } from "../eventcards/eventcarddetails/eventcarddetails.component";
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-calendario-eventos',
   standalone: true,
-  imports: [FullCalendarModule, EventcarddetailsComponent, MatInputModule, MatSelectModule],
+  imports: [FullCalendarModule,  MatInputModule, MatSelectModule],
   templateUrl: './calendario-eventos.component.html',
   styleUrls: ['./calendario-eventos.component.scss']
 })
