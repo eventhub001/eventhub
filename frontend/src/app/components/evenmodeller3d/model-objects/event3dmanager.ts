@@ -28,18 +28,20 @@ export class Event3DManager {
             if (set.hasAssetInPosition(col, floor, row)) {
                 throw new GridAdditionError("There is already an asset is the position selected");
             }
-
-            else {
-                newasset.x = col;
-                newasset.y = floor;
-                newasset.z = row;
-            }
         });
+        
+        newasset.col = col;
+        newasset.floor = floor;
+        newasset.row = row;
 
         if (allowedPosition) {
             const newSet = new Set("Set" + this.sets.length, this.grid, newasset);
             this.addSet(newSet);
         }
+    }
+
+    load(asset: Asset) {
+        this.add(asset, asset.col, asset.floor, asset.row);
     }
 
     
@@ -100,6 +102,16 @@ export class Event3DManager {
                 }
                 scene.remove(selectedAsset.asset.content);
             }
+        });
+    }
+
+    deleteAll(scene: THREE.Scene) {
+        this.sets.forEach((set) => {
+            set.getAssets().forEach((asset) => {
+                scene.remove(asset.content);
+            })
+            set.deleteAll();
+            this.sets = [];
         });
     }
 
@@ -200,6 +212,7 @@ export class Event3DManager {
     }
 
     public computeSpatialObjectOccupancy(asset: Asset, col: number, floor: number, row: number, scene: THREE.Scene) {
+
         // create just the bounding box of the content.
         this.add(asset, col, floor, row);
         const positionedAsset = this.getAsset(col, floor, row);
@@ -240,6 +253,15 @@ export class Event3DManager {
         }
         return null;
     }
+
+    getAssets() {
+        const assets: Asset[] = [];
+        for (let i = 0; i < this.sets.length; i++) {
+            const set = this.sets[i];
+            assets.push(...set.getAssets());
+        }
+        return assets;
+    } 
 
     getAssetsAsObjects(): THREE.Object3D[] {
         const objects: THREE.Object3D[] = [];
@@ -316,10 +338,11 @@ export class Set implements Set {
         this.grid = grid;
         this.matrix = new NMatrix<Asset>(grid.cols, grid.floor, grid.rows, null);
         if (initialAsset) {
-            this.matrix.matrix[initialAsset.x][initialAsset.y][initialAsset.z] = initialAsset;
-            this.sideMatrix = new NMatrix<{loc1: Side; loc2: Side}>(grid.cols, grid.floor, grid.rows, {loc1: Side.CENTER, loc2: Side.BOTTOM});   
-            this.placeAsset(initialAsset, initialAsset.x, initialAsset.y, initialAsset.z, grid);
+            this.matrix.matrix[initialAsset.col][initialAsset.floor][initialAsset.row] = initialAsset;
+            this.sideMatrix = new NMatrix<{loc1: Side; loc2: Side}>(grid.cols, grid.floor, grid.rows, {loc1: Side.CENTER, loc2: Side.BOTTOM});
+            this.placeAsset(initialAsset, initialAsset.col, initialAsset.floor, initialAsset.row, grid);
             this.assets.push(initialAsset);
+
         }
     }
 
@@ -332,6 +355,7 @@ export class Set implements Set {
         direction2?: Direction;
         gap?: number;
     }) : Asset | null {
+
 
         if (this.matrix.matrix[oldasset.col][oldasset.floor][oldasset.row] === null) {
             throw new Error('The asset is not in the grid');
@@ -370,8 +394,6 @@ export class Set implements Set {
             this.matrix.matrix[indx][newasset.y][indz]!.x = indx;
             this.matrix.matrix[indx][newasset.y][indz]!.z = indz;
 
-            console.log("newasset, indx, newasset.y, indz");
-            console.log(newasset, indx, newasset.y, indz);
             this.placeAsset(newasset, indx, newasset.y, indz, oldasset.grid);
 
             this.assets.push(newasset);
@@ -382,6 +404,10 @@ export class Set implements Set {
 
     delete(selectedAsset: {asset: Asset, position: {col: number; floor: number; row: number}}) {
         this.matrix.matrix[selectedAsset.position.col][selectedAsset.position.floor][selectedAsset.position.row] = null;
+    }
+
+    deleteAll() {
+        this.matrix = new NMatrix<Asset>(this.grid.cols, this.grid.floor, this.grid.rows, null);
     }
 
     move(asset: {asset: Asset, position: {col: number; floor: number; row: number}}, col: number, floor: number, row: number) {

@@ -29,6 +29,8 @@ export class Floor extends ThreeDObject {
                     new THREE.PlaneGeometry(width, depth),
                     new THREE.MeshPhongMaterial({ map: texture })
                 );
+
+                model.receiveShadow = true;
             }
 
             else {
@@ -36,10 +38,12 @@ export class Floor extends ThreeDObject {
                     new THREE.PlaneGeometry(width, depth),
                     new THREE.MeshPhongMaterial({ color: 0x00ff00 })
                 );
+
+                model.receiveShadow = true;
             }
         }
 
-        super(0, {width: width, height: 0.1, depth: depth}, model, position, sides, url, texture);
+        super(0, {width: width, height: 0.1, depth: depth}, model, position, sides, sides, url, texture);
         
         model.rotateOnAxis(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
         

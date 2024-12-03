@@ -15,19 +15,30 @@ export class DefaultThreeDObject extends ThreeDObject {
         content: THREE.Object3D,
         position: Position,
         initialorientation?: AxisOrientation,
-        texture?: THREE.Texture
+        texture?: THREE.Texture,
+        col?: number,
+        floor?: number,
+        row?: number
     ) {
         
-        super(id, size, content, position, initialorientation, url, texture);
+        super(id, size, content, position, initialorientation, undefined, url, texture, col, floor, row);
 
         if (initialorientation) {
-            this.fixOrientation();
+            console.log("initial orientation configured");
             this.resize();
+            this.fixOrientation();
         }
 
         if (texture) {
             this.loadTexture();
         }
+
+        content.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                child.castShadow = true;
+                child.material.side = THREE.FrontSide;
+            }
+        });
     }
 
     public static async createFromModel(token: string, chairid: number, size: Size, position: Position, http: HttpClient, sides: AxisOrientation = { front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) }) : Promise<DefaultThreeDObject> {

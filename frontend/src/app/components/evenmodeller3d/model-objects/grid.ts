@@ -33,10 +33,10 @@ export class EventGrid {
     model: THREE.Object3D;
     floorGrid: THREE.Object3D;
 
-    constructor(width: number, height: number, depth: number, metric: MetricType) {
-        this.cols = 21;
+    constructor(width: number, height: number, depth: number, cols: number, rows: number, metric: MetricType) {
+        this.cols = cols;
         this.floor = 3;
-        this.rows = 10;
+        this.rows = rows;
         this.width = width;
         this.height = height;
         this.depth = depth;
@@ -191,8 +191,6 @@ export class EventGrid {
         }
         
         const boxInGridPos = this.getPosMatrix(x, y, z);
-
-        const positionAsset = ThreeCalculationUtils.getAbsolutePosition(threeobject.content); 
         
         const assetBoundingBox = new THREE.Box3().setFromObject(threeobject.content);
         const boxSize = assetBoundingBox.getSize(new THREE.Vector3());
@@ -227,9 +225,20 @@ export class EventGrid {
             threeobject.content.position.z = boxInGridPos.z + (boxSize.z / 2);
         }
 
+        threeobject.x = threeobject.content.position.x;
+        threeobject.y = threeobject.content.position.y;
+        threeobject.z = threeobject.content.position.z;
+
+        threeobject.col = x;
+        threeobject.row = z;
+        threeobject.floor = y;
+
         return threeobject;
     }
 
+    reset() {
+        this.nMatrix.forEach((value, x, y, z) => this.nMatrix.set(x, y, z, null));
+    }
 }
 
 export class Event {

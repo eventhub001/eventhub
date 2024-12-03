@@ -1,4 +1,4 @@
-import { afterRender, AfterRenderRef, Component, computed, effect, ElementRef, inject, Input, Signal, signal, SimpleChange, SimpleChanges, ViewChild, WritableSignal } from '@angular/core';
+import { afterRender, AfterRenderRef, Component, computed, effect, ElementRef, EventEmitter, inject, Input, Output, Signal, signal, SimpleChange, SimpleChanges, ViewChild, WritableSignal } from '@angular/core';
 import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -10,7 +10,7 @@ import { Floor } from './models/floor.model';
 import { DefaultThreeDObject } from './models/default.model';
 import { ChairSet, Event3DManager, Direction, Set } from './model-objects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { Asset, AssetImg, AssetMetadata, AssetModel, AssetTexture } from '../../interfaces';
+import { Asset, AssetImg, AssetMetadata, AssetModel, AssetTexture, ISceneSnapshot3D, IScene3DSetting, IScene3D } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModelMetadataService } from '../../services/model-metadata.service';
@@ -25,6 +25,10 @@ import { GridAdditionError } from './model-objects/exceptions';
 import { AlertService } from '../../services/alert.service';
 import { ModelHandler, TextureHandler } from '../../services/modelsHandler';
 import { TextureService } from '../../services/texture.service';
+import { SettingService } from '../../services/setting.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SaveDialogComponent } from './save-dialog/save-dialog/save-dialog.component';
+import { SceneLoader } from './model-objects/scene-loader';
 
 @Injectable({
   providedIn: 'root'
@@ -38,19 +42,38 @@ import { TextureService } from '../../services/texture.service';
   templateUrl: './3dsimulator.component.html',
   styleUrl: './3dsimulator.component.scss'
 })
-export class TestComponent {
+export class Simulator3DComponent {
 
   @ViewChild("mainThreeCv", {static: false}) mainThreeCv!: ElementRef<HTMLCanvasElement>;	
   @Input() modelMetadata: AssetMetadata[] = [];
   @Input() images: AssetImg[] = [];
   @Input() models: AssetModel[] = [];
   @Input() textures: AssetTexture[] = [];
+
+  @Input() scene3DLoaded: IScene3D | null = null;
+  @Input() sceneSnapshotsLoaded: ISceneSnapshot3D[] | null = null;
+  @Input() sceneSettingsLoaded: IScene3DSetting | null = null;
+  alertService: any = inject(AlertService);
+
+  @Output() callSaveAction: EventEmitter<{scene3D: IScene3D, assets: Asset[], settings: IScene3DSetting}> = new EventEmitter<{scene3D: IScene3D, assets: Asset[], settings: IScene3DSetting}>();
+  @Output() showSceneSelectionAction: EventEmitter<void> = new EventEmitter<void>();
   modelHandler!: ModelHandler;
   isUILoading: boolean = true;
   is3DLoading: boolean = true;
 
+
+  sceneSettings: IScene3DSetting = {
+    floorTextureId: 1,
+    width: 20,
+    depth: 15,
+    cols: 21,
+    rows: 10
+  } as IScene3DSetting;
+
   modelService: ModelMetadataService = inject(ModelMetadataService);
   textureService: TextureService = inject(TextureService);
+  settingService: SettingService = inject(SettingService);
+
   renderer!: THREE.WebGLRenderer;
   scene!: THREE.Scene;
   camera!: THREE.PerspectiveCamera;
@@ -59,7 +82,8 @@ export class TestComponent {
   pointer! : THREE.Vector2;
   intersector!: THREE.Raycaster;
   selectionsBox: THREE.Box3Helper[] = [];
-  alertService: any = inject(AlertService);
+
+  sceneLoader: SceneLoader = new SceneLoader();
 
   selectedAsset: ({asset: Asset, position: {col: number; floor: number; row: number}})[] = [];
   selectedFloor: THREE.Object3D | null = null;
@@ -69,6 +93,11 @@ export class TestComponent {
   set!: ChairSet;
 
   mousePosition: {x: number, y: number} = {x: 0, y: 0};
+
+  // dialogs
+  saveDialogRef: any = MatDialogRef<SaveDialogComponent>;
+
+  dialog = inject(MatDialog);
 
   arrowToProjection: arrowToAxis = {
     ['up']: { x: 0, y: 0, z: -1 },
@@ -82,7 +111,7 @@ export class TestComponent {
     ['down']: 90,
     ['left']: 180,
     ['right']: 0
-}
+  }
 
   arrowsToProjectionSignal: WritableSignal<arrowToAxis> = signal<arrowToAxis>(this.arrowToProjection, {equal: isSameArrowsToAxis});
   arrowsToRotationSignal: WritableSignal<arrowsToRotation> = signal<arrowsToRotation>(this.arrowsToRotation, {equal: isSameArrowsToRotation});
@@ -95,7 +124,8 @@ export class TestComponent {
   }
   // debugging properties. Must remove later.
   defaultChair!: DefaultThreeDObject;
-  modelsMenu: ThreeDObject[] = []; 
+  modelsMenu: ThreeDObject[] = [];
+  modelsContentMenu!: Record<number, THREE.Object3D>;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
 
@@ -106,6 +136,7 @@ export class TestComponent {
     if (addtion.id) {
 
       const model = this.modelsMenu.find(model => model.id == addtion.id);
+      console.log(model);
       try {
         this.eventManager.computeSpatialObjectOccupancy(model!, this.selectedFloor?.userData["x"], 0, this.selectedFloor?.userData["z"], this.scene);
       }
@@ -118,7 +149,7 @@ export class TestComponent {
         console.error("Unhandled error:", e);
         this.alertService.displayAlert(
           "error",
-          "An unexpected error occurred. Please try again.",
+          "Un error inesperado ha ocurrido. Por favor, inténtalo de nuevo.",
           "center",
           "top",
           ["error-snackbar"]
@@ -135,7 +166,6 @@ export class TestComponent {
 
   public handleDirectionComponent(direction: UICommand.directional) {
 
-    console.log(direction);
     if (direction.direction == SELECTIONTYPE.ROTATE) {
       console.log("Rotating asset from UI selection");
       this.eventManager.rotate(this.selectedAsset[0], direction.x, 0, direction.z);
@@ -207,15 +237,17 @@ export class TestComponent {
     if (changes["textures"] && this.textures.length > 0) {
       if (this.textures.length === this.textureService.search.totalElements) {
         this.is3DLoading = false;
-        console.log("finished loading textures with length: " + this.textures.length);
-        console.log(this.textures);
         this.loadModeler();
       }
     }
     
     if (this.images.length > 0 && this.models.length > 0 && this.images.length === this.modelService.search.totalElements) {
       this.isUILoading = false;
-      console.log('finished loading images');
+    }
+
+    if (changes["scene3DLoaded"]) {
+      console.log("load scene");
+      this.loadScene();
     }
   }
 
@@ -225,52 +257,28 @@ export class TestComponent {
     //new zim.Frame(zim.FIT, 800, 600, "#ff0000", 1);
     this.setupComponents();
 
-    this.grid = new EventGrid(20, 3, 15, MetricType.Meters);
+    this.grid = new EventGrid(this.sceneSettings.width, 3, this.sceneSettings.depth, this.sceneSettings.cols, this.sceneSettings.rows, MetricType.Meters);
 
     // resize canvas on half the size
     this.addRenderingHelpers();
+
+    this.modelsContentMenu = await this.sceneLoader.mapContentsToModel(this.models);
     
     // const token = this.authService.getAccessToken();
     const floorTexture = await TextureHandler.parseTextureBlob(this.textures[0].blob!);
 
-    const floor = new Floor(20, 15, {x: 0, y: 0, z: 0}, "", undefined, undefined, floorTexture);
+    const floor = new Floor(this.sceneSettings.width, this.sceneSettings.depth, {x: 0, y: 0, z: 0}, "", undefined, undefined, floorTexture);
 
     DebuggingUtils.showSide(floor, Side.TOP, this.scene);
 
-    const chairData = this.modelMetadata[0];
-    const chairModel = await ModelHandler.parseGLBFile(this.models.find(model => model.id === chairData.id)?.blob!);
-
-    const chair = new DefaultThreeDObject(
-      chairData.id,
-      chairData.modelPath,
-      {width: chairData!.width, height:chairData!.height, depth: chairData!.depth},
-      chairModel,
-      {x: chairData.x, y: chairData.y, z: chairData.z},
-      {front: new THREE.Vector3(chairData.frontx, chairData.fronty, chairData.frontz), right: new THREE.Vector3(chairData.rightx, chairData.righty, chairData.rightz), top: new THREE.Vector3(chairData.topx, chairData.topy, chairData.topz)},
-    )
-
-    const tableData = this.modelMetadata[1];
-    const tableModel = await ModelHandler.parseGLBFile(this.models.find(model => model.id === tableData.id)?.blob!);
-
-    const table = new DefaultThreeDObject(
-      tableData.id,
-      tableData.modelPath,
-      {width: tableData!.width, height:tableData!.height, depth: tableData!.depth},
-      tableModel,
-      {x: tableData.x, y: tableData.y, z: tableData.z},
-      {front: new THREE.Vector3(tableData.frontx, tableData.fronty, tableData.frontz), right: new THREE.Vector3(tableData.rightx, tableData.righty, tableData.rightz), top: new THREE.Vector3(tableData.topx, tableData.topy, tableData.topz)}
-    )
-
-    this.modelsMenu.push(chair, table);
-
-    this.defaultChair = chair;
+    this.modelsMenu = await this.sceneLoader.createThreeDObjects(this.modelMetadata, this.models);
 
     DebuggingUtils.showLights(floor.content);
 
     this.scene.add(this.grid.model);
     this.scene.add(this.grid.floorGrid);
 
-    this.set = new Set("left", this.grid, chair);
+    this.set = new Set("left", this.grid, this.modelsMenu[0]);
 
     this.intersector = new THREE.Raycaster();
     this.pointer = new THREE.Vector2(); 
@@ -306,8 +314,6 @@ export class TestComponent {
   }
   
   selectAsset(event: MouseEvent) {
-    const pointerUpX = this.pointer.x;
-    const pointerUpY = this.pointer.y;
   
     this.pointer.x = (event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
     this.pointer.y = -(event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
@@ -403,5 +409,72 @@ export class TestComponent {
   clearSelection() {
     this.selectedAsset = [];
     this.clearBoundingBoxes();
+  }
+
+  saveScene() {
+    this.eventManager.printAssets();
+    const assets = this.eventManager.getAssets();
+    
+    this.saveDialogRef = this.dialog.open(SaveDialogComponent);
+
+    this.saveDialogRef.componentInstance.callSaveAction.subscribe((data: IScene3D) => {
+      this.callSaveAction.emit({scene3D: data, assets: assets, settings: this.sceneSettings});
+      this.saveDialogRef.close();
+    })
+  }
+
+  loadScene() {
+    this.grid.reset();
+
+    let modelsUpdated : Asset[] = [];
+
+    console.log("loading snapshots");
+    console.log(this.sceneSnapshotsLoaded);
+
+    this.sceneSnapshotsLoaded?.forEach((sceneSnapshot) => {
+
+      const modelMetadata: AssetMetadata = this.modelMetadata.find((modelMetadata) => modelMetadata.id === sceneSnapshot.model.id)!;
+
+      const model = new DefaultThreeDObject(
+        sceneSnapshot.model.id,
+        sceneSnapshot.model.modelPath,
+        {
+          width: modelMetadata.width,
+          height: modelMetadata.height,
+          depth: modelMetadata.depth
+        },
+        this.modelsContentMenu[sceneSnapshot.model.id]!.clone(),
+        {
+          x: sceneSnapshot.x,
+          y: sceneSnapshot.y,
+          z: sceneSnapshot.z
+        },
+        {
+          front: new THREE.Vector3(sceneSnapshot.frontx, sceneSnapshot.fronty, sceneSnapshot.frontz),
+          right: new THREE.Vector3(sceneSnapshot.rightx, sceneSnapshot.righty, sceneSnapshot.rightz),
+          top: new THREE.Vector3(sceneSnapshot.topx, sceneSnapshot.topy, sceneSnapshot.topz)
+        },
+        undefined,
+        sceneSnapshot.row,
+        sceneSnapshot.floor,
+        sceneSnapshot.col
+      );
+      modelsUpdated.push(model);
+    });
+
+
+    this.eventManager.deleteAll(this.scene);
+
+    this.eventManager = new Event3DManager(this.grid);
+
+    modelsUpdated.forEach((model) => {
+      this.eventManager.load(model);
+    });
+
+    this.eventManager.render(this.scene);
+  }
+
+  showLoadSceneDialog() {
+    this.showSceneSelectionAction.emit();
   }
 }
