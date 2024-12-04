@@ -137,8 +137,8 @@ export class EventcardsComponent {
     this.eventForm.controls["eventName"].setValue(event.eventName);
     this.eventForm.controls["eventType"].setValue(event?.eventType?.eventTypeId ? JSON.stringify(event?.eventType.eventTypeId) : '');
     this.eventForm.controls["eventDescription"].setValue(event?.eventDescription);
-    this.editEventId = event.eventId!; // Toggle edit mode
-    this.createEvent = false; // Close create mode
+    this.editEventId = event.eventId!;
+    this.createEvent = false;
   }
 
   deleteMode(event: IEvent) {

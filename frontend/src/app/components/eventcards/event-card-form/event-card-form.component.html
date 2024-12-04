@@ -1,4 +1,4 @@
-<div style="width: 700px" class="p-4" >
+<div [ngStyle]="createEvent ? {'width': '700px'} : {}" class="p-4" >
   <form [formGroup]="eventForm" class="row">
     <div *ngIf="createEvent">
       <div>
@@ -37,9 +37,11 @@
     <div class="mb-2">
       <datetime-custom-picker [dateTimeForm]="dateTimeForm" (isValidInput)="isDateTimeValid($event)"></datetime-custom-picker>
     </div>
-    <div class="mb-2">
-      <task-form-ai [taskForm]="taskAIForm" [eventFormQuestion]="eventFormQuestion" ></task-form-ai>
-    </div>
+    @if (createEvent) {
+      <div class="mb-2">
+        <task-form-ai [taskForm]="taskAIForm" [eventFormQuestion]="eventFormQuestion" ></task-form-ai>
+      </div>
+    }
     <div class="mb-2">
 
     </div>

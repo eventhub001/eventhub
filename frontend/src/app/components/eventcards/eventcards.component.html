@@ -37,7 +37,7 @@
         </div>
       </mat-card-header>
       <div class="right-toolbar">
-        <button mat-icon-button color="primary" class="clickable icon-layout" (click)="editMode(event)"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button color="primary" (click)="editMode(event)"><mat-icon>edit</mat-icon></button>
         <button mat-icon-button color="warn" (click)="deleteMode(event)"><mat-icon>delete</mat-icon></button>
       </div>
     </div>
@@ -54,8 +54,7 @@
       </div>
     </div>
     <mat-card-actions>
-
-        <button mat-button (click)="event.eventId && navigateToTasks(event.eventId)" style="margin-bottom: 12px; color: #7DA1A4 ;">Gestionar tareas</button>
+        <button mat-button (click)="event.eventId && navigateToTasks(event.eventId)" style="margin-bottom: 12px;  margin-left: 27px;      color: #7DA1A4 ;">Gestionar tareas</button>
         <p *ngIf="event.eventStartDate">
           <span class="date-label time-label">
             <mat-icon>calendar_today</mat-icon>
