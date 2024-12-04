@@ -29,8 +29,8 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        //this.createSuperAdministrator();
-        //this.createVendorUsers();
+        this.createSuperAdministrator();
+        this.createVendorUsers();
         //this.createProducerUsers();
     }
 

@@ -67,7 +67,6 @@ export interface ILoginResponse {
     message?: string;
     roomId?: number;
     timestamp?: string;
-
   }
 
   export interface IVendor{

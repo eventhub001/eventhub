@@ -1,8 +1,5 @@
 
-
-table {
-  font-family: 'Montserrat', sans-serif;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 
 /* Estilos para los progresos  */
@@ -42,17 +39,83 @@ table {
    background-color: red;
  }
 
- th{
-   font-family: 'Montserrat', sans-serif;
-
- }
-
- td{
-   font-family: 'Montserrat', sans-serif;
- }
 
 
- mat-label{
-    font-family: 'Montserrat', sans-serif;
- }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+/* Estilos para la tabla */
+.mat-elevation-z8 {
+  margin-top: 20px;
+  overflow: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para la tabla */
+  font-family: 'Montserrat', sans-serif;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e0e0e0; /* Borde exterior de la tabla */
+    font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
+
+
+    th {
+      background-color: #f9f9f9; /* Color de fondo de los encabezados */
+      font-weight: bold;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 2px solid #e0e0e0; /* Borde inferior de los encabezados */
+      font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
+
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e0e0e0;
+      border-right: 1px solid #e0e0e0; /* Borde derecho de las celdas */
+      font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
+
+    }
+
+    tr:last-child td {
+      border-bottom: none; /* Eliminar el borde inferior de la última fila */
+    }
+
+    tr:hover {
+      background-color: #e3f2fd; /* Color de fondo al pasar el mouse */
+      transition: background-color 0.3s ease; /* Transición suave */
+    }
+
+    .mat-row {
+      &.mat-no-data-row {
+        td {
+          text-align: center;
+          font-style: italic;
+          font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
+
+        }
+      }
+    }
+  }
+}
+
+/* Estilos para los botones de acción */
+button[mat-icon-button] {
+  font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
+
+  mat-icon {
+    color: #1976d2;
+  }
+
+  &:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+    transition: background-color 0.3s ease; /* Transición suave */
+  }
+}
+
+mat-label{
+  font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
+}
 

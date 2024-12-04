@@ -34,6 +34,7 @@ export class VendorListComponent {
   @Input() vendor: IVendor[] = [];
   @Output() callModalAction: EventEmitter<IVendor> = new EventEmitter<IVendor>();
   @Output() callDeleteAction: EventEmitter<IVendor> = new EventEmitter<IVendor>();
+  @Output() filterApplied = new EventEmitter<number>();
   public authService: AuthService = inject(AuthService);
   public categories: IVendorCategory[] = [];
   public vendorCategoryService: VendorcategoryService = inject(VendorcategoryService);
@@ -104,13 +105,18 @@ export class VendorListComponent {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const normalizedFilterValue = this.normalizeString(filterValue);
+    this.dataSource.filter = normalizedFilterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    this.filterApplied.emit(this.dataSource.filteredData.length);
   }
 
+normalizeString(str: string): string {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
   saveToLocalStorage(): void {
     localStorage.setItem('vendors', JSON.stringify(this.vendor));

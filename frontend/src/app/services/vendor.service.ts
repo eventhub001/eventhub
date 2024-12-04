@@ -118,4 +118,5 @@ export class VendorService extends BaseService<IVendor> {
       }
     });
   }
+
 }
