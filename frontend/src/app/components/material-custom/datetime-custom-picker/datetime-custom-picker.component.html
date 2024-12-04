@@ -3,10 +3,10 @@
     <div class="">
       <mat-form-field class="example-full-width" class="pe-3">
         <mat-label>Fecha de inicio del evento</mat-label>
-        <input matInput [matDatepicker]="picker" class="d-flex" for="dateInput" (click)="picker.open()" formControlName="dateInput" >
+        <input matInput [matDatepicker]="picker" [matDatepickerFilter]="dateFilter" class="d-flex" for="dateInput" (click)="picker.open()" formControlName="dateInput" >
         <mat-datepicker #picker></mat-datepicker>
         <mat-hint>MM/dd/yyyy</mat-hint>
-      </mat-form-field>  
+      </mat-form-field>
     </div>
   </div>
   <div class="mb-2">

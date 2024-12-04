@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { IEventFormQuestion } from '../../../interfaces';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 
 /** @title Task Form AI Component */
 @Component({
@@ -16,19 +18,19 @@ import { IEventFormQuestion } from '../../../interfaces';
   styleUrls: ['task-formai.component.scss'],
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatOptionModule, CommonModule, MatSelectModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatOptionModule, CommonModule, MatSelectModule, MatTooltipModule, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskFormAIComponent {
 
   @Input() taskForm!: FormGroup;
   @Output() isValidInput: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Input() eventFormQuestion: IEventFormQuestion[] = []; 
+  @Input() eventFormQuestion: IEventFormQuestion[] = [];
 
   emitIsValidInput() {
     // Emit validity status of the form
     const isValid = this.taskForm.valid;
-    
+
     // Emit the overall form validity
     this.isValidInput.emit(isValid);
   }
@@ -91,20 +93,20 @@ export class TaskFormAIComponent {
         'Equipo audiovisual', 'Sonido', 'Wi-Fi', 'Decoración', 'Pantalla',
         'Iluminación', 'Sillas', 'Mesas', 'Escenario', 'Micrófonos',
         'Pizarras', 'Transporte', 'Electricidad', 'Carpas', 'Stands',
-        'Espacios de descanso', 'Zona de catering', 'Estacionamiento', 
+        'Espacios de descanso', 'Zona de catering', 'Estacionamiento',
         'Material promocional', 'Servicio de seguridad', 'Proyección',
         'Personal de apoyo', 'Mobiliario adicional', 'Material de limpieza'
       ],
       "¿Qué rango de personas?": [
-        '5-20', '10-30', '20-50', '30-70', '50-100', 
+        '5-20', '10-30', '20-50', '30-70', '50-100',
         '100-200', '200-500', '500-1000', '1000-2000', 'Más de 2000'
       ],
       "¿Cuál es el objetivo de tu evento?": [
-        'Ponentes principales', 'Sesión de networking', 'Talleres interactivos', 
-        'Panel de expertos', 'Café y desayuno', 'Conferencia magistral', 
-        'Almuerzo de trabajo', 'Rueda de prensa', 'Exposición de productos', 
+        'Ponentes principales', 'Sesión de networking', 'Talleres interactivos',
+        'Panel de expertos', 'Café y desayuno', 'Conferencia magistral',
+        'Almuerzo de trabajo', 'Rueda de prensa', 'Exposición de productos',
         'Presentación de nuevos proyectos'
-      ]    
+      ]
     };
 
     return mapping[questioname];

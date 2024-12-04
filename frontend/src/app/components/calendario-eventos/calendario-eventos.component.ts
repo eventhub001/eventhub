@@ -17,7 +17,6 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./calendario-eventos.component.scss']
 })
 export class CalendarioEventosComponent {
-  // Calendar options
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -33,6 +32,9 @@ export class CalendarioEventosComponent {
     },
     navLinks: false,
     moreLinkClick: 'popover',
+    validRange: {
+      start: new Date().toISOString().split('T')[0]
+    },
     eventClick: (info) => {
       console.log(info.event.title);
       if (info.event.extendedProps['type'] === 'Event') {
@@ -43,27 +45,34 @@ export class CalendarioEventosComponent {
       }
     },
     eventDrop: (info) => {
-      if (info.event.extendedProps['type'] === 'Event') {
-        this.saveEvent.emit(this.calendarEventBuilder.parseToEvent(info.event as ICalendarEvent));
-      }
-      if (info.event.extendedProps['type'] === 'Task') {
-        this.saveTask.emit(this.calendarEventBuilder.parseToTask(info.event as ICalendarEvent));
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const eventStart = new Date(info.event.start as Date);
+      if (eventStart < today) {
+        info.revert();
+      } else{
+        if (info.event.extendedProps['type'] === 'Event') {
+          this.saveEvent.emit(this.calendarEventBuilder.parseToEvent(info.event as ICalendarEvent));
+        }
+        if (info.event.extendedProps['type'] === 'Task') {
+          this.saveTask.emit(this.calendarEventBuilder.parseToTask(info.event as ICalendarEvent));
+        }
       }
     },
   };
 
-  @Input() events: IEvent[] = [];               // Array of event objects
-  @Input() tasks: ITask[] = [];                 // Array of task objects
-  @Input() tasksProgress: ITaskProgress[] = []; // Array of task progress objects
+  @Input() events: IEvent[] = [];
+  @Input() tasks: ITask[] = [];
+  @Input() tasksProgress: ITaskProgress[] = [];
 
   @Output() saveEvent: EventEmitter<IEvent> = new EventEmitter<IEvent>();
   @Output() showEventDetails: EventEmitter<IEvent> = new EventEmitter<IEvent>();
   @Output() saveTask: EventEmitter<ITask> = new EventEmitter<ITask>();
   @Output() showTaskDetails: EventEmitter<ITask> = new EventEmitter<ITask>();
 
-  selectedEventType: string = '';               // Selected event type filter (Event/Task)
-  selectedTaskType: string = '';                // Selected task type filter (e.g., TypeA, TypeB)
-  calendarEvents: ICalendarEvent[] = [];        // Events to be displayed on the calendar
+  selectedEventType: string = '';
+  selectedTaskType: string = '';
+  calendarEvents: ICalendarEvent[] = [];
   calendarEventBuilder: EventCalendarBuilder = new EventCalendarBuilder();
 
   constructor() {
@@ -74,24 +83,21 @@ export class CalendarioEventosComponent {
     this.updateCalendarEvents();
   }
 
-  // Apply filters when selection changes
+
   applyFilters() {
     this.updateCalendarEvents();
   }
 
-  // Update the calendar events based on the selected filters
   updateCalendarEvents() {
     let filteredEvents = [...this.events];
     let filteredTasks = [...this.tasks];
 
     this.calendarEventBuilder = new EventCalendarBuilder();
 
-    // Filter by selected event type
     if (this.selectedEventType === 'event') {
-      filteredTasks = [];  // Hide tasks if only events are selected
+      filteredTasks = [];
     } else if (this.selectedEventType === 'task') {
-      filteredEvents = [];  // Hide events if only tasks are selected
-      // Further filter tasks by task type, if specified
+      filteredEvents = [];
     }
 
     if (this.selectedTaskType) {
@@ -99,16 +105,13 @@ export class CalendarioEventosComponent {
       filteredTasks = filteredTasks.filter(task => task.status === this.selectedTaskType);
     }
 
-    // Build calendar events from the filtered lists
     this.calendarEventBuilder.parseEvents(filteredEvents);
     this.calendarEventBuilder.parseTasks(filteredTasks);
 
-    // Update the calendar view with filtered events
     this.calendarEvents = [...this.calendarEventBuilder.build()];
     this.calendarOptions.events = this.calendarEvents as EventSourceInput;
   }
 
-  // Method to add a new event to the calendar
   addEvent(event: ICalendarEvent) {
     this.calendarEvents = [
       ...this.calendarEvents,

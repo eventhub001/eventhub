@@ -24,7 +24,7 @@ export class TaskService extends BaseService<ITask> {
 
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 10
   }
 
   public totalItems: any = [];
