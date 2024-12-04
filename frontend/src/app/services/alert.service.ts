@@ -16,4 +16,13 @@ export class AlertService {
       duration: 3000
     });
   }
+
+  info(message: string, horizontalPosition: MatSnackBarHorizontalPosition = 'center', verticalPosition: MatSnackBarVerticalPosition = 'top') {
+    this.snackBar.open(message, 'Cerrar', {
+      horizontalPosition,
+      verticalPosition,
+      panelClass: ['info-snackbar'],
+      duration: 10000,
+    });
+  }
 }

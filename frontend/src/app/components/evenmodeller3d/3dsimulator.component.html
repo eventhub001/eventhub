@@ -25,6 +25,8 @@
         [arrowToAxis]="arrowsToProjection$()"
         [arrowToRotation]="arrowsToRotation$()"
         [modelMetadata]="modelMetadata"
+        (SettingsAction)="handleSettings($event)"
+        (MatrizViewAction)="handleMatrizView($event)"
         ></app-ui3d>
     </div>
 </div>

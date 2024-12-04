@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { AxisOrientation, Size } from "../model-objects/3dobjects-utils";
 import { HttpClient } from "@angular/common/http";
 import { AssetMetadata, AssetTexture } from "../../../interfaces";
-import { TextureHandler } from "../../../services/modelsHandler";
+import { TextureHandler } from "../../../services/models-parse.service";
 
 export class Floor extends ThreeDObject {
     

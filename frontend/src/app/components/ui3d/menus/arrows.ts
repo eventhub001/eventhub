@@ -179,4 +179,12 @@ export class ArrowsMenu {
             }
         } 
     }
+
+    hide() {
+        this.container.vis(false);
+    }
+
+    show() {
+        this.container.vis(true);
+    }
 }

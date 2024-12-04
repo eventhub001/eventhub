@@ -6,11 +6,14 @@ import * as UICommands from './commands/commands'
 import { blobsToImages, blobToImage } from './loader/blobloader'
 import { AssetSelectorComponent } from './menus/assetselector'
 import { ArrowsMenu, DIRECTION, MOVE_DIRECTION, SELECTIONTYPE } from './menus/arrows'
-import { AssetBitmap, AssetImg, AssetMetadata, AssetModel } from '../../interfaces'
+import { AssetBitmap, AssetImg, AssetMetadata, AssetModel, IScene3D, IScene3DSetting } from '../../interfaces'
 import { SelectionArrowsPad } from './menus/selectionarrowspad'
 import { arrowToAxis } from '../evenmodeller3d/input-projections/movement'
 import { arrowsToRotation } from '../evenmodeller3d/input-projections/rotation'
 import { DeleteActionPad } from './menus/delete'
+import { SaveHandlerPad } from './settings/savehandler'
+import { SceneSettingsPad } from './settings/scene-settings'
+import { AlertService } from '../../services/alert.service'
 @Component({
     selector: 'app-ui3d',
     standalone: true,
@@ -23,23 +26,40 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     @Input() images: AssetImg[] = [];
     @Input() models: AssetModel[] = [];
 
+    // this could go in one single command object.
     @Output() AdditionAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
     @Output() MoveAction: EventEmitter<UICommands.directional> = new EventEmitter<UICommands.directional>()
     @Output() RotationAction: EventEmitter<UICommands.directional> = new EventEmitter<UICommands.directional>()
     @Output() AddtionFromModelSelectedAction: EventEmitter<UICommands.addtion> = new EventEmitter<UICommands.addtion>()
     @Output() DeleteAction: EventEmitter<boolean> = new EventEmitter<boolean>()
+    @Output() SaveAction: EventEmitter<boolean> = new EventEmitter<boolean>()
+    @Output() SettingsAction: EventEmitter<IScene3DSetting> = new EventEmitter<IScene3DSetting>()
+    @Output() LoadSceneAction: EventEmitter<boolean> = new EventEmitter<boolean>()
+    @Output() SaveSceneSettingAction: EventEmitter<IScene3DSetting> = new EventEmitter<IScene3DSetting>()
+    @Output() MatrizViewAction: EventEmitter<boolean> = new EventEmitter<boolean>()
+
+
+    isFirstLoaded: boolean = true;
+
     @Input() arrowToAxis!: arrowToAxis;
     @Input() arrowToRotation!: arrowsToRotation;
+    
     matriz?: MatrixUI;
     settings: settings;
+    saveHandlerPad: SaveHandlerPad | undefined;
     modelImgs: AssetBitmap[] = [];
     width: number = 300;
-    height: number = 800;
+    height: number = 840;
     stage: Stage | undefined;
+    showMatriz: boolean = true;
 
     selectionArrowsPad: SelectionArrowsPad | undefined;
     arrowSelection: ArrowsMenu | undefined;
     deletePad: DeleteActionPad | undefined;
+    sceneSettingsPad: SceneSettingsPad | undefined;
+    assetSelector: AssetSelectorComponent | undefined;
+
+    alertService: any = inject(AlertService);
     constructor() {
         this.settings = SetUpUI.setUpUI(
             350, 600, 20, 15, 3, 21, 10, 3);
@@ -61,9 +81,11 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
     }   
 
     async ngAfterContentInit() {
-        // hardcoded have to change of course with the setting parameters.
-        const divisionwidth = 0.0476;
-        const divisionheight = 0.15;
+
+        this.settings.x = 21;
+        this.settings.y = 10;
+        this.settings.width = 20;
+        this.settings.depth = 15;
 
         this.frame = new Frame({
             scaling: "zim",
@@ -72,7 +94,6 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
             outerColor: blue,
             mouseMoveOutside: true, // so Pen and Dial work better
             ready: async () => {
-
                 const PADDING = 20;
 
                 const pen = new Pen({ min: 10, max: 60 })
@@ -88,17 +109,116 @@ export class Ui3DComponent implements OnDestroy, AfterContentInit {
                     return {id: id, bitmap: bitmap};
                 }));
 
-                const assetSelector = new AssetSelectorComponent(imgs, 10, 400, 5);
-                assetSelector.onBitmapClick = (id: number) => {
+                this.assetSelector = new AssetSelectorComponent(imgs, 10, 400, 5);
+                this.assetSelector.onBitmapClick = (id: number) => {
                     this.AdditionAction.emit({
                         id: id
                     });
                 }
                 this.arrowSelection = new ArrowsMenu(PADDING, PADDING + 20, 300, 300);
+                this.selectionArrowsPad = new SelectionArrowsPad(this.width / 2 + 40, this.height * 0.77, 80, 30);
+                this.saveHandlerPad = new SaveHandlerPad(this.width / 2 + 40, this.height * 0.90, 80, 30);
+                this.deletePad = new DeleteActionPad(this.width / 2 + 40, this.height * 0.82, 80, 30);
 
-                this.selectionArrowsPad = new SelectionArrowsPad(this.width / 2, this.height * 0.9, 100, 40);
+                this.saveHandlerPad.saveButtonOnClick = () => {
+                    this.SaveAction.emit(true);
+                };
+                this.saveHandlerPad.loadButtonOnClick = () => {
+                    this.LoadSceneAction.emit(true);
+                }
 
-                this.deletePad = new DeleteActionPad(this.width / 2, this.height * 0.8, 100, 40);
+                this.sceneSettingsPad = new SceneSettingsPad(this.width / 2 - 40, this.height * 0.94, 150, 30);
+
+                if (this.isFirstLoaded) {
+                    this.saveHandlerPad.hide();
+                    this.deletePad.hide();
+                    this.selectionArrowsPad.hide();
+                    this.arrowSelection.hide();
+                    this.assetSelector.hide();
+                }
+
+                this.sceneSettingsPad.sceneSettingButtonOnClick = () => {
+
+                    if (this.isFirstLoaded) {
+                        this.arrowSelection?.show();
+                        this.selectionArrowsPad?.show();
+                        this.deletePad?.show();
+                        this.assetSelector?.show();
+                        this.saveHandlerPad?.show();
+
+                        this.isFirstLoaded = false;
+                    }
+                    else {
+                        this.saveHandlerPad?.buttons.forEach((button) => {
+                            button.vis(button.visible === false ? true : false);
+                            if (button.visible === false) {
+                                this.alertService.info("Recuerda que no debe de haber objetos en la escena para guardar los cambios.");
+                            }
+                        })
+                    }
+
+                    this.settings.width = Number(this.sceneSettingsPad?.inputs.widthInput.text);
+                    this.settings.depth = Number(this.sceneSettingsPad?.inputs.depthInput.text);
+                    this.settings.x = Number(this.sceneSettingsPad?.inputs.colInput.text);
+                    this.settings.y = Number(this.sceneSettingsPad?.inputs.rowsInput.text);
+
+                    this.SaveSceneSettingAction.emit({
+                        width: this.settings.width,
+                        depth: this.settings.depth,
+                        cols: this.settings.x,
+                        rows: this.settings.y
+                    } as IScene3DSetting);
+                }
+                this.sceneSettingsPad.inputsOnChanges = () => {
+
+                    if (this.sceneSettingsPad?.isInvalidInput()) {
+                        return;
+                    }
+
+                    this.SettingsAction.emit({
+                       width: Number(this.sceneSettingsPad?.inputs.widthInput.text),
+                       depth: Number(this.sceneSettingsPad?.inputs.depthInput.text),
+                       cols: Number(this.sceneSettingsPad?.inputs.colInput.text),
+                       rows: Number(this.sceneSettingsPad?.inputs.rowsInput.text)
+                    } as IScene3DSetting); 
+                }
+
+                this.sceneSettingsPad.sceneSettingCancelButtonOnClick = () => {
+                    if (this.isFirstLoaded) {
+                        this.arrowSelection?.show();
+                        this.selectionArrowsPad?.show();
+                        this.deletePad?.show();
+                        this.assetSelector?.show();
+                        this.saveHandlerPad?.show();
+
+                        this.isFirstLoaded = false;
+                    }
+
+                    else {
+                        this.saveHandlerPad?.buttons.forEach((button) => {
+                            button.vis(button.visible === false ? true : false);
+                        })
+                    }
+
+                    this.SettingsAction.emit({
+                        width: this.settings.width,
+                        depth: this.settings.depth,
+                        cols: this.settings.x,
+                        rows: this.settings.y
+                    } as IScene3DSetting);
+
+                    if (this.sceneSettingsPad && this.sceneSettingsPad.inputs) {
+                        this.sceneSettingsPad.inputs.widthInput.text = this.settings.width.toString();
+                        this.sceneSettingsPad.inputs.depthInput.text = this.settings.depth.toString();
+                        this.sceneSettingsPad.inputs.colInput.text = this.settings.x.toString();
+                        this.sceneSettingsPad.inputs.rowsInput.text = this.settings.y.toString();
+                    }
+                }
+
+                this.sceneSettingsPad.sceneMatrixViewButtonOnClick = () => {
+                    this.showMatriz = !this.showMatriz;
+                    this.MatrizViewAction.emit(this.showMatriz);
+                }
 
                 this.deletePad.deleteButtonOnClick = () => this.DeleteAction.emit(true);
                 this.selectionArrowsPad.rotationButtonOnClick = () => {

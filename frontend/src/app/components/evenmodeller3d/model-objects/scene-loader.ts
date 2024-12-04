@@ -1,5 +1,5 @@
 import { AssetMetadata, AssetModel, IScene3D, IScene3DSetting, ISceneSnapshot3D } from "../../../interfaces";
-import { ModelHandler } from "../../../services/modelsHandler";
+import { ModelHandler } from "../../../services/models-parse.service";
 import { DefaultThreeDObject } from "../models/default.model";
 import { Event3DManager } from "./event3dmanager";
 import * as THREE from "three";

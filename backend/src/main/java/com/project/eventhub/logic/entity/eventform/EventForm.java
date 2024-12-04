@@ -1,9 +1,7 @@
 package com.project.eventhub.logic.entity.eventform;
-import com.project.eventhub.logic.entity.auth.eventformquestion.EventFormQuestion;
+import com.project.eventhub.logic.entity.eventformquestion.EventFormQuestion;
 import com.project.eventhub.logic.entity.event.Event;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "event_form")

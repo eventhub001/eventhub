@@ -1,4 +1,4 @@
-package com.project.eventhub.logic.entity.auth.eventformquestion;
+package com.project.eventhub.logic.entity.eventformquestion;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

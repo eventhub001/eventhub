@@ -1,7 +1,9 @@
-package com.project.eventhub.rest.scene3d;
+package com.project.eventhub.rest.scenesnapshot3d;
 
 import com.project.eventhub.logic.entity.scene3d.Scene3D;
 import com.project.eventhub.logic.entity.scene3d.Scene3DRepository;
+import com.project.eventhub.logic.entity.scenesnapshot3d.SceneSnapshot3D;
+import com.project.eventhub.logic.entity.scenesnapshot3d.SceneSnapshot3DRepository;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
@@ -19,8 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/scene3d")
-public class Scene3DRestController {
+@RequestMapping("/scene-snapshot-3d")
+public class SceneSnapshot3DRestController {
+
+    @Autowired
+    private SceneSnapshot3DRepository sceneSnapshot3DRepository;
 
     @Autowired
     private Scene3DRepository scene3DRepository;
@@ -30,11 +35,12 @@ public class Scene3DRestController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> addScene3D(@RequestBody Scene3D scene3D) {
+    public ResponseEntity<?> addScene3D(@RequestBody SceneSnapshot3D scene3D) {
         Optional<User> user = userRepository.findById(scene3D.getUser().getId());
-        if (user.isPresent()) {
+        Optional<Scene3D> scene = scene3DRepository.findById(scene3D.getScene3D().getId());
+        if (user.isPresent() && scene.isPresent()) {
             scene3D.setUser(user.get());
-            return ResponseEntity.ok(scene3DRepository.save(scene3D));
+            return ResponseEntity.ok(sceneSnapshot3DRepository.save(scene3D));
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -48,7 +54,7 @@ public class Scene3DRestController {
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Scene3D> scene3DPage = scene3DRepository.findAll(pageable);
+        Page<SceneSnapshot3D> scene3DPage = sceneSnapshot3DRepository.findAll(pageable);
 
         Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
         meta.setTotalPages(scene3DPage.getTotalPages());
@@ -67,7 +73,7 @@ public class Scene3DRestController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getScene3DById(@PathVariable Long id) {
-        Optional<Scene3D> scene3D = scene3DRepository.findById(id);
+        Optional<SceneSnapshot3D> scene3D = sceneSnapshot3DRepository.findById(id);
         if (scene3D.isPresent()) {
             return ResponseEntity.ok(scene3D.get());
         } else {
@@ -78,16 +84,16 @@ public class Scene3DRestController {
 
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateScene3D(@PathVariable Long id, @RequestBody Scene3D scene3D) {
-        return scene3DRepository.findById(id)
+    public ResponseEntity<?> updateScene3D(@PathVariable Long id, @RequestBody SceneSnapshot3D scene3D) {
+        return sceneSnapshot3DRepository.findById(id)
                 .map(existingScene3D -> {
                     Optional.ofNullable(scene3D.getModel()).ifPresent(existingScene3D::setModel);
                     Optional.ofNullable(scene3D.getUser()).ifPresent(existingScene3D::setUser);
-                    return ResponseEntity.ok(scene3DRepository.save(existingScene3D));
+                    return ResponseEntity.ok(sceneSnapshot3DRepository.save(existingScene3D));
                 })
                 .orElseGet(() -> {
                     scene3D.setId(id);
-                    return ResponseEntity.ok(scene3DRepository.save(scene3D));
+                    return ResponseEntity.ok(sceneSnapshot3DRepository.save(scene3D));
                 });
     }
 
@@ -95,7 +101,7 @@ public class Scene3DRestController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteScene3D(@PathVariable Long id) {
         if (scene3DRepository.existsById(id)) {
-            scene3DRepository.deleteById(id);
+            // deleting all dependencies.
             return ResponseEntity.ok("Scene3D with ID " + id + " deleted successfully");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

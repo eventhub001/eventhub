@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { DebuggingUtils } from './model-objects/3dobjects-utils';
+import { DebuggingUtils, getLastParentBefore } from './model-objects/3dobjects-utils';
 import { Side } from './model-objects/3dtypes';
 import { MetricType, EventGrid } from './model-objects/grid';
 import { Floor } from './models/floor.model';
@@ -23,7 +23,7 @@ import { arrowsToRotation, isSameArrowsToRotation } from './input-projections/ro
 import { ThreeDObject } from './models/threeobject.model';
 import { GridAdditionError } from './model-objects/exceptions';
 import { AlertService } from '../../services/alert.service';
-import { ModelHandler, TextureHandler } from '../../services/modelsHandler';
+import { ModelHandler, TextureHandler } from '../../services/models-parse.service';
 import { TextureService } from '../../services/texture.service';
 import { SettingService } from '../../services/setting.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -208,7 +208,7 @@ export class Simulator3DComponent {
 
     const light = new THREE.AmbientLight(0xffffff, 0.3);
     this.scene.add(light);
-    const light2 = new THREE.DirectionalLight(0xffffff, 8);
+    const light2 = new THREE.DirectionalLight(0xffffff, 7);
 
     light2.position.set(8, 5, 0);
     light2.target.position.set(-1, -1, 0); 
@@ -253,18 +253,22 @@ export class Simulator3DComponent {
 
 
   async loadModeler() {
+    
+    if (this.scene) {
+      this.scene.clear();
+    }
+
     console.log("loading world");
-    //new zim.Frame(zim.FIT, 800, 600, "#ff0000", 1);
     this.setupComponents();
 
-    this.grid = new EventGrid(this.sceneSettings.width, 3, this.sceneSettings.depth, this.sceneSettings.cols, this.sceneSettings.rows, MetricType.Meters);
+    this.grid = new EventGrid(this.sceneSettings.width, 8, this.sceneSettings.depth, this.sceneSettings.cols, this.sceneSettings.rows, MetricType.Meters);
 
+    console.log(this.grid);
     // resize canvas on half the size
     this.addRenderingHelpers();
 
     this.modelsContentMenu = await this.sceneLoader.mapContentsToModel(this.models);
     
-    // const token = this.authService.getAccessToken();
     const floorTexture = await TextureHandler.parseTextureBlob(this.textures[0].blob!);
 
     const floor = new Floor(this.sceneSettings.width, this.sceneSettings.depth, {x: 0, y: 0, z: 0}, "", undefined, undefined, floorTexture);
@@ -274,7 +278,7 @@ export class Simulator3DComponent {
     this.modelsMenu = await this.sceneLoader.createThreeDObjects(this.modelMetadata, this.models);
 
     DebuggingUtils.showLights(floor.content);
-
+ 
     this.scene.add(this.grid.model);
     this.scene.add(this.grid.floorGrid);
 
@@ -285,8 +289,7 @@ export class Simulator3DComponent {
     this.intersector.setFromCamera(this.pointer, this.camera);
 
     this.eventManager = new Event3DManager(this.grid);
-    this.eventManager.addSet(this.set); 
-    //this.eventManager.printAssets();
+
     this.eventManager.render(this.scene);
 
     DebuggingUtils.showBoundingBox(floor.content, this.scene);
@@ -343,9 +346,12 @@ export class Simulator3DComponent {
         return;
       } 
 
-      const object = intersections[0].object.parent as THREE.Mesh;
+      const object = getLastParentBefore(this.scene.uuid, intersections[0].object);
 
-      this.updateSelection(object.parent!);
+
+      this.updateSelection(object!);
+
+      console.log(object!);
     }
   }
 
@@ -418,17 +424,20 @@ export class Simulator3DComponent {
     this.saveDialogRef = this.dialog.open(SaveDialogComponent);
 
     this.saveDialogRef.componentInstance.callSaveAction.subscribe((data: IScene3D) => {
+      console.log("saving scene", assets);
       this.callSaveAction.emit({scene3D: data, assets: assets, settings: this.sceneSettings});
       this.saveDialogRef.close();
     })
   }
 
-  loadScene() {
-    this.grid.reset();
-
+  async loadScene() {
+    if (this.sceneSettingsLoaded?.cols) {      
+      this.sceneSettings = this.sceneSettingsLoaded!;
+      console.log("loading grid settings");
+      await this.loadModeler();
+    }
     let modelsUpdated : Asset[] = [];
 
-    console.log("loading snapshots");
     console.log(this.sceneSnapshotsLoaded);
 
     this.sceneSnapshotsLoaded?.forEach((sceneSnapshot) => {
@@ -455,9 +464,9 @@ export class Simulator3DComponent {
           top: new THREE.Vector3(sceneSnapshot.topx, sceneSnapshot.topy, sceneSnapshot.topz)
         },
         undefined,
-        sceneSnapshot.row,
+        sceneSnapshot.col,
         sceneSnapshot.floor,
-        sceneSnapshot.col
+        sceneSnapshot.row
       );
       modelsUpdated.push(model);
     });
@@ -476,5 +485,22 @@ export class Simulator3DComponent {
 
   showLoadSceneDialog() {
     this.showSceneSelectionAction.emit();
+  }
+
+  handleSettings(settings: IScene3DSetting) {
+    this.sceneSettings = settings;
+    console.log("scene settings updated");
+    console.log(this.sceneSettings);
+
+    this.grid = new EventGrid(this.sceneSettings.width, 3, this.sceneSettings.depth, this.sceneSettings.cols, this.sceneSettings.rows, MetricType.Meters);
+    this.eventManager = new Event3DManager(this.grid);
+
+    this.loadModeler();
+  }
+
+  handleMatrizView(show : boolean) {
+    console.log("toggling matriz visibility", show);
+    show ? this.grid.show() : this.grid.hide();
+    this.renderer.render(this.scene, this.camera);
   }
 }

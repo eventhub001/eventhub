@@ -1,7 +1,7 @@
 package com.project.eventhub.rest.eventformquestion;
 
-import com.project.eventhub.logic.entity.auth.eventformquestion.EventFormQuestion;
-import com.project.eventhub.logic.entity.auth.eventformquestion.EventFormQuestionRepository;
+import com.project.eventhub.logic.entity.eventformquestion.EventFormQuestion;
+import com.project.eventhub.logic.entity.eventformquestion.EventFormQuestionRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
 import com.project.eventhub.logic.http.Meta;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController

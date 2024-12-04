@@ -3,7 +3,7 @@ import { AxisOrientation, ModelThreeDObject, Size } from "../model-objects/3dobj
 import { Position, Side } from "../model-objects/3dtypes";
 import { ThreeDObject } from "./threeobject.model";
 import * as THREE from 'three';
-import {ModelHandler} from "../../../services/modelsHandler";
+import {ModelHandler} from "../../../services/models-parse.service";
 import { AssetMetadata } from "../../../interfaces";
 
 export class DefaultThreeDObject extends ThreeDObject {
@@ -24,7 +24,6 @@ export class DefaultThreeDObject extends ThreeDObject {
         super(id, size, content, position, initialorientation, undefined, url, texture, col, floor, row);
 
         if (initialorientation) {
-            console.log("initial orientation configured");
             this.resize();
             this.fixOrientation();
         }

@@ -3,4 +3,9 @@
     [images]="modelService.modelImgs$()"
     [models]="modelService.modelModels$()"
     [textures]="textureService.textureTextures$()"
+    [sceneSnapshotsLoaded]="scene3DSnapshots"
+    [sceneSettingsLoaded]="settings"
+    [scene3DLoaded]="scene3D"
+    (callSaveAction)="saveScene($event)"
+    (showSceneSelectionAction)="openSceneSelection()"
 />

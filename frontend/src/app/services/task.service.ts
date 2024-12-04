@@ -19,8 +19,6 @@ export class TaskService extends BaseService<ITask> {
     return this.taskListSignal;
   }
 
-
-
   public search: ISearch = {
     page: 1,
     size: 5

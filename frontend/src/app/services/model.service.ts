@@ -20,7 +20,7 @@ export class ModelService extends BaseService<Blob> {
   }
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 100
   }
   public totalItems: any = [];
 

@@ -1,10 +1,11 @@
-package com.project.eventhub.logic.entity.scene3d;
+package com.project.eventhub.logic.entity.scenesnapshot3d;
 
 import com.project.eventhub.logic.entity.models.Model;
+import com.project.eventhub.logic.entity.scene3d.Scene3D;
 import com.project.eventhub.logic.entity.user.User;
 import jakarta.persistence.*;
 
-@Table(name = "scene3d")
+@Table(name = "scene_snapshot_3d")
 @Entity
 public class SceneSnapshot3D {
     @Id
@@ -15,9 +16,9 @@ public class SceneSnapshot3D {
     @JoinColumn(name = "model_id", nullable = false)
     private Model model;
 
-
-    @Column(name = "description")
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "scene_id", nullable = false)
+    private Scene3D scene3D;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -287,14 +288,6 @@ public class SceneSnapshot3D {
         this.rightz = rightz;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Long getId() {
         return id;
     }
@@ -317,5 +310,13 @@ public class SceneSnapshot3D {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Scene3D getScene3D() {
+        return scene3D;
+    }
+
+    public void setScene3D(Scene3D scene3D) {
+        this.scene3D = scene3D;
     }
 }

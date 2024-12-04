@@ -23,6 +23,7 @@ export class Event3DManager {
         const newasset = asset.clone();
 
         let allowedPosition = true;
+        console.log("this.sets", this.sets);
         // verify if there a set created
         this.sets.forEach((set) => {
             if (set.hasAssetInPosition(col, floor, row)) {
@@ -423,6 +424,12 @@ export class Set implements Set {
     }
 
     public placeAsset(asset: Asset, x: number, y: number, z: number) {
+        if (x >= this.matrix.cols || z >= this.matrix.rows) {
+            console.log(asset)
+            console.error(x, y, z);
+            console.log("with matrix of dims: ", this.matrix.cols, this.matrix.rows);
+            throw new Error('The asset is out of the grid');
+        }
         this.grid.placeAssetTo(asset, x, y, z, this.sideMatrix!.matrix[x][y][z]!.loc1, this.sideMatrix!.matrix[x][y][z]!.loc2);
     }
 
@@ -434,9 +441,9 @@ export class Set implements Set {
         let occupiedByAsset = false;
         this.matrix.forEach((value, _i, _j, _k) => {
             if (value !== null && _i === row && _j === floor && _k === col) {
-                console.log('occupied');
-                console.log(_i, _j, _k);
-                console.log(value);
+                console.error('occupied by asset in position');
+                console.error(_i, _j, _k);
+                console.error("asset: ", value);
                 occupiedByAsset = true;
             }
         });

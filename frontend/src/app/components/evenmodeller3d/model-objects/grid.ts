@@ -35,7 +35,7 @@ export class EventGrid {
 
     constructor(width: number, height: number, depth: number, cols: number, rows: number, metric: MetricType) {
         this.cols = cols;
-        this.floor = 3;
+        this.floor = 1;
         this.rows = rows;
         this.width = width;
         this.height = height;
@@ -129,6 +129,12 @@ export class EventGrid {
     public hide() {
         if (this.model !== undefined) {
             this.model.visible = false;
+        }
+    }
+
+    public show() {
+        if (this.model !== undefined) {
+            this.model.visible = true;
         }
     }
 

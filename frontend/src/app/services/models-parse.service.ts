@@ -44,11 +44,9 @@ export class ModelHandler {
     
                 loader.parse(arrayBuffer, '', (gltf) => {
                     const gltfScene = gltf.scene;
-                    const chair: ModelThreeDObject = ModelThreeDObject.fromGLTF(gltfScene, true);
+                    const chair: ModelThreeDObject = ModelThreeDObject.fromGLTF(gltfScene, false);
                     const parentDS = chair.pivot;
 
-                    // move to the 0 position.
-                    //parentDS.position.y = 1.4;
                     
                     resolve(parentDS); // Resolve with the THREE.Object3D
                 },
@@ -94,8 +92,6 @@ export class TextureHandler {
     }
 
     public static async parseTextureBlob(blob: Blob): Promise<THREE.Texture> {
-        console.log('Parsing texture blob...');
-        console.log(blob);
         const loader = new THREE.TextureLoader();
 
         return new Promise<THREE.Texture>((resolve, reject) => {

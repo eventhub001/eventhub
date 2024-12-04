@@ -33,4 +33,12 @@ export class DeleteActionPad  {
     moveButtonOnClick() {
         return;
     }
+
+    hide() {
+        this.container.vis(false);
+    }
+
+    show() {
+        this.container.vis(true);
+    }
 }

@@ -216,6 +216,70 @@ export interface AssetTextureMetadata {
   texturePath: string;
 }
 
+export interface ISceneSnapshot3D {
+  id: number;
+  model: AssetMetadata;
+  user: IUser;
+  description: string;
+  x: number;
+  y: number;
+  z: number;
+  width: number;
+  height: number;
+  depth: number;
+  frontx: number;
+  fronty: number;
+  frontz: number;
+  backx: number;
+  backy: number;
+  backz: number;
+  leftx: number;
+  lefty: number;
+  leftz: number;
+  rightx: number;
+  righty: number;
+  rightz: number;
+  topx: number;
+  topy: number;
+  topz: number;
+  bottomx: number;
+  bottomy: number;
+  bottomz: number;
+  col: number;
+  floor: number;
+  row: number;
+  scene3D?: IScene3D;
+}
+
+export interface ISetting {
+  id?: number; // Optional for creation
+  user: IUser;
+  settingOption: ISettingOption;
+  value: string;
+  scene3D?: IScene3D;
+}
+
+export interface IScene3D {
+  id?: number;
+  user: IUser;
+  description: string;
+}
+
+export interface IScene3DSetting {
+  floorTextureId: number;
+  width: number;
+  depth: number;
+  rows: number;
+  cols: number;
+}
+
+export interface ISettingOption {
+  id?: number;
+  key?: string;
+  datatype?: string;
+}
+
+
 export interface AssetTexture {
     id: number;
     blob: Blob;
@@ -243,6 +307,9 @@ export interface Asset {
     content: THREE.Object3D;
     texture: THREE.Texture | undefined;
     size: Size;
+    row: number;
+    floor: number;
+    col: number;
 
     clone: () => Asset;
     rotate: (x: number, y: number, z: number) => void;

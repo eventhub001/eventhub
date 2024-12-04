@@ -136,4 +136,12 @@ export class AssetSelectorComponent {
     onBitmapClick(id: number) {
     
     }
+
+    hide() {
+        this.container.vis(false);
+    }
+
+    show() {
+        this.container.vis(true);
+    }
 }

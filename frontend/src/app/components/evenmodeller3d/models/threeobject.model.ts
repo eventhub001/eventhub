@@ -133,9 +133,6 @@ export class ThreeDObject implements Asset {
     }
 
     public resize() {
-
-        console.log("resizing");
-        console.log(this.content);
         // Get the current bounding box of the object to determine its current size
         const boundingBox = new THREE.Box3().setFromObject(this.content);
         const currentSize = new THREE.Vector3();

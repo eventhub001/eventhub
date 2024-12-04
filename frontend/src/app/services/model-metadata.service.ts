@@ -32,7 +32,7 @@ export class ModelMetadataService extends BaseService<AssetMetadata> {
 
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 100
   }
   public totalItems: any = [];
 
