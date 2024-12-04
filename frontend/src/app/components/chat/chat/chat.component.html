@@ -1,5 +1,7 @@
 <div class="chat_toggle_button">
-  <button mat-raised-button color="primary" (click)="toggleChat()">Toggle Chat</button>
+  <button mat-raised-button (click)="toggleChat()" [ngStyle]="{'background-color': '#80A2A6', 'color': '#FFFFFF'}">
+    {{ isChatHidden ? 'Mostrar Chat' : 'Esconder Chat' }}
+  </button>
 </div>
 
 <div class="chat_window " [ngClass]="{'hidden': isChatHidden}">
@@ -18,7 +20,7 @@
           <div class="user_name"[style.color]="getUserColor(message.user.name + ' ' + message.user.lastname)">
             {{message.user.name + ' ' + message.user.lastname}}</div>
         <div class="text"> {{message.message}}</div>
-        <div class="timestamp">{{message.timestamp | date:'h:mm a'}}</div> <!-- Formato de hora similar a WhatsApp -->
+        <div class="timestamp">{{formatTimestamp(message.timestamp)}}</div>
       </div>
     </li>
   </ul>

@@ -3,7 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../../services/chat.service';
 import { IUser } from '../../../interfaces';
@@ -25,7 +25,8 @@ interface Message {
   standalone: true,
   imports: [MatCardModule, MatButtonModule, MatFormFieldModule,MatInputModule,  FormsModule, CommonModule, MatSnackBarModule],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.scss'
+  styleUrl: './chat.component.scss',
+  providers: [DatePipe]
 })
 export class ChatComponent {
 
@@ -40,7 +41,7 @@ export class ChatComponent {
   isChatHidden: boolean = false;
   @ViewChild('messageContainer') private messageContainer!: ElementRef;
 
-  constructor(private chatService: ChatService,  private route: ActivatedRoute, private snackBar: MatSnackBar) {
+  constructor(private chatService: ChatService,  private route: ActivatedRoute, private snackBar: MatSnackBar, private datePipe: DatePipe) {
 
   }
 
@@ -212,6 +213,17 @@ export class ChatComponent {
     const color = `hsl(${hash % 360}, 70%, 50%)`;
     return color;
   }
+
+  formatTimestamp(timestamp: string): string {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM/PM
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
+    }
+
 }
 
 

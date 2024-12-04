@@ -36,7 +36,7 @@ export class TaskListComponent {
 
   public todayDate: Date;
   public dataSource: MatTableDataSource<ITask>;
-  public displayedColumns: string[] = ['id', 'taskName', 'description', 'status', 'dueDate', 'priority', 'actions'];
+  public displayedColumns: string[] = ['taskName', 'description', 'status', 'dueDate', 'priority', 'actions'];
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

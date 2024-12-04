@@ -105,11 +105,13 @@ align-self: flex-end;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+  font-size: small;
 }
 
 mat-card-title{
   font-family: 'Montserrat', sans-serif;
-
+  font-weight: 600;
+  font-size: medium;
 }
 
 .separator {

@@ -22,6 +22,8 @@
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     background-color: #f8f8f8;
     overflow: hidden;
+    transition: height 0.3s ease;
+
   }
 
   .top_menu {
@@ -257,6 +259,8 @@
       transition: background-color 0.3s, transform 0.3s; // Transiciones suaves
       background-color: #007bff; // Color de fondo inicial
       color: #fff; // Color del texto
+      font-family: 'Montserrat', sans-serif;
+
 
       &:hover {
         background-color: #0056b3; // Color de fondo al pasar el mouse
@@ -290,4 +294,8 @@
     text-align: right; /* Alinea el texto a la derecha */
     display: block; /* Asegura que el texto ocupe toda la línea */
     margin-top: 5px; /* Añade un pequeño margen superior */
+  }
+
+  .chat_toggle_button{
+    color: yellow;
   }
