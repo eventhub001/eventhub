@@ -34,17 +34,6 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  height: 100%;
-}
-
-#app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.content {
-  flex: 1;
 }
 
 h1 {
