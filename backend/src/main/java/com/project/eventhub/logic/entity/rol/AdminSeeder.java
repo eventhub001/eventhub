@@ -65,7 +65,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
             return;
         }
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 500; i++) {
             String email = "RegularUser" + i + "@gmail.com";
             Optional<User> optionalUser = userRepository.findByEmail(email);
 

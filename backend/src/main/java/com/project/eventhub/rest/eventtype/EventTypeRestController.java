@@ -1,6 +1,6 @@
 package com.project.eventhub.rest.eventtype;
 
-import com.project.eventhub.logic.entity.event.EventTypeRepository;
+import com.project.eventhub.logic.entity.eventtype.EventTypeRepository;
 import com.project.eventhub.logic.entity.eventtype.EventType;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
 import com.project.eventhub.logic.http.Meta;
@@ -24,7 +24,7 @@ public class EventTypeRestController {
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> getAllEventTypes(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page-1, size);

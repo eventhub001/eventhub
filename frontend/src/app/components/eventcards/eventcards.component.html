@@ -3,8 +3,8 @@
 </div>
 <div [hidden]="createEvent">
     <div class="toolbar-top-right">
-      <div >
-        <input type="text" placeholder="Buscar..." class="event-input" [(ngModel)]="searchTerm" (input)= "filterEventByTerm(searchTerm)">
+      <div>
+        <input type="text" placeholder="Buscar..." class="event-input" [(ngModel)]="searchTerm" (input)="filterEventByTerm(searchTerm)">
       </div>
       <div class="right-toolbar">
         <mat-card-actions>
@@ -16,66 +16,67 @@
     </div>
 </div>
 <div [hidden]="!createEvent">
-  <app-card-events-form 
-  [eventTypes]="eventTypeService.eventTypes$()"
-  [eventFormQuestion]="eventFormQuestionService.eventFormQuestions$()"
-  [eventForm]="eventForm"
-  (callSaveEvent)="save($event)"
-  [createEvent]="true"
-  (closeView)="closeCreateMode()"
+  <app-card-events-form
+    [eventTypes]="eventTypeService.eventTypes$()"
+    [eventFormQuestion]="eventFormQuestionService.eventFormQuestions$()"
+    [eventForm]="eventForm"
+    (callSaveEvent)="save($event)"
+    [createEvent]="true"
+    (closeView)="closeCreateMode()"
   ></app-card-events-form>
 </div>
 <div class="card-container">
-    <mat-card *ngFor="let event of events" class="card">
-      <div *ngIf="editEventId !== event.eventId" class="toolbar-top-right m-4">
-        <mat-card-header class=>
-              <div *ngIf="editEventId !== event.eventId" class="right-toolbar">
-                <mat-card-title>{{ event.eventId }} - {{ event.eventName }}</mat-card-title>
-                <mat-card-subtitle>{{ event.eventType?.eventTypeName }}</mat-card-subtitle>
-                <mat-card-content>
-                  <p>Descripción: {{ event.eventDescription }}</p> <!-- Assuming 'description' is a property -->
-                  <p *ngIf="event.eventStartDate">Fecha del evento: {{  asDate(event.eventStartDate.toString()) }}</p>
-                  <p *ngIf="event.eventStartDate">Hora de inicio del evento: {{  asTime(event.eventStartDate.toString()) }}</p>
-                  <p *ngIf="event.eventEndDate">Hora de finalización del evento: {{  asTime(event.eventEndDate.toString()) }}</p>
-                </mat-card-content>
-              </div>
-          </mat-card-header>
-          <div class="right-toolbar">
-            <button mat-icon-button color="primary" class="clickable icon-layout" (click)="editMode(event)"><mat-icon>edit</mat-icon></button>
-            <button mat-icon-button color="warn" (click)="deleteMode(event)"><mat-icon>delete</mat-icon></button>
+  <mat-card *ngFor="let event of events" class="card">
+    <div *ngIf="editEventId !== event.eventId" class="toolbar-top-right m-4">
+      <mat-card-header>
+        <div *ngIf="editEventId !== event.eventId" class="right-toolbar">
+          <mat-card-title>{{ event.eventName }}</mat-card-title>
+          <div class="mat-card-content">
+            <p *ngIf="event.eventDescription">{{ event.eventDescription }}</p>
           </div>
+        </div>
+      </mat-card-header>
+      <div class="right-toolbar">
+        <button mat-icon-button color="primary" (click)="editMode(event)"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button color="warn" (click)="deleteMode(event)"><mat-icon>delete</mat-icon></button>
       </div>
-      <div [hidden]="editEventId !== event.eventId" class="toolbar-top-right">
-        <app-card-events-form #eventFormComponent
+    </div>
+    <div [hidden]="editEventId !== event.eventId" class="toolbar-top-right" >
+      <app-card-events-form #eventFormComponent
         [eventTypes]="eventTypeService.eventTypes$()"
         [eventForm]="eventForm"
         [eventStartDate]="event.eventStartDate || null"
-        [eventEndDate]="event.eventEndDate||null"
-        (callUpdateEvent)="update($event)" ></app-card-events-form>
-        <div class="right-toolbar m-3">
-          <img src="../../../assets/img/close.png" class="clickable icon-layout" (click)="closeEditMode()" />
-        </div>
+        [eventEndDate]="event.eventEndDate || null"
+        (callUpdateEvent)="update($event)"
+      ></app-card-events-form>
+      <div class="right-toolbar m-3">
+        <img src="../../../assets/img/close.png" class="clickable icon-layout" (click)="closeEditMode()" />
       </div>
-      <mat-card-actions>
-        <mat-card-actions>
-        <button mat-button (click)="event.eventId && navigateToTasks(event.eventId)">Gestionar tareas</button>
-        </mat-card-actions>
-        <button mat-button color="accent" >Buscar recursos</button>
-      </mat-card-actions>
-      <!-- Show event details if selected -->
+    </div>
+    <mat-card-actions>
+        <button mat-button (click)="event.eventId && navigateToTasks(event.eventId)" style="margin-bottom: 12px;  margin-left: 27px;      color: #7DA1A4 ;">Gestionar tareas</button>
+        <p *ngIf="event.eventStartDate">
+          <span class="date-label time-label">
+            <mat-icon>calendar_today</mat-icon>
+            {{ asDate(event.eventStartDate.toString()) }}
+            <span class="separator">|</span>
+            <mat-icon>access_time</mat-icon>
+            {{ asTime(event.eventStartDate.toString()) }} - {{ asTime(event.eventEndDate!.toString()) }}
+          </span>
+        </p>
+    </mat-card-actions>
   </mat-card>
-  <app-pagination
-    [service]="eventService"
-    [customCall]="true"
-    (callCustomPaginationMethod)="eventService.getAll()"
-  ></app-pagination>
+
   <ng-template #addProductsModal>
-    <app-modal
-      [hideFooter]="true">
+    <app-modal [hideFooter]="true">
       <div>
         <app-event-confirmation-modal [eventParam]="selectedEvent" (confirmed)="deleteEvent($event)" (canceled)="cancelDelete()"></app-event-confirmation-modal>
       </div>
     </app-modal>
   </ng-template>
-
-  </div>
+</div>
+<app-pagination
+  [service]="eventService"
+  [customCall]="true"
+  (callCustomPaginationMethod)="eventService.getAll()"
+></app-pagination>

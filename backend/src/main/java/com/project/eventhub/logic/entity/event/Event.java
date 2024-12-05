@@ -29,6 +29,11 @@ public class Event {
     @Column(name = "event_end_date")
     private LocalDateTime eventEndDate;
 
+
+    private LocalDateTime event_date;
+
+
+
     @ManyToOne
     @JoinColumn(name = "event_type_id", nullable = false)
     private EventType eventType;
@@ -87,5 +92,13 @@ public class Event {
 
     public void setEventEndDate(LocalDateTime eventEndDate) {
         this.eventEndDate = eventEndDate;
+    }
+
+    public LocalDateTime getEvent_date() {
+        return event_date;
+    }
+
+    public void setEvent_date(LocalDateTime event_date) {
+        this.event_date = event_date;
     }
 }

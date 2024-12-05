@@ -3,8 +3,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IEvent, IEventForm, IEventFormQuestion, IEventType } from '../../../interfaces';
 import { AuthService } from '../../../services/auth.service';
-import { EventDeleteConfirmationComponent } from "../delete-event-confirmation/delete-event-confirmation.component";
-import { NgbDatepicker, NgbDatepickerModule, NgbInputDatepicker, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import {  DateTimeCustomPickerComponent } from "../../material-custom/datetime-custom-picker/datetime-custom-picker.component";
 import { TaskFormAIComponent } from "../../task/task-form-AI/task-formai.component";
@@ -16,7 +14,6 @@ import { TaskFormAIComponent } from "../../task/task-form-AI/task-formai.compone
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    EventDeleteConfirmationComponent,
     FormsModule, DateTimeCustomPickerComponent,
     TaskFormAIComponent
 ],
@@ -83,19 +80,19 @@ export class EventsFormComponent {
   formatToLocalDateTime(date: any, time: any): string | null {
     const dateControl = date; // Date object
     const startTimeControl = time; // Time in HH:mm
-    
+
     if (!dateControl || !startTimeControl) return null; // Return if values are missing
-  
+
     // Format the date to YYYY-MM-DD
     const dateParsed = new Date(dateControl);
     const year = dateParsed.getFullYear();
     const month = String(dateParsed.getMonth() + 1).padStart(2, '0'); // Months are 0-based
     const day = String(dateParsed.getDate()).padStart(2, '0');
-  
+
     // Parse start time (assuming 'HH:mm' format) and append seconds
     const [hours, minutes] = startTimeControl.split(':');
     const startTimeFormatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
-  
+
     // Combine date and time into ISO string
     return `${year}-${month}-${day}T${startTimeFormatted}`;
   }
@@ -122,12 +119,13 @@ export class EventsFormComponent {
 
     let event: IEvent = {
       eventName: this.eventForm.controls['eventName'].value,
+      eventDescription: this.eventForm.controls['eventDescription'].value,
       eventType: eventType,
       eventStartDate: startDateTime,
       eventEndDate: endDateTime,
       userId: this.authService.getUser()?.id!
     };
-
+    console.log("event", event);
     if (this.eventForm.controls['id'].value) {
       event.eventId = this.eventForm.controls['id'].value;
     }
@@ -138,6 +136,7 @@ export class EventsFormComponent {
         event: event,
         formresults:this.generateTaskAI(event)
       });
+
     }
 
     this.closeView.emit();
@@ -146,7 +145,7 @@ export class EventsFormComponent {
   sampleMethod() {
     console.log("sample method called");
   }
-   
+
   closeViewEmitter() {
     this.closeView.emit();
   }
@@ -190,7 +189,7 @@ export class EventsFormComponent {
           question: question,
           answer:  (this.taskAIForm.controls[eventFormQuestion.nnControlName].value as string[]).join(", "),
           event: event
-        } as IEventForm 
+        } as IEventForm
       }
     })
 

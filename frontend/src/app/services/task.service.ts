@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { AlertService } from './alert.service';
 import { EventcardsComponent } from '../components/eventcards/eventcards.component';
 import { EventsService } from './event.service';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class TaskService extends BaseService<ITask> {
 
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 10
   }
 
   public totalItems: any = [];
@@ -55,6 +56,29 @@ export class TaskService extends BaseService<ITask> {
       }
     });
   }
+
+
+
+  getAllTasksByEventName(eventName: string): Observable<ITask[]> {
+    const params = {
+      page: this.search.page,
+      size: this.search.size,
+      eventName: eventName
+    };
+
+    return this.findAllWithParamsAndCustomSource(`event/tasks/search`, params).pipe(
+      map((response: any) => {
+        this.search = { ...this.search, ...response.meta };
+        this.totalItems = Array.from({ length: this.search.totalPages ? this.search.totalPages : 0 }, (_, i) => i + 1);
+        this.taskListSignal.set(response.data);
+        return response.data;
+      })
+    );
+  }
+
+
+
+
 
   save(task: ITask) {
     this.add(task).subscribe({

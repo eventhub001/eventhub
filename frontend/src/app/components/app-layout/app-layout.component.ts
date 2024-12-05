@@ -13,9 +13,8 @@ import { LayoutService } from '../../services/layout.service';
     CommonModule,
     RouterOutlet,
     TopbarComponent,
-    SidebarComponent,
-    SvgIconComponent
-  ],
+    SidebarComponent
+],
   templateUrl: './app-layout.component.html',
 })
 export class AppLayoutComponent {

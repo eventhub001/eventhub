@@ -1,12 +1,13 @@
-<div class="chat_window">
+<div class="chat_toggle_button">
+  <button mat-raised-button (click)="toggleChat()" [ngStyle]="{'background-color': '#80A2A6', 'color': '#FFFFFF'}">
+    {{ isChatHidden ? 'Mostrar Chat' : 'Esconder Chat' }}
+  </button>
+</div>
+
+<div class="chat_window " [ngClass]="{'hidden': isChatHidden}">
   <div class="top_menu">
-    <!-- <div class="buttons">
-      <div class="button close"></div>
-      <div class="button minimize"></div>
-      <div class="button maximize"></div>
-    </div> -->
+
     <div class="title">
-      <!-- <img src="/src/assets/icons/whatsapp-512.webp" width="25px" height="25px"> -->
       EventHub Chat
     </div>
   </div>
@@ -16,8 +17,10 @@
     >
       <div  [ngClass]="{'left':message.message_side === 'receiver', 'right':message.message_side === 'sender'}"></div>
       <div class="text_wrapper">
-          <div class="user_name">{{message.user.name + ' ' + message.user.lastname}}</div>
+          <div class="user_name"[style.color]="getUserColor(message.user.name + ' ' + message.user.lastname)">
+            {{message.user.name + ' ' + message.user.lastname}}</div>
         <div class="text"> {{message.message}}</div>
+        <div class="timestamp">{{formatTimestamp(message.timestamp)}}</div>
       </div>
     </li>
   </ul>

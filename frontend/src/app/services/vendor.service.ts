@@ -20,7 +20,7 @@ export class VendorService extends BaseService<IVendor> {
 
   public search: ISearch = {
     page: 1,
-    size: 5
+    size: 10
   }
 
 
@@ -45,19 +45,6 @@ export class VendorService extends BaseService<IVendor> {
   }
 
 
-  // getVendorByUserId(userId: number) {
-  //    q(`user/${userId}`, { page: this.search.page, size: this.search.size}).subscribe({
-  //     next: (response: any) => {
-  //       this.search = {...this.search, ...response.meta};
-  //       this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages: 0}, (_, i) => i+1);
-  //       this.vendorListSignal.set(response.data);
-  //     },
-  //     error: (err: any) => {
-  //       console.error('error', err);
-  //     }
-  //   });
-  // }
-
   getVendorByUserId(userId: number): Observable<IVendor[]> {
     return this.findAllWithParamsAndCustomSource(`user/${userId}`, { page: this.search.page, size: this.search.size}).pipe(
       map((response: any) => response.data),
@@ -80,6 +67,16 @@ export class VendorService extends BaseService<IVendor> {
   }
 
 
+
+  getServicesByVendorId(vendorId: number): Observable<IVendor[]> {
+    return this.findAllWithParamsAndCustomSource(`${vendorId}/services`, { page: this.search.page, size: this.search.size}).pipe(
+      map((response: any) => response.data),
+      catchError((err: any) => {
+        console.error('error', err);
+        return throwError(err);
+      })
+    );
+  }
 
 
 
@@ -121,4 +118,5 @@ export class VendorService extends BaseService<IVendor> {
       }
     });
   }
+
 }

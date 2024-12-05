@@ -1,14 +1,17 @@
-import { AfterContentInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core'
+import { AfterContentInit, Component, EventEmitter, LOCALE_ID, OnDestroy, Output } from '@angular/core'
 import { Simulator3DComponent } from './components/evenmodeller3d/3dsimulator.component'
 import { RouterOutlet } from '@angular/router'
-import { CommonModule } from '@angular/common'
+import { CommonModule, registerLocaleData } from '@angular/common'
+import { ChatbotComponent } from "./components/chatbot/chatbot/chatbot.component";
+import localeEs from '@angular/common/locales/es';
 
+registerLocaleData(localeEs, 'es');
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
-    imports: [Simulator3DComponent, RouterOutlet, CommonModule],
+    imports: [RouterOutlet, CommonModule],
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {

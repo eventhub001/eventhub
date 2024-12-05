@@ -16,6 +16,8 @@ mat-card-subtitle {
 
 mat-card-title{
 padding-bottom: 10px;
+font-family: 'Montserrat', sans-serif;
+
 }
 
 
@@ -25,24 +27,32 @@ h5{
 
 
 .disponible {
-  background-color: #BBDEFB;
+  background-color: #C8E6C9;
   mat-card-header {
-    background-color: #BBDEFB;
+    background-color: #C8E6C9;
   }
 }
 
 .no-disponible {
-  background-color: #E0E0E0;
+  background-color: #FFCDD2;
   mat-card-header {
-    background-color: #E0E0E0;
+    background-color: #FFCDD2;
   }
 }
 
 .chat-container {
   bottom: 0;
   width: 100%;
-  z-index: 1000; /* Asegúrate de que el chat esté por encima de otros elementos */
-  padding: 200px; /* Añade un poco de padding para que el contenido no esté pegado al borde */
-  padding-right: 1000px; /* Añade un poco de padding para que el contenido no esté pegado al borde */
+  z-index: 1000;
+  padding: 200px;
+  padding-right: 1000px;
 }
 
+*{
+  font-family: 'Montserrat', sans-serif;
+}
+
+h5{
+  font-family: 'Montserrat', sans-serif;
+
+}

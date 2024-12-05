@@ -38,7 +38,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/roles").permitAll()
-                        .requestMatchers("/chat/**").permitAll() //permite la conexion con el controlador websocket desde el localhost 4200
+                        .requestMatchers("/chat/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "http://127.0.0.1:5000/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()

@@ -21,4 +21,23 @@ export class DateTimeCustomPickerComponent {
 
   @Input() dateTimeForm!: FormGroup;
   @Output() isValidInput: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+
+
+
+
+
+  dateFilter = (date: Date | null): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Ignorar la hora
+    return date ? date >= today : false;
+  };
+
+
+
+
+
+
+
+
 }

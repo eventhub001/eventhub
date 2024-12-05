@@ -14,11 +14,12 @@ public class Vendor {
 
 
     private String name;
+
     private String description;
     private String location;
     private Double rating;
     private String Phone;
-
+    private String labels;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -91,5 +92,13 @@ public class Vendor {
 
     public void setVendorCategory(VendorCategory vendorCategory) {
         this.vendorCategory = vendorCategory;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String labels) {
+        this.labels = labels;
     }
 }

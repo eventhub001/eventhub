@@ -3,7 +3,7 @@ import { ICalendarEvent, IEvent, ITask, ITaskProgress } from "../../interfaces";
 
 export class EventCalendarBuilder {
     private calendarEvents: ICalendarEvent[] = [];
-  
+
     settings = {
         editable: true,
         allDay: false
@@ -14,7 +14,7 @@ export class EventCalendarBuilder {
 
     parseEvents(events: IEvent[]) {
         this.calendarEvents = this.calendarEvents.concat(events.map(event => ({
-            title: event.eventName || 'No Title', // Default title if none provided
+            title: event.eventName || 'No Title',
             start: event.eventStartDate as string,
             end: event.eventEndDate as string,
             id: event.eventId,
@@ -25,14 +25,14 @@ export class EventCalendarBuilder {
                 eventDescription: event.eventDescription,
                 userId: event.userId
             },
-            color: "#EA55A1",
+            color: "#80A2A6",
             ...this.settings
         })));
     }
 
     parseTasks(tasks: ITask[]) {
         this.calendarEvents = this.calendarEvents.concat(tasks.map(task => ({
-            title: task.taskName || 'No Title', // Default title if none provided
+            title: task.taskName || 'No Title',
             start: task.dueDate ? this.getDateOnly(task.dueDate?.toString() as string) : '',
             end: task.dueDate ? this.getDateOnly(this.addOneDayToDate(task.dueDate?.toString() as string)) : '',
             id: task.id,
@@ -43,17 +43,18 @@ export class EventCalendarBuilder {
                 taskDescription: task.description,
                 taskEventId: task.event?.eventId
             },
+            color: "#A68080 ",
             ...this.settings
         })));
     }
 
     asTime(arg0: string): string {
         const date = new Date(arg0);
-        const hours = date.getHours().toString().padStart(2, '0'); // Format hours to 2 digits
-        const minutes = date.getMinutes().toString().padStart(2, '0'); // Format minutes to 2 digits
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
       }
-    
+
     asDate(arg0: string) {
         return new DatePipe('en-US').transform(arg0, 'yyyy-MM-dd');
     }
@@ -102,9 +103,8 @@ export class EventCalendarBuilder {
     getTaskProgress(taskId: number, tasksProgress: ITaskProgress[]) {
         return tasksProgress.find(taskProgress => taskProgress.task?.id === taskId);
     }
-  
+
     build(): ICalendarEvent[] {
       return this.calendarEvents;
     }
   }
-  

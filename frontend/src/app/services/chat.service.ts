@@ -3,8 +3,7 @@ import { BaseService } from './base-service';
 import { IChat } from '../interfaces';
 import * as SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,14 +38,15 @@ export class ChatService  extends BaseService<IChat> {
     });
   }
 
-   sendMessage(roomId: number, chatMessage: IChat){
+  sendMessage(roomId: number, chatMessage: IChat) {
     console.log('Sending message:', chatMessage); // Agrega este registro para depurar
     if (this.stompClient && this.stompClient.connected) {
+
       this.stompClient.send(`/app/chat/${roomId}`, {}, JSON.stringify(chatMessage));
     } else {
       console.error('Stomp client is not connected');
     }
-   }
+  }
 
     getMessages(){
       return this.messageSubject.asObservable();

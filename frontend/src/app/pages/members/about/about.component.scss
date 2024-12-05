@@ -1,0 +1,133 @@
+/* Estilo global */
+body {
+    font-family: 'Bebas', sans-serif;
+    background: #121212;
+    color: #EFEFEF;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #2A2A2A;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li a {
+    color: #F22786;
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 5px;
+}
+
+nav ul li a:hover {
+    color: #F280AA;
+}
+
+.team {
+    padding: 50px;
+    text-align: center;
+    background: #1A1A1D;
+}
+
+.member-card {
+    background: #2A2A2A;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    display: inline-block;
+    width: 30%;
+    text-align: center;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #F22786;
+}
+
+footer {
+    background: #2A2A2A;
+    color: #EFEFEF;
+    padding: 20px;
+    text-align: center;
+}
+
+footer a {
+    color: #F22786;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #F280AA;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+}
+
+/* Media Queries para Responsividad */
+
+/* Pantallas medianas (tablets) */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .team {
+        padding: 30px 20px;
+    }
+
+    .member-card {
+        width: 80%;
+        margin: 20px auto;
+    }
+}
+
+/* Pantallas pequeñas (móviles) */
+@media (max-width: 480px) {
+    header {
+        padding: 15px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .team h1 {
+        font-size: 1.8rem;
+    }
+
+    .member-card {
+        width: 90%;
+        margin: 15px auto;
+    }
+
+    .profile-pic {
+        width: 120px;
+        height: 120px;
+    }
+}

@@ -67,8 +67,7 @@ export interface ILoginResponse {
     userId?: IUser;
     message?: string;
     roomId?: number;
-    // timestamp?: string;
-
+    timestamp?: string;
   }
 
   export interface IVendor{
@@ -97,7 +96,7 @@ export interface ILoginResponse {
 
   export interface IVendorCategory{
     id?: number;
-    category_name?: string;
+    categoryName?: string;
     description?: string;
 
 

@@ -8,6 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
@@ -18,4 +22,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e WHERE e.userId = :userId AND e.eventName LIKE %:name%")
     Page<Event> findByUserIdAndNameContaining(@Param("userId") Long userId, @Param("name") String name, Pageable pageable);
+
+
+    List<Event> findByEventStartDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<Event> findByEventStartDate(LocalDateTime date);
+
+
 }
+
+
+
+
+

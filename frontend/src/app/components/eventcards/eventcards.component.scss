@@ -1,57 +1,166 @@
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+
 .toolbar-top-right {
-    display: flex;                // Enable flexbox
-    justify-content: space-between; // Space out children
-    flex-direction: row;
-  
-    .left-toolbar {
-      align-self: flex-end;
-    }
-  
-    .right-toolbar {
-      // Always positioned at the top right
-      align-self: flex-start;    // Align to the top
-      align-items: center;
-      padding: 0.3rem 0.3rem;           // Add padding
-    }
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+
+  .left-toolbar {
+    align-self: flex-end;
   }
 
-  .clickable {
-    cursor: pointer;
+  .right-toolbar {
+    align-self: flex-start;
+    align-items: center;
+    padding: 0.3rem 0.3rem;
   }
+}
+
+.clickable {
+  cursor: pointer;
+}
 
 .material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
+font-variation-settings:
+'FILL' 0,
+'wght' 400,
+'GRAD' 0,
+'opsz' 24
 }
 
 .icon-layout {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  align-self: flex-end;
+width: 30px;
+height: 30px;
+margin-right: 10px;
+align-self: flex-end;
 }
 
 .event-input {
-    font-size: 20px; // Match the font size of mat-card-title
-    font-weight: 500; // Semi-bold text
-    color: #F2622E; // Default text color for mat-card-title
-    padding: 8px; // Inner spacing
-    border: 1px solid #ccc; // Border styling
-    border-radius: 4px; // Rounded corners
-    margin-right: 8px; // Spacing between inputs
-    width: 100%; // Make inputs take full width
-    box-shadow: none; // Remove any shadow
-  }
-  
-  .event-input::placeholder {
-    color: rgba(0, 0, 0, 0.38); // Placeholder color
-    opacity: 1; // Make sure placeholder is visible
-  }
+  font-size: 20px;
+  font-weight: 500;
+  color: #F2622E;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+  width: 100%;
+  box-shadow: none;
+}
 
-  
-  .ten h1 {
-    font-size:34px; font-weight:500; text-transform:uppercase;
+.event-input::placeholder {
+  color: rgba(0, 0, 0, 0.38);
+  opacity: 1;
+}
+
+
+.ten h1 {
+  font-size:24px; font-weight:500; text-transform:uppercase;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.mat-mdc-card-title{
+  font-size: 18px;
+}
+
+.card-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  transition: transform 0.3s;
+}
+
+
+
+.card:not(.editing) {
+  width: calc(33.333% - 16px);
+}
+
+.card.editing {
+  width: 50%;
+}
+
+
+.mat-card-content {
+  margin-top: 16px;
+  max-height: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+  font-family: 'Montserrat', sans-serif;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  font-size: small;
+}
+
+mat-card-header {
+  padding-top: 6px;
+}
+
+mat-card-title{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: medium;
+}
+
+.separator {
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+
+
+.time-label, .date-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5px 2px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  color: #333;
+
+  mat-icon {
+    margin-left: 2px;
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
   }
+}
+
+.separator {
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+.date-time-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.edit-form-container {
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+

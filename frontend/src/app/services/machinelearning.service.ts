@@ -18,7 +18,7 @@ interface IComputeResponse {
   providedIn: 'root',
 })
 export class MachineLearningService extends BaseService<IEventForm> {
-    
+
     protected override source: string = 'ml-model';
   /**
    * Calls the compute API on the Flask server.
@@ -28,4 +28,14 @@ export class MachineLearningService extends BaseService<IEventForm> {
   public computeEventForm(data: { new_user_answers: string }): Observable<IComputeResponse> {
     return this.http.post<IComputeResponse>(`${this.source}/compute`, data);
   }
+
+  public computeVendorData(data: { vendor_answers: string }): Observable<IComputeResponse> {
+    return this.http.post<IComputeResponse>(`${this.source}/compute/vendor/suggestions`, data);
+  }
+
+
+  public computeEventSuggestionsData(data: { suggestions_answers: string }): Observable<IComputeResponse> {
+    return this.http.post<IComputeResponse>(`${this.source}/compute/event/suggestions`, data);
+  }
 }
+

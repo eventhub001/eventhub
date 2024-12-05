@@ -146,9 +146,31 @@ public class VendorRestController {
         vendorRepository.deleteById(id);
     }
 
+    @GetMapping("/{vendorId}/services")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getServicesByVendorId(
+            @PathVariable Integer vendorId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+        Optional<Vendor> foundVendor = vendorRepository.findById(vendorId);
+        if (foundVendor.isPresent()) {
 
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<Vendor_service> servicePage = vendorServiceRepository.findByVendorId(vendorId, pageable);
+            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+            meta.setTotalPages(servicePage.getTotalPages());
+            meta.setTotalElements(servicePage.getTotalElements());
+            meta.setPageNumber(servicePage.getNumber() + 1);
+            meta.setPageSize(servicePage.getSize());
 
+            return new GlobalResponseHandler().handleResponse("Vendor services retrieved successfully",
+                    servicePage.getContent(), HttpStatus.OK, meta);
 
-
+        } else {
+            return new GlobalResponseHandler().handleResponse("Vendor Id " + vendorId + " not found",
+                    HttpStatus.NOT_FOUND, request);
+        }
+    }
 
 }

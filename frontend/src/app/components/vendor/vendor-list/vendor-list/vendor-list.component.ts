@@ -34,11 +34,12 @@ export class VendorListComponent {
   @Input() vendor: IVendor[] = [];
   @Output() callModalAction: EventEmitter<IVendor> = new EventEmitter<IVendor>();
   @Output() callDeleteAction: EventEmitter<IVendor> = new EventEmitter<IVendor>();
+  @Output() filterApplied = new EventEmitter<number>();
   public authService: AuthService = inject(AuthService);
   public categories: IVendorCategory[] = [];
-  public vendorCategoryService: VendorcategoryService = inject(VendorcategoryService); //injeccion del category service para llamar el getall
+  public vendorCategoryService: VendorcategoryService = inject(VendorcategoryService);
   public dataSource: MatTableDataSource<IVendor>;
-  public displayedColumns: string[] = ['id', 'name', 'description', 'location', 'rating', 'category', 'actions'];
+  public displayedColumns: string[] = [ 'name', 'description', 'location', 'rating', 'category', 'actions'];
   public userService: UserService = inject(UserService);
 
 
@@ -49,15 +50,13 @@ export class VendorListComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(  private router: Router ) {
-    // Asigna la fecha de hoy formateada a la variable todayDate
     this.dataSource = new MatTableDataSource(this.vendor);
     this.loadCategories();
   }
 
 
-  navigateToDetails(userId: number) {
-    this.userService.setUserId(userId);
-    this.router.navigate(['app/details']);
+  navigateToDetails(vendorId: number) {
+    this.router.navigate(['app/details', vendorId]);
   }
 
   private loadCategories(): void {
@@ -106,13 +105,18 @@ export class VendorListComponent {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const normalizedFilterValue = this.normalizeString(filterValue);
+    this.dataSource.filter = normalizedFilterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    this.filterApplied.emit(this.dataSource.filteredData.length);
   }
 
+normalizeString(str: string): string {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
   saveToLocalStorage(): void {
     localStorage.setItem('vendors', JSON.stringify(this.vendor));

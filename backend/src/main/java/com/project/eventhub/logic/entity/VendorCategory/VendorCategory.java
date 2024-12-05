@@ -3,6 +3,9 @@ package com.project.eventhub.logic.entity.VendorCategory;
 
 import jakarta.persistence.*;
 
+import java.sql.Array;
+import java.util.List;
+
 @Entity
 @Table(name = "vendor_category")
 public class VendorCategory {
@@ -12,7 +15,8 @@ public class VendorCategory {
     private Integer id;
 
 
-    private String category_name;
+    @Column(name = "category_name")
+    private String categoryName;
     private String description;
 
 
@@ -26,12 +30,12 @@ public class VendorCategory {
         this.id = id;
     }
 
-    public String getCategory_name() {
-        return category_name;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCategory_name(String category_name) {
-        this.category_name = category_name;
+    public void setCategoryName(String category_name) {
+        this.categoryName = category_name;
     }
 
     public String getDescription() {
@@ -41,4 +45,7 @@ public class VendorCategory {
     public void setDescription(String description) {
         this.description = description;
     }
+
+
+
 }

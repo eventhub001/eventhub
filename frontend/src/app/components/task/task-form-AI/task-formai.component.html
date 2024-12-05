@@ -1,7 +1,11 @@
 <form [formGroup]="taskForm" class="row">
   <div>
-    <h2 class="mb-1">Describe tu evento</h2>
-    <p class="mb-4">Se recomienda seleccionar un máximo de 4 opciones por pregunta.</p>
+    <h4 class="mb-4">Describe tu evento</h4>
+
+    <p class="mb-4">
+      <mat-icon matTooltip="El formulario se llena solo una vez">info</mat-icon>
+      Se recomienda seleccionar un máximo de 4 opciones por pregunta
+    </p>
   </div>
   <div *ngFor="let question of eventFormQuestion" class="mb-2">
     <label class="m-4" [for]="question.id">{{ question.question }}</label>
