@@ -22,6 +22,7 @@ import { resetComponent } from './pages/auth/reset-password/reset.component';
 import { RequestResourceFormComponent } from './components/request-resource/request-resource-form/request-resource-form.component';
 import { QuoteComponent } from './pages/quote/quote.component';
 import { SolicitudesComponent } from './pages/request-resource/recuest-resource.component';
+import { ProductosComponent } from './pages/members/productos/productos.component';
 
 export const routes: Routes = [
   { path: '',
@@ -55,6 +56,10 @@ export const routes: Routes = [
   { path: 'contact',
     component: ContactComponent,
   },
+  { path: 'productos',
+    component: ProductosComponent,
+  },
+
 
 
   {
