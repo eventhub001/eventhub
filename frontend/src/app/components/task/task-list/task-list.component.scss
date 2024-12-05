@@ -105,9 +105,7 @@ body {
 button[mat-icon-button] {
   font-family: 'Montserrat', sans-serif; /* Aplicar la fuente Montserrat */
 
-  mat-icon {
-    color: #1976d2;
-  }
+
 
   &:hover {
     background-color: rgba(25, 118, 210, 0.1);
