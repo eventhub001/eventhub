@@ -10,12 +10,12 @@ import { LoaderComponent } from "../../../components/loader/loader.component";
 import { ModalComponent } from "../../../components/modal/modal.component";
 import { SolicitudFormComponent } from "../../../components/solicitudes/solicitud-form/solicitud-form/solicitud-form.component";
 import { EventsService } from '../../../services/event.service';
-import { StatusFormComponent } from "../../../components/status/solicitud-form/status-form.component";
+import { StatusFormComponent } from '../../../components/status/solicitud-form/status-form.component';
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [SolicitudListComponent, PaginationComponent, LoaderComponent, ModalComponent, SolicitudFormComponent, StatusFormComponent],
+  imports: [SolicitudListComponent, PaginationComponent, LoaderComponent, ModalComponent, SolicitudFormComponent,StatusFormComponent],
   templateUrl: './solicitudes.component.html',
   styleUrl: './solicitudes.component.scss'
 })

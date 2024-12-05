@@ -1,3 +1,4 @@
+import { StatusFormComponent } from './../../components/status/solicitud-form/status-form.component';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../app/services/auth.service';
 import { CotizacionListComponent } from '../../components/cotizar/cotizar-list/cotizar-list.component';
@@ -10,12 +11,12 @@ import { Component, inject, ViewChild } from '@angular/core';
 import { ICotizacion } from '../../interfaces';
 import { CotizarFormComponent } from "../../components/cotizar/cotizar-form/cotizar-form.component";
 import { EventsService } from '../../services/event.service';
-import { StatusFormComponent } from "../../components/status/solicitud-form/status-form.component";
+
 
 @Component({
   selector: 'app-cotizaciones',
   standalone: true,
-  imports: [CotizacionListComponent, PaginationComponent, LoaderComponent, ModalComponent, CotizacionListComponent, CotizarFormComponent, StatusFormComponent],
+  imports: [CotizacionListComponent, PaginationComponent, LoaderComponent, ModalComponent, CotizacionListComponent, CotizarFormComponent,StatusFormComponent],
   templateUrl: './cotizar.component.html',
   styleUrl: './cotizar.component.scss'
 })
