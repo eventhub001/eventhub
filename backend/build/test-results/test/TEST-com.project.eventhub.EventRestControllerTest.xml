@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.eventhub.EventRestControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-12-05T05:00:11" hostname="DESKTOP-8QPICU2" time="0.614">
+  <properties/>
+  <testcase name="testGetAllEvents()" classname="com.project.eventhub.EventRestControllerTest" time="0.614"/>
+  <system-out><![CDATA[23:00:06.052 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.project.eventhub.EventRestControllerTest]: EventRestControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+23:00:06.138 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.project.eventhub.DemoApplication for test class com.project.eventhub.EventRestControllerTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+2024-12-04T23:00:06.495-06:00  INFO 13372 --- [demo] [    Test worker] c.p.eventhub.EventRestControllerTest     : Starting EventRestControllerTest using Java 21.0.4 with PID 13372 (started by aleja in C:\Cenfotec\proyecto de software 3\eventhub\backend)
+2024-12-04T23:00:06.497-06:00  INFO 13372 --- [demo] [    Test worker] c.p.eventhub.EventRestControllerTest     : No active profile set, falling back to 1 default profile: "default"
+2024-12-04T23:00:07.135-06:00  INFO 13372 --- [demo] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-12-04T23:00:07.224-06:00  INFO 13372 --- [demo] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 82 ms. Found 18 JPA repository interfaces.
+2024-12-04T23:00:07.900-06:00  INFO 13372 --- [demo] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-12-04T23:00:07.982-06:00  INFO 13372 --- [demo] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-12-04T23:00:08.019-06:00  INFO 13372 --- [demo] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-12-04T23:00:08.266-06:00  INFO 13372 --- [demo] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-12-04T23:00:08.301-06:00  INFO 13372 --- [demo] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-12-04T23:00:08.388-06:00  INFO 13372 --- [demo] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.mariadb.jdbc.Connection@d8e4250
+2024-12-04T23:00:08.390-06:00  INFO 13372 --- [demo] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-12-04T23:00:08.411-06:00  WARN 13372 --- [demo] [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-12-04T23:00:09.309-06:00  INFO 13372 --- [demo] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-12-04T23:00:09.369-06:00  INFO 13372 --- [demo] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-12-04T23:00:09.693-06:00  INFO 13372 --- [demo] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-12-04T23:00:10.191-06:00  WARN 13372 --- [demo] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-12-04T23:00:11.250-06:00  INFO 13372 --- [demo] [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@db372b, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1e31e7e0, org.springframework.security.web.context.SecurityContextHolderFilter@7940d27b, org.springframework.security.web.header.HeaderWriterFilter@22e733f5, org.springframework.web.filter.CorsFilter@20395afe, org.springframework.security.web.authentication.logout.LogoutFilter@7152ee36, com.project.eventhub.logic.entity.auth.JwtAuthenticationFilter@404a7c61, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4cd3e2f3, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@10e5471d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@a72bb34, org.springframework.security.web.session.SessionManagementFilter@58070889, org.springframework.security.web.access.ExceptionTranslationFilter@15c25cb6, org.springframework.security.web.access.intercept.AuthorizationFilter@65314e4]
+2024-12-04T23:00:11.683-06:00  INFO 13372 --- [demo] [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2024-12-04T23:00:11.684-06:00  INFO 13372 --- [demo] [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2024-12-04T23:00:11.685-06:00  INFO 13372 --- [demo] [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2024-12-04T23:00:11.707-06:00  INFO 13372 --- [demo] [    Test worker] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2024-12-04T23:00:11.709-06:00  INFO 13372 --- [demo] [    Test worker] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@7834d8ec]]
+2024-12-04T23:00:11.710-06:00  INFO 13372 --- [demo] [    Test worker] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+Hibernate: select r1_0.id,r1_0.created_at,r1_0.description,r1_0.name,r1_0.updated_at from rol r1_0 where r1_0.name=?
+com.project.eventhub.logic.entity.rol.Role@4b2164a9
+Hibernate: select r1_0.id,r1_0.created_at,r1_0.description,r1_0.name,r1_0.updated_at from rol r1_0 where r1_0.name=?
+com.project.eventhub.logic.entity.rol.Role@49d94d67
+Hibernate: insert into texture (created_at,texture_path,updated_at) values (?,?,?)
+2024-12-04T23:00:11.857-06:00  INFO 13372 --- [demo] [    Test worker] c.p.eventhub.EventRestControllerTest     : Started EventRestControllerTest in 5.557 seconds (process running for 6.579)
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.email,u1_0.lastname,u1_0.name,u1_0.password,u1_0.role_id,u1_0.updated_at from user u1_0 where u1_0.email=?
+Hibernate: select r1_0.id,r1_0.created_at,r1_0.description,r1_0.name,r1_0.updated_at from rol r1_0 where r1_0.id=?
+Generated Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXBlci5hZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3MzMzNzQ4MTIsImV4cCI6MTczMzM3ODQxMn0._OVQWT4vgnCbaFQZCONn34O4WjJHUBfObW0SHrOqXbc
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.email,u1_0.lastname,u1_0.name,u1_0.password,u1_0.role_id,u1_0.updated_at from user u1_0 where u1_0.email=?
+Hibernate: select r1_0.id,r1_0.created_at,r1_0.description,r1_0.name,r1_0.updated_at from rol r1_0 where r1_0.id=?
+Hibernate: select u1_0.id,u1_0.created_at,u1_0.email,u1_0.lastname,u1_0.name,u1_0.password,u1_0.role_id,u1_0.updated_at from user u1_0 where u1_0.email=?
+Hibernate: select r1_0.id,r1_0.created_at,r1_0.description,r1_0.name,r1_0.updated_at from rol r1_0 where r1_0.id=?
+SUPER_ADMIN
+Hibernate: select e1_0.event_id,e1_0.event_description,e1_0.event_end_date,e1_0.event_name,e1_0.event_start_date,e1_0.event_type_id,e1_0.event_date,e1_0.user_id from event e1_0 limit ?,?
+Hibernate: select et1_0.event_type_id,et1_0.event_type_name from event_type et1_0 where et1_0.event_type_id=?
+Hibernate: select et1_0.event_type_id,et1_0.event_type_name from event_type et1_0 where et1_0.event_type_id=?
+Hibernate: select et1_0.event_type_id,et1_0.event_type_name from event_type et1_0 where et1_0.event_type_id=?
+com.project.eventhub.logic.entity.eventtype.EventType@634fa039
+]]></system-out>
+  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (C:\Users\aleja\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.14.13\979ce25f7d3096a2e82214ba7dc972a05ce7a171\byte-buddy-agent-1.14.13.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>
