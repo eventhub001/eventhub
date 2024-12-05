@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 @Component
 public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent> {
@@ -37,8 +38,8 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        //this.createCategories();
-        //this.createVendors();
+        this.createCategories();
+        this.createVendors();
 
     }
 

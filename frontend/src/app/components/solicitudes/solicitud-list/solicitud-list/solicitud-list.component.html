@@ -1,0 +1,39 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Evento</th>
+      <th scope="col">Fecha Solicitud</th>
+      <th scope="col">Cantidad</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Recurso</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of recursos; track item.id; let i = $index) {
+    <tr>
+      <th scope="row">{{item.id}}</th>
+      <td>{{item.event?.eventName}}</td>
+      <td>{{item.dateRequest}}</td>
+      <td>{{item.requested_quantity}}</td>
+      <td>{{item.status?.status}}</td>
+      <td>{{item.vendor_service?.service_name}}</td>
+      <td>
+        <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2 cursor-pointer" type="button"><i class="fas fa-pen"></i></button>
+        <button (click)="callDeleteAction.emit(item)" class="btn btn-danger cursor-pointer" type="button"><i class="fas fa-trash"></i></button>
+        <button (click)="callEditStatusAction.emit(item)" class="btn btn-primary cursor-pointer" type="button"><i class="fas fa-edit"></i></button>
+      </td>
+    </tr>
+  } @empty {
+    <tr *ngIf="!recursos?.length">
+      <td colspan="8">
+        <div class="d-flex justify-content-center align-items-center w-100">
+          <p class="mb-0">No hay solicitudes</p>
+        </div>
+      </td>
+    </tr>
+  }
+  </tbody>
+
+</table>

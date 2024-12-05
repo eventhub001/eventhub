@@ -12,10 +12,10 @@ public class Vendor_service {
     private Integer id;
 
 
-private String service_name;
-private String description;
-private Double price;
-private Boolean isAvailable;
+    private String service_name;
+    private String description;
+    private Double price;
+    private Boolean isAvailable;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id", nullable = false)

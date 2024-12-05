@@ -1,5 +1,7 @@
+
 import * as THREE from 'three';
 import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
+import { I, S } from '@fullcalendar/core/internal-common';
 
 export interface ILoginResponse {
     accessToken: string;
@@ -14,7 +16,7 @@ export interface ILoginResponse {
     title: string;                     // Required: The text that will appear on an event
     start: Date | string;              // Required: The event's start date/time
     end: Date | string;                // Required: The event's end date/time
-    
+
     id?: string | number;              // Optional: Unique identifier for the event
     groupId?: string | number;         // Optional: Group identifier for linking events
     allDay?: boolean;                  // Optional: Specifies if the event is all-day
@@ -42,7 +44,7 @@ export interface ILoginResponse {
     rrule?: string;                    // Optional: RRule for recurrence
     duration?: string;                 // Optional: Event duration (for recurrence)
     extendedProps?: { [key: string]: any };  // Optional: Additional properties
-  
+
     // Any other properties can be added dynamically
     [key: string]: any;
   }
@@ -52,6 +54,7 @@ export interface ILoginResponse {
     eventTypeName?: string;     // Name of the event type
   }
   export interface IEvent {
+    id?: number;               // Primary key, optional since it's auto-generated
     eventId?: number;               // Primary key, optional since it's auto-generated
     userId?: number;            // Foreign key referencing the user associated with the event
     eventName?: string;         // Name of the event
@@ -98,9 +101,6 @@ export interface ILoginResponse {
     id?: number;
     category_name?: string;
     description?: string;
-
-
-
   }
 
 
@@ -176,7 +176,9 @@ export interface ILoginResponse {
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",
-    superAdmin = 'ROLE_SUPER_ADMIN'
+    superAdmin = 'ROLE_SUPER_ADMIN',
+    Supplier = 'ROLE_Supplier',
+    Producer = 'ROLE_Producer'
   }
 
 export interface AssetModel {
@@ -221,7 +223,41 @@ export interface Asset {
     clone: () => Asset;
 }
 
+export interface ICotizacion {
+  id?: number;
+  vendor_service?: IVendorService;
+  vendor_service_id?: IVendorService;
+  event?: IEvent;
+  event_id?: IEvent;
+  user?: IUser;
+  quoted_amount?: number;
+  quantityResource?: number;
+  status?: IStatus;
+  status_id?: IStatus;
+}
+
+export interface SolicituRecurso {
+  id?: number;
+  vendor_service?: IVendorService;
+  vendor_service_id?: IVendorService;
+  event?: IEvent;
+  event_id?: IEvent;
+  user?: IUser;
+  user_id?: IUser;
+  status?: IStatus;
+  dateRequest?: Date;
+  requested_quantity?: number;
+
+}
+
+export interface IStatus {
+  id?: number;
+  status: string;
+  description: string;
+}
+
 export interface IEventForm {
+  id?: number; // Optional for new forms
   taskFormId?: number; // Optional because it might be undefined for new forms
   event: IEvent; // Assuming User entity has a numeric ID
   question: IEventFormQuestion;

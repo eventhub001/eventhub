@@ -1,0 +1,49 @@
+@defer {
+  <div class="row p-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Solicitudes</h2>
+
+      </div>
+    </div>
+    <div class="col-12">
+      <app-solicitud-list
+        (callModalAction)="callEdition($event)"
+        (callDeleteAction)="solicituRecursoService.delete($event)"
+        (callEditStatusAction)="callEditStatus($event)"
+        [recursos]="solicituRecursoService.solicitudRecurso$()"
+        [eventos]="eventService.events$()"
+      />
+    </div>
+    @if(solicituRecursoService.solicitudRecurso$().length) {
+      <app-pagination
+        [service]="solicituRecursoService"
+        [customCall]="true"
+        (callCustomPaginationMethod)="solicituRecursoService.getAllRecursosByUserId(this.userId)"
+      />
+    }
+  </div>
+} @loading (minimum 1.5s) {
+  <app-loader/>
+}
+
+<ng-template #addRecursosModal>
+  <app-modal [hideFooter]="true">
+    <div>
+      <app-solicitud-form
+        [solicitudForm]="solicitudForm"
+        (callSaveMethod)="saveRecurso($event)"
+        (callUpdateMethod)="updatRecurso($event)"
+      />
+    </div>
+  </app-modal>
+</ng-template>
+
+<ng-template #changeStatusModal>
+  <app-modal [hideFooter]="true">
+    <app-solicitud-status-form
+      [solicitudForm]="solicitudForm"
+      (callSaveMethod)="saveRecurso($event)"
+      (callUpdateStatusMethod)="updateStatus($event)"
+    ></app-solicitud-status-form>
+  </app-modal>

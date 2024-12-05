@@ -11,7 +11,13 @@ import { NotificationDialogComponent } from '../../../chat/chat/notification-dia
 @Component({
   selector: 'app-vendor1-details',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, CommonModule, ChatComponent, NotificationDialogComponent],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    CommonModule,
+    ChatComponent,
+    NotificationDialogComponent
+  ],
   templateUrl: './vendor-details.component.html',
   styleUrl: './vendor-details.component.scss'
 })
@@ -20,6 +26,10 @@ export class VendorDetails1Component {
   vendor: IVendor | undefined;
   vendorService: IVendorService | undefined;
   service: VendorService = inject(VendorService)
+  selectedDate: Date | undefined;
+  selectedTime: string = '';
+  availabilityStatus: string = '';
+
   @Input() servicios: IVendorService[] = [];
   @Input() vendors: IVendor[] = [];
   public chatService: ChatService = inject(ChatService);
@@ -27,7 +37,9 @@ export class VendorDetails1Component {
 
   constructor() {}
 
-
+ngOnChanges() {
+// blabla solicitudRecursos$()
+}
 
   ngOnInit(): void {
     this.loadFromLocalStorage();
@@ -55,8 +67,6 @@ export class VendorDetails1Component {
   }
 
 
-
-
   saveToLocalStorage(): void {
     localStorage.setItem('vendor', JSON.stringify(this.vendor));
     localStorage.setItem('servicios', JSON.stringify(this.servicios));
@@ -72,29 +82,6 @@ export class VendorDetails1Component {
       this.servicios = JSON.parse(serviciosData);
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

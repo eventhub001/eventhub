@@ -25,7 +25,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
@@ -57,7 +56,7 @@ public class EventRestController {
     private UserRepository userRepository;
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getAllEvents(
+    public ResponseEntity<?> getAllEvents (
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -97,6 +96,33 @@ public class EventRestController {
                 HttpStatus.OK,
                 meta
         );
+    }
+
+    @GetMapping("/user/{userId}/events")
+    public ResponseEntity<?> getAllbyUserEventos(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Optional<User> foundUser = userRepository.findById(userId);
+
+        if (foundUser.isPresent()) {
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<Event> eventPage = eventRepository.findAll(pageable);
+            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+            meta.setTotalPages(eventPage.getTotalPages());
+            meta.setTotalElements(eventPage.getTotalElements());
+            meta.setPageNumber(eventPage.getNumber() + 1);
+            meta.setPageSize(eventPage.getSize());
+
+            return new GlobalResponseHandler().handleResponse("Event retrieved successfully",
+                    eventPage.getContent(), HttpStatus.OK, meta);
+
+        } else {
+            return new GlobalResponseHandler().handleResponse("User Id " + userId + " not found",
+                    HttpStatus.NOT_FOUND, request);
+        }
     }
 
     @PostMapping

@@ -24,7 +24,7 @@ public class Vendor {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private VendorCategory vendorCategory;
 

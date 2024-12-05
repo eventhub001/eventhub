@@ -29,7 +29,7 @@ public class Event {
     @Column(name = "event_end_date")
     private LocalDateTime eventEndDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
     @JoinColumn(name = "event_type_id", nullable = false)
     private EventType eventType;
 

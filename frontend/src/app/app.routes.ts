@@ -1,3 +1,4 @@
+import { ICotizacion } from './interfaces/index';
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { AppLayoutComponent } from './components/app-layout/app-layout.component';
@@ -13,6 +14,10 @@ import { TaskComponent } from './pages/task/task.component';
 import { VendorComponent } from './pages/vendor/vendor/vendor.component';
 import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
 import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
+import { SolicitudesComponent } from './pages/solicitudes/solicitudes/solicitudes.component';
+import { CotizacionesComponent } from './pages/cotizar/cotizar.component';
+import { forgotComponent } from './pages/auth/forgot-password/forgot.component';
+import { resetComponent } from './pages/auth/reset-password/reset.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +29,14 @@ export const routes: Routes = [
     path: 'signup',
     component: SigUpComponent,
     canActivate: [GuestGuard],
+  },
+  {
+    path: 'forgot-password',
+    component: forgotComponent,
+  },
+  {
+    path: 'reset-password',
+    component: resetComponent,
   },
   {
     path: 'access-denied',
@@ -65,10 +78,12 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         data: {
-          authorities: [
+          authorirolesolties: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Calendario',
           showInSidebar: true
@@ -81,7 +96,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Task',
           showInSidebar: false
@@ -94,7 +111,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Proveedores',
           showInSidebar: true
@@ -107,13 +126,44 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Detalles del Proveedor',
           showInSidebar: false
         }
       },
-
+      {
+        path: 'recursos',
+        component: SolicitudesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Mis Solicitudes',
+          showInSidebar: true
+        }
+      },
+      {
+        path: 'cotizar',
+        component: CotizacionesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Cotizaciones',
+          showInSidebar: true
+        }
+      },
     ],
   },
 ];

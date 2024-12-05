@@ -10,6 +10,7 @@ import { AlertService } from './alert.service';
 export class EventsService extends BaseService<IEvent> {
   protected override source: string = 'events';
   private eventListSignal = signal<IEvent[]>([]);
+  events: IEvent[] = [];
   get events$() {
     return this.eventListSignal;
   }
@@ -54,6 +55,21 @@ export class EventsService extends BaseService<IEvent> {
       }
     });
   }
+
+  getAllByUserId(userId: number) {
+    this.findAllWithParamsAndCustomSource(`user/${userId}/events`, { page: this.search.page, size: this.search.size}).subscribe({
+      next:  (response: any) => {
+        console.log('response', response);
+        this.search = {...this.search, ...response.meta};
+        this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages: 0}, (_, i) => i+1);
+        this.eventListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    });
+  }
+
 
   save(event: IEvent) {
     this.add(event).subscribe({
@@ -111,5 +127,13 @@ export class EventsService extends BaseService<IEvent> {
         console.error('error', err);
       }
     })
+  }
+
+  ngOnInit(): void {
+    this.getEvents();
+  }
+
+  getEvents(): void {
+    this.getAll();
   }
 }
