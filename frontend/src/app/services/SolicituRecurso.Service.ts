@@ -1,8 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { BaseService } from './base-service';
-import { ISearch, SolicituRecurso } from '../interfaces';
+import { ISearch, IStatus, SolicituRecurso } from '../interfaces';
 import { AlertService } from './alert.service';
-import { map, Observable, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +22,6 @@ export class SolicituRecursoService extends BaseService<SolicituRecurso> {
   };
 
   public totalItems: any = [];
-
-
 
   getAll() {
     this.findAllWithParams({ page: this.search.page, size: this.search.size}).subscribe({
@@ -75,6 +72,19 @@ export class SolicituRecursoService extends BaseService<SolicituRecurso> {
       },
       error: (err: any) => {
         this.alertService.displayAlert('error', 'Error updating solicitud', 'center', 'top', ['error-snackbar']);
+        console.error('error', err);
+      }
+    });
+  }
+
+  updateStatus(status: IStatus, id?: number) {
+    this.editCustomSourceStatus(`${id}`, status).subscribe({
+      next: (response: any) => {
+        this.alertService.displayAlert('success', 'Solicitud actualizada con éxito', 'center', 'top', ['success-snackbar']);
+        this.getAll();
+      },
+      error: (err: any) => {
+        this.alertService.displayAlert('error', 'Error al actualizar la solicitud', 'center', 'top', ['error-snackbar']);
         console.error('error', err);
       }
     });

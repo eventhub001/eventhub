@@ -19,12 +19,7 @@ export class SolicitudListComponent {
   @Input() eventos: IEvent[] = [];
   @Output() callModalAction: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
   @Output() callDeleteAction: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
+  @Output() callEditStatusAction: EventEmitter<SolicituRecurso> = new EventEmitter<SolicituRecurso>();
   public AuthService: AuthService = inject(AuthService);
-
-  estado = [
-    { id: 'pendiente', nombre: 'Pendiente' },
-    { id: 'aprobado', nombre: 'Aprobado' },
-    { id: 'rechazado', nombre: 'Rechazado' }
-  ];
 
 }

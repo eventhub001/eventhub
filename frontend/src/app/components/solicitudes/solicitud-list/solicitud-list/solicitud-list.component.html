@@ -3,8 +3,6 @@
     <tr>
       <th scope="col">ID</th>
       <th scope="col">Evento</th>
-      <th scope="col">Fecha Evento</th>
-      <th scope="col">Hora Evento</th>
       <th scope="col">Fecha Solicitud</th>
       <th scope="col">Cantidad</th>
       <th scope="col">Estado</th>
@@ -16,16 +14,15 @@
     @for (item of recursos; track item.id; let i = $index) {
     <tr>
       <th scope="row">{{item.id}}</th>
-      <td>{{eventos[i]?.eventName}}</td>
-      <td>{{item.fechaEvento}}</td>
-      <td>{{item.horaEvento}}</td>
-      <td>{{item.fechaSolicitud}}</td>
-      <td>{{item.cantidad_solicitada}}</td>
-      <td>{{item.estado}}</td>
+      <td>{{item.event?.eventName}}</td>
+      <td>{{item.dateRequest}}</td>
+      <td>{{item.requested_quantity}}</td>
+      <td>{{item.status?.status}}</td>
       <td>{{item.vendor_service?.service_name}}</td>
       <td>
         <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2 cursor-pointer" type="button"><i class="fas fa-pen"></i></button>
         <button (click)="callDeleteAction.emit(item)" class="btn btn-danger cursor-pointer" type="button"><i class="fas fa-trash"></i></button>
+        <button (click)="callEditStatusAction.emit(item)" class="btn btn-primary cursor-pointer" type="button"><i class="fas fa-edit"></i></button>
       </td>
     </tr>
   } @empty {

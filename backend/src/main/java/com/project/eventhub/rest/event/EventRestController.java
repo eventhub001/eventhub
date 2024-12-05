@@ -1,6 +1,5 @@
 package com.project.eventhub.rest.event;
 
-import com.project.eventhub.logic.entity.SolicitudRecurso.SolicitudRecurso;
 import com.project.eventhub.logic.entity.auth.AuthenticationService;
 import com.project.eventhub.logic.entity.auth.JwtService;
 import com.project.eventhub.logic.entity.event.Event;
@@ -26,7 +25,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController

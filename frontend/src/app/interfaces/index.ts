@@ -1,7 +1,7 @@
 
 import * as THREE from 'three';
 import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
-import { S } from '@fullcalendar/core/internal-common';
+import { I, S } from '@fullcalendar/core/internal-common';
 
 export interface ILoginResponse {
     accessToken: string;
@@ -176,7 +176,9 @@ export interface ILoginResponse {
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",
-    superAdmin = 'ROLE_SUPER_ADMIN'
+    superAdmin = 'ROLE_SUPER_ADMIN',
+    Supplier = 'ROLE_Supplier',
+    Producer = 'ROLE_Producer'
   }
 
 export interface AssetModel {
@@ -225,25 +227,33 @@ export interface ICotizacion {
   id?: number;
   vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
+  event?: IEvent;
   event_id?: IEvent;
-  montoCotizado?: number;
-  cantidadRecurso?: number;
   user?: IUser;
-  estado?: 'enviada' | 'aceptada' | 'rechazada';
+  quoted_amount?: number;
+  quantityResource?: number;
+  status?: IStatus;
+  status_id?: IStatus;
 }
 
 export interface SolicituRecurso {
   id?: number;
   vendor_service?: IVendorService;
   vendor_service_id?: IVendorService;
-  event_id?: IEvent;
   event?: IEvent;
+  event_id?: IEvent;
   user?: IUser;
-  fechaSolicitud?: Date;
-  fechaEvento?: Date;
-  horaEvento?: string; // Hora específica del evento
-  cantidad_solicitada?: number; // Cantidad solicitada
-  estado?: String; // Estado de la solicitud
+  user_id?: IUser;
+  status?: IStatus;
+  dateRequest?: Date;
+  requested_quantity?: number;
+
+}
+
+export interface IStatus {
+  id?: number;
+  status: string;
+  description: string;
 }
 
 export interface IEventForm {

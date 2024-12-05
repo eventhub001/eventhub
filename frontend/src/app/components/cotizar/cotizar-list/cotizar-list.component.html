@@ -6,7 +6,7 @@
       <th scope="col">Recurso</th>
       <th scope="col">Monto Cotizado</th>
       <th scope="col">Cantidad</th>
-      <th scope="col">Estatus</th>
+      <th scope="col">Estado</th>
       <th scope="col">Acciones</th>
     </tr>
   </thead>
@@ -15,18 +15,18 @@
     @for (item of recursos; track item.id; let i = $index) {
       <tr>
         <th scope="row">{{ item.id }}</th>
-        <td>{{eventos[i]?.eventName}}</td>
+        <td>{{item.event?.eventName}}</td>
         <td>{{item.vendor_service?.service_name}}</td>
-        <td>{{ item.cantidadRecurso }}</td>
-        <td>{{ item.montoCotizado }}</td>
-        <td>{{ item.estado }}</td>
+        <td>{{ item.quantityResource }}</td>
+        <td>{{ item.quoted_amount }}</td>
+        <td>{{item.status?.status}}</td>
         <td>
           <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2 cursor-pointer" type="button"> <i class="fas fa-pen"></i></button>
           <button (click)="callDeleteAction.emit(item)" class="btn btn-danger cursor-pointer" type="button"><i class="fas fa-trash"></i></button>
+          <button (click)="callEditStatusAction.emit(item)" class="btn btn-primary cursor-pointer" type="button"><i class="fas fa-edit"></i></button>
         </td>
       </tr>
     } @empty {
-      <!-- Mensaje cuando no hay cotizaciones -->
       <tr  *ngIf="!recursos?.length">
         <td colspan="8">
           <div class="d-flex justify-content-center align-items-center w-100">

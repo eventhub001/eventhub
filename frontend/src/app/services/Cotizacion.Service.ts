@@ -1,8 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { BaseService } from './base-service';
-import { ISearch, ICotizacion } from '../interfaces';
+import { ISearch, ICotizacion, IStatus } from '../interfaces';
 import { AlertService } from './alert.service';
-import { map, Observable, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +36,6 @@ export class CotizacionService extends BaseService<ICotizacion> {
       }
     });
   }
-
 
   getAllCotizacionesByUserId(userId: number) {
     this.findAllWithParamsAndCustomSource(`user/${userId}/cotizaciones`, { page: this.search.page, size: this.search.size}).subscribe({
@@ -74,6 +72,19 @@ export class CotizacionService extends BaseService<ICotizacion> {
       error: (err: any) => {
         this.alertService.displayAlert('error', 'Error updating cotización', 'center', 'top', ['error-snackbar']);
         console.error('Error updating cotización', err);
+      }
+    });
+  }
+
+  updateStatus(status: IStatus, id?: number) {
+    this.editCustomSourceStatus(`${id}`, status).subscribe({
+      next: (response: any) => {
+        this.alertService.displayAlert('success', 'Solicitud actualizada con éxito', 'center', 'top', ['success-snackbar']);
+        this.getAll();
+      },
+      error: (err: any) => {
+        this.alertService.displayAlert('error', 'Error al actualizar la solicitud', 'center', 'top', ['error-snackbar']);
+        console.error('error', err);
       }
     });
   }

@@ -44,6 +44,8 @@ export class SigUpComponent {
   public handleSignup(event: Event) {
     event.preventDefault();
 
+    window.location.href = '/app/dashboard';
+
     this.user.role = { id: this.roleSelected } as IRole;
 
     if (!this.nameModel.valid) {

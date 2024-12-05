@@ -8,7 +8,7 @@
     <select id="event_id" formControlName="event_id" class="form-select">
       <ng-container *ngFor="let item of events">
         <ng-container *ngIf="item.eventType">
-          <option [value]="item.id">{{item.eventName}}</option>
+          <option [value]="item.eventId">{{item.eventName}}</option>
         </ng-container>
       </ng-container>
     </select>
@@ -17,36 +17,18 @@
     }
   </div>
 
-
-
   <div class="mb-2">
-    <label class="mb-1" for="fechaEvento">Fecha de Evento</label>
-    <input id="fechaEvento" formControlName="fechaEvento" type="date" class="form-control">
-    @if (solicitudForm.controls['fechaEvento'].invalid && (solicitudForm.controls['fechaEvento'].dirty || solicitudForm.controls['fechaEvento'].touched)) {
-      <p class="text-danger my-1">Fecha de Evento es requerida</p>
-    }
-  </div>
-
-  <div class="mb-2">
-    <label class="mb-1" for="horaEvento">Hora de Evento</label>
-    <input id="horaEvento" formControlName="horaEvento" type="time" class="form-control">
-    @if (solicitudForm.controls['horaEvento'].invalid && (solicitudForm.controls['horaEvento'].dirty || solicitudForm.controls['horaEvento'].touched)) {
-      <p class="text-danger my-1">Hora de Evento es requerida</p>
-    }
-  </div>
-
-  <div class="mb-2">
-    <label class="mb-1" for="fechaSolicitud">Fecha de Solicitud</label>
-    <input id="fechaSolicitud" formControlName="fechaSolicitud" type="date" class="form-control">
-    @if (solicitudForm.controls['fechaSolicitud'].invalid && (solicitudForm.controls['fechaSolicitud'].dirty || solicitudForm.controls['fechaSolicitud'].touched)) {
+    <label class="mb-1" for="dateRequest">Fecha de Solicitud</label>
+    <input id="dateRequest" formControlName="dateRequest" min="{{minDate | date:'yyyy-MM-dd'}}" type="date" class="form-control">
+    @if (solicitudForm.controls['dateRequest'].invalid && (solicitudForm.controls['dateRequest'].dirty || solicitudForm.controls['dateRequest'].touched)) {
       <p class="text-danger my-1">Fecha de Solicitud es requerida</p>
     }
   </div>
 
   <div class="mb-2">
-    <label class="mb-1" for="cantidad_solicitada">Cantidad Solicitada</label>
-    <input min="1" id="cantidad_solicitada" formControlName="cantidad_solicitada" type="number" class="form-control">
-    @if (solicitudForm.controls['cantidad_solicitada'].invalid && (solicitudForm.controls['cantidad_solicitada'].dirty || solicitudForm.controls['cantidad_solicitada'].touched)) {
+    <label class="mb-1" for="requested_quantity">Cantidad Solicitada</label>
+    <input min="1" id="requested_quantity" formControlName="requested_quantity" type="number" class="form-control">
+    @if (solicitudForm.controls['requested_quantity'].invalid && (solicitudForm.controls['requested_quantity'].dirty || solicitudForm.controls['requested_quantity'].touched)) {
       <p class="text-danger my-1">Cantidad es requerida</p>
     }
   </div>
@@ -62,20 +44,6 @@
     </select>
     @if (solicitudForm.controls['vendor_service_id'].invalid && (solicitudForm.controls['vendor_service_id'].dirty || solicitudForm.controls['vendor_service_id'].touched)) {
       <p class="text-danger my-1">Recurso es requerido</p>
-    }
-  </div>
-
-
-
-  <div class="mb-2">
-    <label class="mb-1" for="estado">Status</label>
-    <select id="estado" formControlName="estado" class="form-select">
-      @for (item of estado; track item.id) {
-        <option [value]="item.id">{{ item.nombre }}</option>
-      }
-    </select>
-    @if (solicitudForm.controls['estado'].invalid && (solicitudForm.controls['estado'].dirty || solicitudForm.controls['estado'].touched)) {
-      <p class="text-danger my-1">Status es requerido</p>
     }
   </div>
 

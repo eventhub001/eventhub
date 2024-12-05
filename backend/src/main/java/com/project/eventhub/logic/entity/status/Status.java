@@ -8,14 +8,14 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String status; // Ejemplo: "PENDIENTE", "APROBADA", "RECHAZADA".
+    @Column(nullable = false)
+    private String status; // "PENDIENTE", "APROBADA", "RECHAZADA".
 
     @Column(nullable = false)
     private String descripcion; // Ejemplo: "Pendiente de aprobación", "Solicitud aprobada"
 
-    // Getters y setters
 
+    // Getters y setters
 
     public Long getId() {
         return id;

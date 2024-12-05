@@ -16,6 +16,8 @@ import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/ve
 import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
 import { SolicitudesComponent } from './pages/solicitudes/solicitudes/solicitudes.component';
 import { CotizacionesComponent } from './pages/cotizar/cotizar.component';
+import { forgotComponent } from './pages/auth/forgot-password/forgot.component';
+import { resetComponent } from './pages/auth/reset-password/reset.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +29,14 @@ export const routes: Routes = [
     path: 'signup',
     component: SigUpComponent,
     canActivate: [GuestGuard],
+  },
+  {
+    path: 'forgot-password',
+    component: forgotComponent,
+  },
+  {
+    path: 'reset-password',
+    component: resetComponent,
   },
   {
     path: 'access-denied',
@@ -68,10 +78,12 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         data: {
-          authorities: [
+          authorirolesolties: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Calendario',
           showInSidebar: true
@@ -84,7 +96,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Task',
           showInSidebar: false
@@ -97,7 +111,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Proveedores',
           showInSidebar: true
@@ -110,7 +126,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Detalles del Proveedor',
           showInSidebar: false
@@ -124,6 +142,8 @@ export const routes: Routes = [
             IRoleType.admin,
             IRoleType.superAdmin,
             IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Mis Solicitudes',
           showInSidebar: true
@@ -137,6 +157,8 @@ export const routes: Routes = [
             IRoleType.admin,
             IRoleType.superAdmin,
             IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Cotizaciones',
           showInSidebar: true

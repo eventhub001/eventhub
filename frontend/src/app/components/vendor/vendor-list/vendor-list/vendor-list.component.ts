@@ -69,7 +69,7 @@ export class VendorListComponent {
     montoCotizado: ['', Validators.required],
     cantidadRecurso: ['', Validators.required],
     user: ['', Validators.required],
-    estado: ['enviada', Validators.required],
+    estado: ['', Validators.required],
     service: ['']
   });
 
@@ -164,9 +164,9 @@ export class VendorListComponent {
   }
 
   saveCotizacion(cotizacion: ICotizacion) {
-    cotizacion.montoCotizado = this.cotizacionForm.controls['montoCotizado'].value ? Number(this.cotizacionForm.controls['montoCotizado'].value) : undefined;
-    cotizacion.cantidadRecurso = this.cotizacionForm.controls['cantidadRecurso'].value ? Number(this.cotizacionForm.controls['cantidadRecurso'].value) : undefined;
-    cotizacion.estado = 'enviada';
+    cotizacion.quoted_amount = this.cotizacionForm.controls['montoCotizado'].value ? Number(this.cotizacionForm.controls['montoCotizado'].value) : undefined;
+    cotizacion.quantityResource = this.cotizacionForm.controls['cantidadRecurso'].value ? Number(this.cotizacionForm.controls['cantidadRecurso'].value) : undefined;
+    cotizacion.status = { id: 1, status: 'Pending', description: 'Pending approval' };
 
     this.cotizacionService.save(cotizacion);
     this.modalService.closeAll();
@@ -178,10 +178,10 @@ export class VendorListComponent {
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? cotizacion.id.toString() : '');
     this.cotizacionForm.controls['event_id'].setValue(cotizacion.event_id && cotizacion.event_id ? cotizacion.event_id.toString() : null);
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id && cotizacion.vendor_service_id ? cotizacion.vendor_service_id.toString() : null);
-    this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? cotizacion.montoCotizado.toString() : '');
-    this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? cotizacion.cantidadRecurso.toString() : '');
+    this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.quoted_amount ? cotizacion.quoted_amount.toString() : '');
+    this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.quantityResource ? cotizacion.quantityResource.toString() : '');
     this.cotizacionForm.controls['user'].setValue(cotizacion.user?.id ? cotizacion.user.id.toString() : null);
-    this.cotizacionForm.controls['estado'].setValue(cotizacion.estado || 'enviada');
+    this.cotizacionForm.controls['estado'].setValue(cotizacion.status ? cotizacion.status.toString() : '');
 
     console.log('Formulario de edición preparado:', this.cotizacionForm.value);
     this.modalService.displayModal('md', this.addCotizacionesModal);
@@ -189,8 +189,8 @@ export class VendorListComponent {
 
 
   updateCotizacion(cotizacion: ICotizacion) {
-    cotizacion.montoCotizado = this.cotizacionForm.controls['montoCotizado'].value ? Number(this.cotizacionForm.controls['montoCotizado'].value) : undefined;
-    cotizacion.cantidadRecurso = this.cotizacionForm.controls['cantidadRecurso'].value ? Number(this.cotizacionForm.controls['cantidadRecurso'].value) : undefined;
+    cotizacion.quoted_amount = this.cotizacionForm.controls['montoCotizado'].value ? Number(this.cotizacionForm.controls['montoCotizado'].value) : undefined;
+    cotizacion.quantityResource = this.cotizacionForm.controls['cantidadRecurso'].value ? Number(this.cotizacionForm.controls['cantidadRecurso'].value) : undefined;
 
     this.cotizacionService.update(cotizacion);
     this.modalService.closeAll();

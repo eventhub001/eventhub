@@ -10,6 +10,7 @@
       <app-cotizacion-list
         (callModalAction)="callEdition($event)"
         (callDeleteAction)="cotizacionService.delete($event)"
+        (callEditStatusAction)="callEditStatus($event)"
         [recursos]="cotizacionService.cotizacion$()"
         [eventos]="eventService.events$()"
       />
@@ -35,3 +36,12 @@
     ></app-cotizacion-form>
   </app-modal>
 </ng-template>
+
+<ng-template #changeStatusModal>
+  <app-modal [hideFooter]="true">
+    <app-solicitud-status-form
+      [solicitudForm]="cotizacionForm"
+      (callSaveMethod)="saveCotizacion($event)"
+      (callUpdateStatusMethod)="updateStatus($event)"
+    ></app-solicitud-status-form>
+  </app-modal>

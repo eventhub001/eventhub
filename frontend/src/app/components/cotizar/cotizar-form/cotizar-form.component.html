@@ -3,13 +3,12 @@
     <h2 class="mb-0">Crear Cotización</h2>
   </div>
 
-  <!-- Evento -->
   <div class="mb-2">
     <label class="mb-1" for="event_id">Eventos</label>
     <select id="event_id" formControlName="event_id" class="form-select">
       <ng-container *ngFor="let item of events">
         <ng-container *ngIf="item.eventType">
-          <option [value]="item.id">{{item.eventName}}</option>
+          <option [value]="item.eventId">{{item.eventName}}</option>
         </ng-container>
       </ng-container>
     </select>
@@ -18,7 +17,6 @@
     }
   </div>
 
-  <!-- Servicio -->
   <div class="mb-2">
     <label class="mb-1" for="vendor_service_id">Recursos</label>
     <select id="vendor_service_id" formControlName="vendor_service_id" class="form-select">
@@ -33,39 +31,23 @@
     }
   </div>
 
-
-  <!-- Monto Cotizado -->
   <div class="mb-2">
-    <label class="mb-1" for="montoCotizado">Monto Cotizado*</label>
-    <input min="1" id="montoCotizado" formControlName="montoCotizado" type="number" class="form-control">
-    <p *ngIf="cotizacionForm.controls['montoCotizado'].invalid && (cotizacionForm.controls['montoCotizado'].dirty || cotizacionForm.controls['montoCotizado'].touched)" class="text-danger my-1">
+    <label class="mb-1" for="quoted_amount">Monto Cotizado*</label>
+    <input min="1" id="quoted_amount" formControlName="quoted_amount" type="number" class="form-control">
+    <p *ngIf="cotizacionForm.controls['quoted_amount'].invalid && (cotizacionForm.controls['quoted_amount'].dirty || cotizacionForm.controls['quoted_amount'].touched)" class="text-danger my-1">
       El monto cotizado es requerido.
     </p>
   </div>
 
-  <!-- Cantidad -->
   <div class="mb-2">
-    <label class="mb-1" for="cantidadRecurso">Cantidad del Recurso*</label>
-    <input min="1" id="cantidadRecurso" formControlName="cantidadRecurso" type="number" class="form-control">
-    <p *ngIf="cotizacionForm.controls['cantidadRecurso'].invalid && (cotizacionForm.controls['cantidadRecurso'].dirty || cotizacionForm.controls['cantidadRecurso'].touched)" class="text-danger my-1">
+    <label class="mb-1" for="quantityResource">Cantidad del Recurso*</label>
+    <input min="1" id="quantityResource" formControlName="quantityResource" type="number" class="form-control">
+    <p *ngIf="cotizacionForm.controls['quantityResource'].invalid && (cotizacionForm.controls['quantityResource'].dirty || cotizacionForm.controls['quantityResource'].touched)" class="text-danger my-1">
       La cantidad es requerida.
     </p>
   </div>
 
-  <!-- Estado -->
-  <div class="mb-2">
-    <label class="mb-1" for="estado">Estado*</label>
-    <select id="estado" formControlName="estado" class="form-select">
-      <option *ngFor="let item of statusOptions" [value]="item.id">
-        {{ item.nombre }}
-      </option>
-    </select>
-    <p *ngIf="cotizacionForm.controls['estado'].invalid && (cotizacionForm.controls['estado'].dirty || cotizacionForm.controls['estado'].touched)" class="text-danger my-1">
-      El estado es requerido.
-    </p>
-  </div>
 
-  <!-- Botón Guardar -->
   <div class="d-flex justify-content-end">
     <button (click)="callSave()"  class="btn btn-primary" type="button">Guardar</button>
   </div>

@@ -10,11 +10,12 @@ import { LoaderComponent } from "../../../components/loader/loader.component";
 import { ModalComponent } from "../../../components/modal/modal.component";
 import { SolicitudFormComponent } from "../../../components/solicitudes/solicitud-form/solicitud-form/solicitud-form.component";
 import { EventsService } from '../../../services/event.service';
+import { StatusFormComponent } from "../../../components/status/solicitud-form/status-form.component";
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [SolicitudListComponent, PaginationComponent, LoaderComponent, ModalComponent, SolicitudFormComponent],
+  imports: [SolicitudListComponent, PaginationComponent, LoaderComponent, ModalComponent, SolicitudFormComponent, StatusFormComponent],
   templateUrl: './solicitudes.component.html',
   styleUrl: './solicitudes.component.scss'
 })
@@ -24,19 +25,23 @@ export class SolicitudesComponent {
   public modalService: ModalService = inject(ModalService);
   public authService: AuthService = inject(AuthService);
   public eventService: EventsService = inject(EventsService);
-  @ViewChild('addRecursosModal') public addRecursosModal: any;
   public fb: FormBuilder = inject(FormBuilder);
+  public statusOptions = [
+    { id: 'Pendiente', nombre: 'Pendiente' },
+    { id: 'Aprobado', nombre: 'Aprobado' },
+    { id: 'Rechazado', nombre: 'Rechazado' }
+  ];
+  @ViewChild('addRecursosModal') public addRecursosModal: any;
+  @ViewChild('changeStatusModal') public changeStatusModal: any;
   userId: number  = 0;
 
   solicitudForm = this.fb.group({
     id: [''],
     vendor_service_id: ['', Validators.required],
     user_id: ['', Validators.required],
-    fechaSolicitud: ['', Validators.required],
-    fechaEvento: ['', Validators.required],
-    horaEvento: ['', Validators.required],
-    cantidad_solicitada: ['', Validators.required],
-    estado: ['', Validators.required],
+    dateRequest: ['', Validators.required],
+    requested_quantity: ['', Validators.required],
+    status: ['', Validators.required],
     event_id: ['', Validators.required],
   });
 
@@ -65,19 +70,34 @@ export class SolicitudesComponent {
     this.solicitudForm.controls['id'].setValue(recurso.id ? JSON.stringify(recurso.id) : '');
     this.solicitudForm.controls['vendor_service_id'].setValue(recurso.vendor_service_id?.service_name ? JSON.stringify(recurso.vendor_service_id.service_name) : '');
     this.solicitudForm.controls['user_id'].setValue(recurso.user?.id  ? JSON.stringify(recurso.user?.id ) : '');
-    this.solicitudForm.controls['fechaSolicitud'].setValue(recurso.fechaSolicitud ? new Date(recurso.fechaSolicitud).toISOString().substring(0, 10) : '');
-    this.solicitudForm.controls['fechaEvento'].setValue(recurso.fechaEvento ? new Date(recurso.fechaEvento).toISOString().substring(0, 10) : '');
-    this.solicitudForm.controls['horaEvento'].setValue(recurso.horaEvento ? recurso.horaEvento : '');
-    this.solicitudForm.controls['cantidad_solicitada'].setValue(recurso.cantidad_solicitada ? JSON.stringify(recurso.cantidad_solicitada) : '');
-    this.solicitudForm.controls['estado'].setValue(recurso.estado ? JSON.stringify(recurso.estado) : '');
+    this.solicitudForm.controls['dateRequest'].setValue(recurso.dateRequest ? new Date(recurso.dateRequest).toISOString().substring(0, 10) : '');
+    this.solicitudForm.controls['requested_quantity'].setValue(recurso.requested_quantity ? JSON.stringify(recurso.requested_quantity) : '');
+    this.solicitudForm.controls['status'].setValue(recurso.status ? JSON.stringify(recurso.status) : '');
     this.solicitudForm.controls['event_id'].setValue(recurso.event ? JSON.stringify(recurso.event) : '');
 
     this.modalService.displayModal('md', this.addRecursosModal);
   }
 
+  callEditStatus(recurso: SolicituRecurso) {
+    this.solicitudForm.controls['id'].setValue(recurso.id ? JSON.stringify(recurso.id) : '');
+    this.solicitudForm.controls['status'].setValue(recurso.status ? JSON.stringify(recurso.status) : '');
+
+    this.modalService.displayModal('md', this.changeStatusModal);
+  }
+
   updatRecurso(recurso: SolicituRecurso) {
     this.solicituRecursoService.update(recurso);
     this.modalService.closeAll();
+  }
+
+  updateStatus(recurso: SolicituRecurso) {
+    if (! recurso.status) {
+      console.error('No se encontró el estado actualizado');
+      return;
+    }
+    this.solicituRecursoService.updateStatus(recurso.status, recurso.id);
+    this.modalService.closeAll();
+
   }
 
   loadingUserIdFromLocalStorage(): void {

@@ -10,6 +10,7 @@
       <app-solicitud-list
         (callModalAction)="callEdition($event)"
         (callDeleteAction)="solicituRecursoService.delete($event)"
+        (callEditStatusAction)="callEditStatus($event)"
         [recursos]="solicituRecursoService.solicitudRecurso$()"
         [eventos]="eventService.events$()"
       />
@@ -37,3 +38,12 @@
     </div>
   </app-modal>
 </ng-template>
+
+<ng-template #changeStatusModal>
+  <app-modal [hideFooter]="true">
+    <app-solicitud-status-form
+      [solicitudForm]="solicitudForm"
+      (callSaveMethod)="saveRecurso($event)"
+      (callUpdateStatusMethod)="updateStatus($event)"
+    ></app-solicitud-status-form>
+  </app-modal>

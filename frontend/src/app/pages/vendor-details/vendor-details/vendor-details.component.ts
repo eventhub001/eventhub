@@ -3,7 +3,7 @@ import { VendorService } from '../../../services/vendor.service';
 import { UserService } from '../../../services/user.service';
 import { LoaderComponent } from "../../../components/loader/loader.component";
 import { VendorDetails1Component } from '../../../components/vendor/vendor-details/vendor-details/vendor-details.component';
-import { ICotizacion, IVendor, IVendorService, SolicituRecurso } from '../../../interfaces';
+import { ICotizacion, IStatus, IVendor, IVendorService, SolicituRecurso } from '../../../interfaces';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -50,11 +50,9 @@ export class VendorDetailsComponent {
     id: [''],
     vendor_service_id: ['', Validators.required],
     user_id: ['', Validators.required],
-    fechaSolicitud: ['', Validators.required],
-    fechaEvento: ['', Validators.required],
-    horaEvento: ['', Validators.required],
-    cantidad_solicitada: ['', Validators.required],
-    estado: ['', Validators.required],
+    dateRequest: ['', Validators.required],
+    requested_quantity: ['', Validators.required],
+    status: ['', Validators.required],
     event_id: ['', Validators.required],
   });
 
@@ -62,10 +60,9 @@ export class VendorDetailsComponent {
     id: [''],
     event_id: ['', Validators.required],
     vendor_service_id: ['', Validators.required],
-    montoCotizado: ['', Validators.required],
-    cantidadRecurso: ['', Validators.required],
+    quoted_amount: ['', Validators.required],
+    quantityResource: ['', Validators.required],
     user: ['', Validators.required],
-    estado: ['enviada', Validators.required],
     service: ['']
   });
 
@@ -93,7 +90,6 @@ export class VendorDetailsComponent {
   }
 
   saveRecurso(recurso: SolicituRecurso) {
-    recurso.horaEvento = this.solicitudForm.controls['horaEvento'].value || undefined;
     console.log('Recurso:', recurso);
 
     this.solicituRecursoService.save(recurso);
@@ -104,18 +100,13 @@ export class VendorDetailsComponent {
     this.solicitudForm.controls['id'].setValue(recurso.id ? JSON.stringify(recurso.id) : '');
     this.solicitudForm.controls['vendor_service_id'].setValue(recurso.vendor_service_id?.service_name ? JSON.stringify(recurso.vendor_service_id.service_name) : '');
     this.solicitudForm.controls['user_id'].setValue(recurso.user?.id ? JSON.stringify(recurso.user.id) : '');
-    this.solicitudForm.controls['fechaSolicitud'].setValue(recurso.fechaSolicitud ? recurso.fechaSolicitud.toISOString().substring(0, 10) : '');
-    this.solicitudForm.controls['fechaEvento'].setValue(recurso.fechaEvento ? recurso.fechaEvento.toISOString().substring(0, 10) : '');
-    this.solicitudForm.controls['horaEvento'].setValue(recurso.horaEvento ? recurso.horaEvento : '');
-    this.solicitudForm.controls['cantidad_solicitada'].setValue(recurso.cantidad_solicitada ? JSON.stringify(recurso.cantidad_solicitada) : '');
-    this.solicitudForm.controls['estado'].setValue(recurso.estado ? JSON.stringify(recurso.estado) : '');
+    this.solicitudForm.controls['dateRequest'].setValue(recurso.dateRequest ? recurso.dateRequest.toISOString().substring(0, 10) : '');
+    this.solicitudForm.controls['requested_quantity'].setValue(recurso.requested_quantity ? JSON.stringify(recurso.requested_quantity) : '');
+    this.solicitudForm.controls['status'].setValue(recurso.status ? JSON.stringify(recurso.status) : '');
     this.modalService.displayModal('md', this.addRecursosModal);
   }
 
   updatRecurso(recurso: SolicituRecurso) {
-
-    recurso.horaEvento = this.solicitudForm.controls['horaEvento'].value || undefined;
-
     this.solicituRecursoService.update(recurso);
     this.modalService.closeAll();
   }
@@ -150,9 +141,11 @@ export class VendorDetailsComponent {
   }
 
   saveCotizacion(cotizacion: ICotizacion) {
-    cotizacion.montoCotizado = this.cotizacionForm.controls['montoCotizado'].value ? Number(this.cotizacionForm.controls['montoCotizado'].value) : undefined;
-    cotizacion.cantidadRecurso = this.cotizacionForm.controls['cantidadRecurso'].value ? Number(this.cotizacionForm.controls['cantidadRecurso'].value) : undefined;
-    cotizacion.estado = 'enviada';
+    let status = {id:1, status: 'Pendiente', description: 'Pending approval'};
+    cotizacion.quoted_amount = this.cotizacionForm.controls['quoted_amount'].value ? Number(this.cotizacionForm.controls['quoted_amount'].value) : undefined;
+    cotizacion.quantityResource = this.cotizacionForm.controls['quantityResource'].value ? Number(this.cotizacionForm.controls['quantityResource'].value) : undefined;
+    cotizacion.status = status;
+    console.log('Cotizacion:', cotizacion);
 
     this.cotizacionService.save(cotizacion);
     this.modalService.closeAll();
@@ -164,10 +157,9 @@ export class VendorDetailsComponent {
     this.cotizacionForm.controls['id'].setValue(cotizacion.id ? cotizacion.id.toString() : '');
     this.cotizacionForm.controls['event_id'].setValue(cotizacion.event_id && cotizacion.event_id.id ? cotizacion.event_id.id?.toString() : null);
     this.cotizacionForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id && cotizacion.vendor_service_id.id ? cotizacion.vendor_service_id.id.toString() : null);
-    this.cotizacionForm.controls['montoCotizado'].setValue(cotizacion.montoCotizado ? cotizacion.montoCotizado.toString() : '');
-    this.cotizacionForm.controls['cantidadRecurso'].setValue(cotizacion.cantidadRecurso ? cotizacion.cantidadRecurso.toString() : '');
+    this.cotizacionForm.controls['quoted_amount'].setValue(cotizacion.quoted_amount ? cotizacion.quoted_amount.toString() : '');
+    this.cotizacionForm.controls['quantityResource'].setValue(cotizacion.quantityResource ? cotizacion.quantityResource.toString() : '');
     this.cotizacionForm.controls['user'].setValue(cotizacion.user?.id ? cotizacion.user.id.toString() : null);
-    this.cotizacionForm.controls['estado'].setValue(cotizacion.estado || 'enviada');
 
     console.log('Formulario de edición preparado:', this.cotizacionForm.value);
     this.modalService.displayModal('md', this.addCotizacionesModal);
@@ -175,8 +167,8 @@ export class VendorDetailsComponent {
 
 
   updateCotizacion(cotizacion: ICotizacion) {
-    cotizacion.montoCotizado = this.cotizacionForm.controls['montoCotizado'].value ? Number(this.cotizacionForm.controls['montoCotizado'].value) : undefined;
-    cotizacion.cantidadRecurso = this.cotizacionForm.controls['cantidadRecurso'].value ? Number(this.cotizacionForm.controls['cantidadRecurso'].value) : undefined;
+    cotizacion.quoted_amount = this.cotizacionForm.controls['quoted_amount'].value ? Number(this.cotizacionForm.controls['quoted_amount'].value) : undefined;
+    cotizacion.quantityResource = this.cotizacionForm.controls['quantityResource'].value ? Number(this.cotizacionForm.controls['quantityResource'].value) : undefined;
 
     this.cotizacionService.update(cotizacion);
     this.modalService.closeAll();

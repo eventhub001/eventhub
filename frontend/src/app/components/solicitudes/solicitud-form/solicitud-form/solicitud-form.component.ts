@@ -5,9 +5,9 @@ import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { SolicituRecursoService } from '../../../../services/SolicituRecurso.Service';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VendorService } from '../../../../services/vendor.service';
-import { CommonModule } from '@angular/common';
-import * as e from 'cors';
+import { CommonModule, DatePipe } from '@angular/common';
 import { IEvent, IUser, IVendor, IVendorService, SolicituRecurso, } from '../../../../interfaces';
+import { min } from 'lodash';
 
 @Component({
   selector: 'app-solicitud-form',
@@ -16,6 +16,7 @@ import { IEvent, IUser, IVendor, IVendorService, SolicituRecurso, } from '../../
     ReactiveFormsModule,
     CommonModule,
   ],
+  providers: [DatePipe],
   templateUrl: './solicitud-form.component.html',
   styleUrl: './solicitud-form.component.scss'
 })
@@ -23,15 +24,16 @@ export class SolicitudFormComponent {
 
   public SolicituRecursoService: SolicituRecursoService = inject(SolicituRecursoService);
   public VendorServiceService: VendorServiceService = inject(VendorServiceService);
-  public UserService: UserService = inject(UserService);
+  public userService: UserService = inject(UserService);
   service: VendorService = inject(VendorService);
   eventsService: EventsService = inject(EventsService)
   user_id: number | undefined = this.getUserIdFromLocalStorage();
   fb: any;
+  minDate: Date = new Date();
 
 
 
-  constructor() {
+  constructor(private datePipe: DatePipe) {
     this.SolicituRecursoService.search.page = 1;
     this.VendorServiceService.getAll();
   // this.SolicituRecursoService.getAll();
@@ -39,7 +41,7 @@ export class SolicitudFormComponent {
     this.getVendorDetails();
     this.SolicituRecursoService = inject(SolicituRecursoService);
     this.VendorServiceService = inject(VendorServiceService);
-    this.UserService = inject(UserService);
+    this.userService = inject(UserService);
     this.service = inject(VendorService);
   }
 
@@ -52,27 +54,30 @@ export class SolicitudFormComponent {
   // debe llegar como parámetro es decir como un Input la lista de evento y debe existir un select en html que liste los eventos
 
   // Lista de status
-  estado = [
-    { id: 'pendiente', nombre: 'Pendiente' },
-    { id: 'aprobado', nombre: 'Aprobado' },
-    { id: 'rechazado', nombre: 'Rechazado' }
+  status = [
+    { id: 'Pendiente', nombre: 'Pendiente' },
+    { id: 'Aprobado', nombre: 'Aprobado' },
+    { id: 'Rechazado', nombre: 'Rechazado' }
   ];
+
+  ngOnInit(): void {
+    this.VendorServiceService.getAll();
+    this.loadFromLocalStorage();
+    this.getVendorDetails();
+  }
 
   callSave() {
     let IdServicio: number = this.solicitudForm.controls['vendor_service_id'].value;
     let IdEvent: number = this.solicitudForm.controls['event_id'].value;
     let solicitud: SolicituRecurso = {
       user: {id:this.user_id} as IUser,
-      fechaEvento: this.solicitudForm.controls['fechaEvento'].value,
-      fechaSolicitud: this.solicitudForm.controls['fechaSolicitud'].value,
-      cantidad_solicitada: this.solicitudForm.controls['cantidad_solicitada'].value,
-      estado: this.solicitudForm.controls['estado'].value,
+      dateRequest: this.solicitudForm.controls['dateRequest'].value,
+      requested_quantity: this.solicitudForm.controls['requested_quantity'].value,
       vendor_service: { id: IdServicio },
-      event:{ id: IdEvent},
-      horaEvento: this.solicitudForm.controls['horaEvento'].value,
+      event:{ eventId: IdEvent},
+      status: { id: 1, status: 'Pendiente', description: 'Pending approval' },
       //event: { id: 1 },
     }
-    console.log(solicitud);
     if(this.solicitudForm.controls['id'].value) {
       solicitud.id = this.solicitudForm.controls['id'].value;
     }
@@ -92,27 +97,19 @@ export class SolicitudFormComponent {
     return undefined;
   }
 
-  ngOnInit(): void {
-    this.solicitudForm = this.fb.group({
-      vendor_service_id: ['', Validators.required],
-      event_id: ['', Validators.required],
-
-    });
-  }
-
-  ngOnChanges() {
+ /* ngOnChanges() {
     // blabla solicitudRecursos$()
-    }
+    }*/
 
     getVendorDetails(): void {
-      const userId = this.UserService.getUserId();
+      const userId = this.userService.getUserId();
       if (userId !== null) {
         this.service.getVendorByUserId(userId).subscribe({
           next: (vendorService : IVendorService[]) => {
             if (vendorService.length > 0) {
               this.servicios = vendorService;
               this.vendor = vendorService[0].vendor;
-
+              this.saveToLocalStorage();
             }
           },
           error: (err: any) => {
@@ -123,5 +120,20 @@ export class SolicitudFormComponent {
     }
 
 
+    saveToLocalStorage(): void {
+      localStorage.setItem('vendor', JSON.stringify(this.vendor));
+      localStorage.setItem('servicios', JSON.stringify(this.servicios));
+    }
+
+    loadFromLocalStorage(): void {
+      const vendorData = localStorage.getItem('vendor');
+      const serviciosData = localStorage.getItem('servicios');
+      if (vendorData) {
+        this.vendor = JSON.parse(vendorData);
+      }
+      if (serviciosData) {
+        this.servicios = JSON.parse(serviciosData);
+      }
+    }
 
 }

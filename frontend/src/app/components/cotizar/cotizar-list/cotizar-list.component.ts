@@ -17,13 +17,8 @@ export class CotizacionListComponent {
   @Input() eventos: IEvent[] = [];
   @Output() callModalAction: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   @Output() callDeleteAction: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
+  @Output() callEditStatusAction: EventEmitter<ICotizacion> = new EventEmitter<ICotizacion>();
   public AuthService: AuthService = inject(AuthService);
   public CotizacionService: CotizacionService = inject(CotizacionService);
-
-  statusOptions = [
-    { id: 'enviada', nombre: 'Enviada' },
-    { id: 'aceptada', nombre: 'Aceptada' },
-    { id: 'rechazada', nombre: 'Rechazada' }
-  ];
 
 }
