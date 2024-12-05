@@ -1,0 +1,55 @@
+<form [formGroup]="solicitudForm" class="row">
+  <div>
+    <h2 class="mb-0">Solicitar Recurso</h2>
+  </div>
+
+  <div class="mb-2">
+    <label class="mb-1" for="event_id">Eventos</label>
+    <select id="event_id" formControlName="event_id" class="form-select">
+      <ng-container *ngFor="let item of events">
+        <ng-container *ngIf="item.eventType">
+          <option [value]="item.eventId">{{item.eventName}}</option>
+        </ng-container>
+      </ng-container>
+    </select>
+    @if (solicitudForm.controls['event_id'].invalid && (solicitudForm.controls['event_id'].dirty || solicitudForm.controls['event_id'].touched)) {
+      <p class="text-danger my-1">Recurso es requerido</p>
+    }
+  </div>
+
+  <div class="mb-2">
+    <label class="mb-1" for="dateRequest">Fecha de Solicitud</label>
+    <input id="dateRequest" formControlName="dateRequest" min="{{minDate | date:'yyyy-MM-dd'}}" type="date" class="form-control">
+    @if (solicitudForm.controls['dateRequest'].invalid && (solicitudForm.controls['dateRequest'].dirty || solicitudForm.controls['dateRequest'].touched)) {
+      <p class="text-danger my-1">Fecha de Solicitud es requerida</p>
+    }
+  </div>
+
+  <div class="mb-2">
+    <label class="mb-1" for="requested_quantity">Cantidad Solicitada</label>
+    <input min="1" id="requested_quantity" formControlName="requested_quantity" type="number" class="form-control">
+    @if (solicitudForm.controls['requested_quantity'].invalid && (solicitudForm.controls['requested_quantity'].dirty || solicitudForm.controls['requested_quantity'].touched)) {
+      <p class="text-danger my-1">Cantidad es requerida</p>
+    }
+  </div>
+
+  <div class="mb-2">
+    <label class="mb-1" for="vendor_service_id">Recursos</label>
+    <select id="vendor_service_id" formControlName="vendor_service_id" class="form-select">
+      <ng-container *ngFor="let item of servicios">
+        <ng-container *ngIf="item.available">
+          <option [value]="item.id">{{item.service_name}}</option>
+        </ng-container>
+      </ng-container>
+    </select>
+    @if (solicitudForm.controls['vendor_service_id'].invalid && (solicitudForm.controls['vendor_service_id'].dirty || solicitudForm.controls['vendor_service_id'].touched)) {
+      <p class="text-danger my-1">Recurso es requerido</p>
+    }
+  </div>
+
+
+
+  <div class="d-flex justify-content-end">
+    <button (click)="callSave()"  class="btn btn-primary" type="button">Guardar</button>
+  </div>
+</form>

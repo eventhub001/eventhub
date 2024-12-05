@@ -1,6 +1,7 @@
+
 import * as THREE from 'three';
-import { Size } from '../components/evenmodeller3d/utils/3dobjects-utils';
-import * as zim from 'zimjs';
+import { Size } from '../components/evenmodeller3d/modelobjects/3dobjects';
+import { I, S } from '@fullcalendar/core/internal-common';
 
 export interface ILoginResponse {
     accessToken: string;
@@ -53,6 +54,7 @@ export interface ILoginResponse {
     eventTypeName?: string;     // Name of the event type
   }
   export interface IEvent {
+    id?: number;               // Primary key, optional since it's auto-generated
     eventId?: number;               // Primary key, optional since it's auto-generated
     userId?: number;            // Foreign key referencing the user associated with the event
     eventName?: string;         // Name of the event
@@ -67,7 +69,8 @@ export interface ILoginResponse {
     userId?: IUser;
     message?: string;
     roomId?: number;
-    timestamp?: string;
+    // timestamp?: string;
+
   }
 
   export interface IVendor{
@@ -96,11 +99,8 @@ export interface ILoginResponse {
 
   export interface IVendorCategory{
     id?: number;
-    categoryName?: string;
+    category_name?: string;
     description?: string;
-
-
-
   }
 
 
@@ -176,113 +176,26 @@ export interface ILoginResponse {
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",
-    superAdmin = 'ROLE_SUPER_ADMIN'
+    superAdmin = 'ROLE_SUPER_ADMIN',
+    Supplier = 'ROLE_Supplier',
+    Producer = 'ROLE_Producer'
   }
 
-export interface AssetMetadata {
-  modelPath: string;
-  modelImgPath: string;
-  modelTexturePath: string;
-  id: number;
-  x: number;
-  y: number;
-  z: number;
-  width: number;
-  height: number;
-  depth: number;
-  frontx: number;
-  fronty: number;
-  frontz: number;
-  backx: number;
-  backy: number;
-  backz: number;
-  leftx: number;
-  lefty: number;
-  leftz: number;
-  rightx: number;
-  righty: number;
-  rightz: number;
-  topx: number;
-  topy: number;
-  topz: number;
-  bottomx: number;
-  bottomy: number;
-  bottomz: number;
+export interface AssetModel {
+    modelPath: string;
+    modelImgPath: string;
+    id: number;
+    posx: number;
+    posy: number;
+    posz: number;
+    width: number;
+    height: number;
 }
-
-export interface AssetTextureMetadata {
-  id: number;
-  texturePath: string;
-}
-
-export interface ISceneSnapshot3D {
-  id: number;
-  model: AssetMetadata;
-  user: IUser;
-  description: string;
-  x: number;
-  y: number;
-  z: number;
-  width: number;
-  height: number;
-  depth: number;
-  frontx: number;
-  fronty: number;
-  frontz: number;
-  backx: number;
-  backy: number;
-  backz: number;
-  leftx: number;
-  lefty: number;
-  leftz: number;
-  rightx: number;
-  righty: number;
-  rightz: number;
-  topx: number;
-  topy: number;
-  topz: number;
-  bottomx: number;
-  bottomy: number;
-  bottomz: number;
-  col: number;
-  floor: number;
-  row: number;
-  scene3D?: IScene3D;
-}
-
-export interface ISetting {
-  id?: number; // Optional for creation
-  user: IUser;
-  settingOption: ISettingOption;
-  value: string;
-  scene3D?: IScene3D;
-}
-
-export interface IScene3D {
-  id?: number;
-  user: IUser;
-  description: string;
-}
-
-export interface IScene3DSetting {
-  floorTextureId: number;
-  width: number;
-  depth: number;
-  rows: number;
-  cols: number;
-}
-
-export interface ISettingOption {
-  id?: number;
-  key?: string;
-  datatype?: string;
-}
-
 
 export interface AssetTexture {
+    texture_path: string;
     id: number;
-    blob: Blob;
-  }
+}
 
 export type Orientation = {
     front: THREE.Vector3,
@@ -304,32 +217,47 @@ export interface Asset {
     orientation: Orientation;
     // this can be a composed object, the event should have N amounnts of assets to add.
     content: THREE.Object3D;
-    texture: THREE.Texture | undefined;
     size: Size;
-    row: number;
-    floor: number;
-    col: number;
+
 
     clone: () => Asset;
-    rotate: (x: number, y: number, z: number) => void;
-  }
-
-export interface AssetImg {
-  id: number;
-  blob: Blob;
 }
 
-export interface AssetModel {
-  id: number;
-  blob: Blob;
+export interface ICotizacion {
+  id?: number;
+  vendor_service?: IVendorService;
+  vendor_service_id?: IVendorService;
+  event?: IEvent;
+  event_id?: IEvent;
+  user?: IUser;
+  quoted_amount?: number;
+  quantityResource?: number;
+  status?: IStatus;
+  status_id?: IStatus;
 }
 
-export interface AssetBitmap {
-  id: number;
-  bitmap: zim.Bitmap;
+export interface SolicituRecurso {
+  id?: number;
+  vendor_service?: IVendorService;
+  vendor_service_id?: IVendorService;
+  event?: IEvent;
+  event_id?: IEvent;
+  user?: IUser;
+  user_id?: IUser;
+  status?: IStatus;
+  dateRequest?: Date;
+  requested_quantity?: number;
+
+}
+
+export interface IStatus {
+  id?: number;
+  status: string;
+  description: string;
 }
 
 export interface IEventForm {
+  id?: number; // Optional for new forms
   taskFormId?: number; // Optional because it might be undefined for new forms
   event: IEvent; // Assuming User entity has a numeric ID
   question: IEventFormQuestion;
@@ -353,3 +281,4 @@ export interface IEventFormQuestion {
   question: string;
   nnControlName: string;
 }
+

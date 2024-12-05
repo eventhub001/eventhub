@@ -1,3 +1,4 @@
+import { ICotizacion } from './interfaces/index';
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { AppLayoutComponent } from './components/app-layout/app-layout.component';
@@ -13,16 +14,12 @@ import { TaskComponent } from './pages/task/task.component';
 import { VendorComponent } from './pages/vendor/vendor/vendor.component';
 import { VendorDetailsComponent } from './pages/vendor-details/vendor-details/vendor-details.component';
 import { ChatpageComponent } from './pages/chat/chatpage/chatpage.component';
-import { LandingPageComponent } from './pages/lading-pages/ladingpage.component';
-import { IndexComponent } from './pages/members/index/index.component';
-import { AboutComponent } from './pages/members/about/about.component';
-import { ContactComponent } from './pages/members/contact/contact.component';
+import { SolicitudesComponent } from './pages/solicitudes/solicitudes/solicitudes.component';
+import { CotizacionesComponent } from './pages/cotizar/cotizar.component';
+import { forgotComponent } from './pages/auth/forgot-password/forgot.component';
+import { resetComponent } from './pages/auth/reset-password/reset.component';
 
 export const routes: Routes = [
-  { path: '',
-    component: LandingPageComponent
-
-  },
   {
     path: 'login',
     component: LoginComponent,
@@ -33,17 +30,14 @@ export const routes: Routes = [
     component: SigUpComponent,
     canActivate: [GuestGuard],
   },
-  { path: 'index',
-    component: IndexComponent,
+  {
+    path: 'forgot-password',
+    component: forgotComponent,
   },
-  { path: 'about',
-    component: AboutComponent,
+  {
+    path: 'reset-password',
+    component: resetComponent,
   },
-  { path: 'contact',
-    component: ContactComponent,
-  },
-
-
   {
     path: 'access-denied',
     component: AccessDeniedComponent,
@@ -52,6 +46,10 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: 'event3dplanner',
+    component: EventModellerComponent
   },
   {
     path: 'app',
@@ -80,10 +78,12 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         data: {
-          authorities: [
+          authorirolesolties: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Calendario',
           showInSidebar: true
@@ -96,7 +96,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Task',
           showInSidebar: false
@@ -109,49 +111,57 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Proveedores',
           showInSidebar: true
         }
       },
       {
-        path: 'details/:vendorid',
+        path: 'details',
         component: VendorDetailsComponent,
         data: {
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Detalles del Proveedor',
           showInSidebar: false
         }
       },
       {
-        path: 'chat',
-        component: ChatpageComponent,
+        path: 'recursos',
+        component: SolicitudesComponent,
         data: {
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
-          name: 'Chat',
-          showInSidebar: false
+          name: 'Mis Solicitudes',
+          showInSidebar: true
         }
       },
       {
-        path: 'event3dplanner',
-        component: EventModellerComponent,
+        path: 'cotizar',
+        component: CotizacionesComponent,
         data: {
-          name: 'Modelaje 3D',
-          showInSidebar: true,
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
-          ]
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Cotizaciones',
+          showInSidebar: true
         }
       },
     ],

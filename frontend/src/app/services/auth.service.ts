@@ -95,6 +95,20 @@ export class AuthService {
     return permittedRoutes;
   }
 
+  public forgotPassword(email: string): Observable<{ resetToken: string }> {
+    // Endpoint para enviar solicitud de recuperación de contraseña
+    return this.http.post<{ resetToken: string }>('auth/forgot-password', { email });
+  }
+
+  public resetPassword(token: string, newPassword: string | null): Observable<{ message: string }> {
+    // Endpoint para enviar solicitud de reseteo de contraseña
+    return this.http.post<{ message: string }>('auth/reset-password', {
+      token,
+      newPassword,
+    });
+  }
+
+
   public signup(user: IUser): Observable<ILoginResponse> {
     return this.http.post<ILoginResponse>('auth/signup', user);
   }

@@ -3,7 +3,6 @@ import { BaseService } from './base-service';
 import { IEvent, ISearch } from '../interfaces';
 import { AuthService } from './auth.service';
 import { AlertService } from './alert.service';
-import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ import { map, Observable } from 'rxjs';
 export class EventsService extends BaseService<IEvent> {
   protected override source: string = 'events';
   private eventListSignal = signal<IEvent[]>([]);
-
+  events: IEvent[] = [];
   get events$() {
     return this.eventListSignal;
   }
@@ -56,6 +55,21 @@ export class EventsService extends BaseService<IEvent> {
       }
     });
   }
+
+  getAllByUserId(userId: number) {
+    this.findAllWithParamsAndCustomSource(`user/${userId}/events`, { page: this.search.page, size: this.search.size}).subscribe({
+      next:  (response: any) => {
+        console.log('response', response);
+        this.search = {...this.search, ...response.meta};
+        this.totalItems = Array.from({length: this.search.totalPages ? this.search.totalPages: 0}, (_, i) => i+1);
+        this.eventListSignal.set(response.data);
+      },
+      error: (err: any) => {
+        console.error('error', err);
+      }
+    });
+  }
+
 
   save(event: IEvent) {
     this.add(event).subscribe({
@@ -115,47 +129,11 @@ export class EventsService extends BaseService<IEvent> {
     })
   }
 
-
-
-
-  getEventsByUserId(userId: number): Observable<IEvent[]> {
-    return this.findAllWithParamsAndCustomSource(`user/${userId}`, { page: this.search.page, size: this.search.size }).pipe(
-      map((response: any) => {
-        this.search = { ...this.search, ...response.meta };
-        this.totalItems = Array.from({ length: this.search.totalPages ? this.search.totalPages : 0 }, (_, i) => i + 1);
-        this.eventListSignal.set(response.data);
-        return response.data;
-      })
-    );
+  ngOnInit(): void {
+    this.getEvents();
   }
 
-
-  getEventsForCurrentWeek() {
-    this.findAllWithParamsAndCustomSource(`week`, { page: this.search.page, size: this.search.size }).subscribe({
-      next: (response: any) => {
-        this.search = { ...this.search, ...response.meta };
-        this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
-        this.eventListSignal.set(response.data);
-      },
-      error: (err: any) => {
-        console.error('error', err);
-      }
-    });
+  getEvents(): void {
+    this.getAll();
   }
-
-  getEventsForTomorrow() {
-    this.findAllWithParamsAndCustomSource(`tomorrow`, { page: this.search.page, size: this.search.size }).subscribe({
-      next: (response: any) => {
-        this.search = { ...this.search, ...response.meta };
-        this.totalItems = Array.from({ length: this.search.totalPages || 0 }, (_, i) => i + 1);
-        this.eventListSignal.set(response.data);
-      },
-      error: (err: any) => {
-        console.error('error', err);
-      }
-    });
-  }
-
-
-
 }

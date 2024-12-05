@@ -105,4 +105,22 @@ callModalAction() {
   this.taskForm.reset();
   this.modalService.displayModal('md', this.addTaskModal)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

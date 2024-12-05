@@ -1,11 +1,13 @@
-package com.project.eventhub.logic.entity.vendor;
+package com.project.eventhub.logic.entity.rol;
 
+import com.project.eventhub.logic.entity.vendor.Vendor;
+import com.project.eventhub.logic.entity.vendor.VendorRepository;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
-import com.project.eventhub.logic.entity.vendorCategory.VendorCategory;
-import com.project.eventhub.logic.entity.vendorCategory.VendorCategoryRepository;
-import com.project.eventhub.logic.entity.vendorservice.Vendor_service;
-import com.project.eventhub.logic.entity.vendorservice.VendorServiceRepository;
+import com.project.eventhub.logic.entity.VendorCategory.VendorCategory;
+import com.project.eventhub.logic.entity.VendorCategory.VendorCategoryRepository;
+import com.project.eventhub.logic.entity.VendorService.Vendor_service;
+import com.project.eventhub.logic.entity.VendorService.VendorServiceRepository;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 @Component
 public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent> {
@@ -35,8 +38,8 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-//        this.createCategories();
-//        this.createVendors();
+        this.createCategories();
+        this.createVendors();
 
     }
 
@@ -60,7 +63,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
         for (int i = 0; i < categoryNames.length; i++) {
             VendorCategory category = new VendorCategory();
-            category.setCategoryName(categoryNames[i]);
+            category.setCategory_name(categoryNames[i]);
             category.setDescription(descriptions[i]);
 
             vendorCategoryRepository.save(category);
@@ -88,7 +91,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
         for (int i = 1; i <= 30; i++) {
             VendorCategory randomCategory = categories.get(random.nextInt(categories.size()));
-            String vendorName = generateVendorName(randomCategory.getCategoryName());
+            String vendorName = generateVendorName(randomCategory.getCategory_name());
             Optional<Vendor> optionalVendor = vendorRepository.findByName(vendorName);
 
             if (optionalVendor.isPresent()) {
@@ -100,7 +103,7 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
             Vendor vendor = new Vendor();
             vendor.setName(vendorName);
-            vendor.setDescription(generateVendorDescription(randomCategory.getCategoryName()));
+            vendor.setDescription("Proveedor de " + randomCategory.getCategory_name() + " en " + location);
             vendor.setLocation(location);
             vendor.setRating(4.5);
             vendor.setPhone("123-456-" + generateRandomDigits(4));
@@ -109,39 +112,8 @@ public class VendorSeeders implements ApplicationListener<ContextRefreshedEvent>
 
             vendorRepository.save(vendor);
 
-            createVendorServices(vendor, randomCategory.getCategoryName());
+            createVendorServices(vendor, randomCategory.getCategory_name());
         }
-    }
-
-    private String generateVendorDescription(String categoryName) {
-        String[] serviceDetails = {
-                "ofrece servicios excepcionales en",
-                "es conocido por su excelente",
-                "proporciona soluciones innovadoras en",
-                "es un líder en el mercado de",
-                "se especializa en"
-        };
-        String[] additionalDetails = {
-                "con años de experiencia en el sector.",
-                "utilizando los mejores materiales y técnicas.",
-                "con un equipo altamente capacitado.",
-                "garantizando la satisfacción del cliente.",
-                "con precios competitivos y calidad superior."
-        };
-        String[] uniqueDetails = {
-                "Cada proyecto es tratado con la máxima dedicación y profesionalismo.",
-                "Nos adaptamos a las necesidades específicas de cada cliente.",
-                "Ofrecemos un servicio personalizado y de alta calidad.",
-                "Nuestro compromiso es superar las expectativas de nuestros clientes.",
-                "Trabajamos con pasión y dedicación en cada tarea."
-        };
-
-        Random random = new Random();
-        String detail = serviceDetails[random.nextInt(serviceDetails.length)];
-        String additional = additionalDetails[random.nextInt(additionalDetails.length)];
-        String unique = uniqueDetails[random.nextInt(uniqueDetails.length)];
-
-        return "Proveedor de " + categoryName + " que " + detail + " " + categoryName + " " + additional + " " + unique;
     }
 
     private void createVendorServices(Vendor vendor, String categoryName) {

@@ -1,0 +1,24 @@
+<form [formGroup]="solicitudForm" class="row g-3">
+  <div class="col-12">
+    <h2 class="mb-3">Actualizar Estado de Solicitud</h2>
+  </div>
+
+  <!-- Select de estado -->
+  <div class="col-12">
+    <label class="form-label" for="status">Estado de la Solicitud</label>
+    <select id="status" formControlName="status" class="form-select" required>
+      <option value="" disabled selected>Seleccione una opción</option>
+      <option value="2">Aceptar</option>
+      <option value="4">Rechazar</option>
+    </select>
+    <!-- Validación del select -->
+    <div *ngIf="solicitudForm.controls['status'].invalid && (solicitudForm.controls['status'].dirty || solicitudForm.controls['status'].touched)">
+      <p class="text-danger my-1">Debe seleccionar un estado.</p>
+    </div>
+  </div>
+
+  <!-- Botón de envío -->
+  <div class="col-12 d-flex justify-content-end">
+    <button (click)="updateStatus()" class="btn btn-primary" type="button">Actualizar</button>
+  </div>
+</form>

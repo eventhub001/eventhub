@@ -4,6 +4,7 @@ import com.project.eventhub.logic.entity.auth.AuthenticationService;
 import com.project.eventhub.logic.entity.auth.JwtService;
 import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.event.EventRepository;
+import com.project.eventhub.logic.entity.event.EventTypeRepository;
 import com.project.eventhub.logic.entity.eventform.EventFormRepository;
 import com.project.eventhub.logic.entity.formtemplatetask.EventTaskTemplateRepository;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
@@ -24,11 +25,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
-import javax.swing.text.html.Option;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,7 +40,8 @@ public class EventRestController {
     @Autowired
     private JwtService jwtService;
 
-
+    @Autowired
+    private EventTypeRepository eventTypeRepository;
 
     @Autowired
     private EventFormRepository eventFormRepository;
@@ -59,7 +56,7 @@ public class EventRestController {
     private UserRepository userRepository;
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getAllEvents(
+    public ResponseEntity<?> getAllEvents (
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -99,6 +96,33 @@ public class EventRestController {
                 HttpStatus.OK,
                 meta
         );
+    }
+
+    @GetMapping("/user/{userId}/events")
+    public ResponseEntity<?> getAllbyUserEventos(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Optional<User> foundUser = userRepository.findById(userId);
+
+        if (foundUser.isPresent()) {
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<Event> eventPage = eventRepository.findAll(pageable);
+            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+            meta.setTotalPages(eventPage.getTotalPages());
+            meta.setTotalElements(eventPage.getTotalElements());
+            meta.setPageNumber(eventPage.getNumber() + 1);
+            meta.setPageSize(eventPage.getSize());
+
+            return new GlobalResponseHandler().handleResponse("Event retrieved successfully",
+                    eventPage.getContent(), HttpStatus.OK, meta);
+
+        } else {
+            return new GlobalResponseHandler().handleResponse("User Id " + userId + " not found",
+                    HttpStatus.NOT_FOUND, request);
+        }
     }
 
     @PostMapping
@@ -180,121 +204,4 @@ public class EventRestController {
                 meta
         );
     }
-
-
-
-
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getEventsByUserId(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            HttpServletRequest request) throws AuthenticationException {
-        Pageable pageable = PageRequest.of(page - 1, size);
-
-        Page<Event> eventsPage;
-
-        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
-        String userName = jwtService.extractUsername(token);
-        Optional<User> user = userRepository.findByEmail(userName);
-
-        if (user.isPresent()) {
-                eventsPage = eventRepository.findAllByUserId(userId, pageable);
-        }
-        else {
-            throw new AuthenticationException("User not found.");
-        }
-
-        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
-        meta.setTotalPages(eventsPage.getTotalPages());
-        meta.setTotalElements(eventsPage.getTotalElements());
-        meta.setPageNumber(eventsPage.getNumber());
-        meta.setPageSize(eventsPage.getSize());
-
-        return new GlobalResponseHandler().handleResponse(
-                "Events retrieved successfully",
-                eventsPage.getContent(),
-                HttpStatus.OK,
-                meta
-        );
-    }
-
-
-
-
-
-
-
-    @GetMapping("/week")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getEventsForCurrentWeek(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
-            HttpServletRequest request) throws AuthenticationException {
-        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
-        String userName = jwtService.extractUsername(token);
-        Optional<User> user = userRepository.findByEmail(userName);
-
-        if (user.isPresent()) {
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime startOfWeek = now.with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
-            LocalDateTime endOfWeek = now.with(DayOfWeek.SUNDAY).toLocalDate().atTime(23, 59, 59);
-
-            List<Event> events = eventRepository.findByEventStartDateBetween(startOfWeek, endOfWeek);
-
-            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
-            return new GlobalResponseHandler().handleResponse(
-                    "Events for the current week retrieved successfully",
-                    events,
-                    HttpStatus.OK,
-                    meta
-            );
-        } else {
-            throw new AuthenticationException("User not found. Please make sure to validate the token.");
-        }
-    }
-
-    @GetMapping("/tomorrow")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getEventsForTomorrow(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
-            HttpServletRequest request) throws AuthenticationException {
-        String token = authenticationService.getTokenFromAuthorationHeader(authorization);
-        String userName = jwtService.extractUsername(token);
-        Optional<User> user = userRepository.findByEmail(userName);
-
-        if (user.isPresent()) {
-            LocalDateTime startOfTomorrow = LocalDateTime.now().plusDays(1).toLocalDate().atStartOfDay();
-            LocalDateTime endOfTomorrow = startOfTomorrow.plusDays(1).minusSeconds(1);
-
-            List<Event> events = eventRepository.findByEventStartDateBetween(startOfTomorrow, endOfTomorrow);
-
-            Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
-            return new GlobalResponseHandler().handleResponse(
-                    "Events for tomorrow retrieved successfully",
-                    events,
-                    HttpStatus.OK,
-                    meta
-            );
-        } else {
-            throw new AuthenticationException("User not found. Please make sure to validate the token.");
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

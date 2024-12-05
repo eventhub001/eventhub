@@ -15,15 +15,15 @@
         <div class="login-main">
           <form (ngSubmit)="handleLogin($event)" autocomplete="off" #frm="ngForm">
             <div class="mb-3">
-              <h4>Ingresa con tu cuenta</h4>
+              <h4>Sign in to account</h4>
               <small style="color: #4f4f4f">
-                Ingresa correo y contraseña para acceder a tu cuenta
+                Enter your email & password to login
               </small>
             </div>
 
             <div class="form-group mb-3">
               <label for="email" class="form-label mb-2">
-                Correo Electrónico
+                Email Address
               </label>
               <input #email="ngModel" type="text" class="form-control" id="email" name="email"
                 placeholder="agent@gmail.com" [(ngModel)]="loginForm.email" [ngClass]="{
@@ -31,12 +31,12 @@
                   'is-valid': email.valid && email.touched
                 }" required />
               <div *ngIf="email.invalid" class="invalid-feedback">
-                Porfavor ingresa un correo electrónico válido
+                Please add a valid email
               </div>
             </div>
 
             <div class="form-group mb-4">
-              <label for="password" class="form-label mb-2">Contraseña</label>
+              <label for="password" class="form-label mb-2">Password</label>
               <div class="form-input position-relative">
                 <input #password="ngModel" type="password" class="form-control" id="password" name="password"
                 placeholder="*****" [(ngModel)]="loginForm.password" [ngClass]="{
@@ -44,20 +44,21 @@
                   'is-valid': password.valid && password.touched
                 }" required />
                 <div *ngIf="password.invalid" class="invalid-feedback">
-                  Porfavor ingresa una contraseña válida
+                  Please add a valid password
                 </div>
               </div>
             </div>
 
             <div class="form-group mb-0">
               <button class="btn btn-primary btn-block w-100" type="submit">
-                Ingresar
+                Sign in
               </button>
               @if(loginError) {
                 <p class="text-danger">{{loginError}}</p>
               }
             </div>
-            <a href="/signup">Registrate</a>
+            <a href="/signup">Go SignUp</a>
+            <a href="/forgot-password">Forgot Password</a>
           </form>
         </div>
       </div>
