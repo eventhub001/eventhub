@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { Position } from '../model-objects/3dtypes';
-import { AxisOrientation, Size } from '../model-objects/3dobjects-utils';
-import { inferOpositeAxis } from '../model-objects/vectorutils';
+import { Position } from '../modeller-objects/3dtypes';
+import { AxisOrientation, Size } from '../utils/3dobjects-utils';
+import { inferOpositeAxis } from '../utils/vectorutils';
 import { constant } from 'lodash';
 import { Asset, Orientation } from '../../../interfaces';
 
@@ -136,16 +136,14 @@ export class ThreeDObject implements Asset {
         // Get the current bounding box of the object to determine its current size
         const boundingBox = new THREE.Box3().setFromObject(this.content);
         const currentSize = new THREE.Vector3();
-        boundingBox.getSize(currentSize); // Get the current width, height, and depth of the object
+        boundingBox.getSize(currentSize); 
 
-        //Calculate the scale factors to resize the object
         const scaleFactors = new THREE.Vector3(
             this.size.width / currentSize.x,
             this.size.height / currentSize.y,
             this.size.depth / currentSize.z
         );
 
-        // Apply the calculated scale factors to resize the object
 
         this.content.scale.set(scaleFactors.x, scaleFactors.y, scaleFactors.z);
     }
@@ -187,7 +185,6 @@ export class ThreeDObject implements Asset {
     }
 
     private resetOrientation() {
-        // now the front.
         const currentFront = new THREE.Vector3(0, 0, 1);
         const front = this.orientation.front.clone();
         

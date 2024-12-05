@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
-import { AxisOrientation, ModelThreeDObject, Size } from "../model-objects/3dobjects-utils";
-import { Position, Side } from "../model-objects/3dtypes";
+import { AxisOrientation, ModelThreeDObject, Size } from "../utils/3dobjects-utils";
+import { Position, Side } from "../modeller-objects/3dtypes";
 import { ThreeDObject } from "./threeobject.model";
 import * as THREE from 'three';
 import {ModelHandler} from "../../../services/models-parse.service";
@@ -41,7 +41,6 @@ export class DefaultThreeDObject extends ThreeDObject {
     }
 
     public static async createFromModel(token: string, chairid: number, size: Size, position: Position, http: HttpClient, sides: AxisOrientation = { front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) }) : Promise<DefaultThreeDObject> {
-        // Load the model from the server, and assigns it accordingly.
 
         const model: AssetMetadata = await ModelHandler.getModelMetadata(token, chairid, http);
         const chair: Blob = await ModelHandler.loadModel(token, model.modelPath, http);

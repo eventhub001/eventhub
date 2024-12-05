@@ -13,6 +13,7 @@ import { EventDeleteConfirmationComponent } from './delete-event-confirmation/de
 import { ModalComponent } from '../modal/modal.component';
 import { Router } from '@angular/router';
 import { EventFormQuestionService } from '../../services/eventformquestions.service';
+import { EventcarddetailsComponent } from './eventcard-details/eventcarddetails.component';
 import { EventFormService } from '../../services/evenform.service';
 import { AlertService } from '../../services/alert.service';
 import { MachineLearningService } from '../../services/machinelearning.service';
@@ -27,7 +28,7 @@ import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-eventcards',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, CommonModule,
+  imports: [MatCardModule, MatButtonModule, DatePipe, CommonModule, EventcarddetailsComponent,
     FormsModule, EventsFormComponent, EventsFormComponent, EventDeleteConfirmationComponent, MatPaginatorModule,
     ModalComponent, PaginationComponent, PaginationComponent, MatButtonModule, MatIcon],
   templateUrl: './eventcards.component.html',
@@ -118,14 +119,13 @@ export class EventcardsComponent {
         this.alertService.displayAlert('success', response.message, 'center', 'top', ['success-snackbar']);
         this.eventService.getAll();
         this.generateTaskAI(response, event.formresults);
-
+        
       },
       error: (err: any) => {
         this.alertService.displayAlert('error', 'An error occurred adding the event', 'center', 'top', ['error-snackbar']);
         console.error('error', err);
       }
     });
-    // once this finish it the generateTaskAI is called.
   }
 
   update(event: IEvent) {
@@ -137,8 +137,8 @@ export class EventcardsComponent {
     this.eventForm.controls["eventName"].setValue(event.eventName);
     this.eventForm.controls["eventType"].setValue(event?.eventType?.eventTypeId ? JSON.stringify(event?.eventType.eventTypeId) : '');
     this.eventForm.controls["eventDescription"].setValue(event?.eventDescription);
-    this.editEventId = event.eventId!;
-    this.createEvent = false;
+    this.editEventId = event.eventId!; // Toggle edit mode
+    this.createEvent = false; // Close create mode
   }
 
   deleteMode(event: IEvent) {
@@ -168,21 +168,18 @@ export class EventcardsComponent {
   // date parsing functions
   asTime(arg0: string): string {
     const date = new Date(arg0);
-    let hours = date.getHours();
+    const hours = date.getHours().toString().padStart(2, '0'); // Format hours to 2 digits
     const minutes = date.getMinutes().toString().padStart(2, '0'); // Format minutes to 2 digits
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const strHours = hours.toString().padStart(2, '0'); // Format hours to 2 digits
-    return `${strHours}:${minutes} ${ampm}`;
+    return `${hours}:${minutes}`;
   }
+
   asDate(arg0: string) {
-    return new DatePipe('en-US').transform(arg0, 'dd/MM/yyyy');
+    return new DatePipe('en-US').transform(arg0, 'MM/dd/yyyy');
   }
 
   generateTaskAI(eventSaved: IEvent, eventanswer: IEventForm[]) {
     console.log("saving the form answers");
-
+    
     const answer_collection: string = formatForCosineModelCompute(eventanswer);
 
 
@@ -193,7 +190,7 @@ export class EventcardsComponent {
         task_list.forEach((task: any) => {
           const tasksTemplates = this.taskTemplateService.taskTemplates$();
           const taskTemplateToSave: ITaskTemplate = tasksTemplates.find(t => t.taskTemplateId === Number(task["task_template_id"]))!;
-          console.log("tasks loading...")
+          console.log("tasks loading...")  
           const eventTaskTemplate: IEventTaskTemplate = {
             taskTemplate: taskTemplateToSave,
             event: {eventId: eventSaved.eventId}

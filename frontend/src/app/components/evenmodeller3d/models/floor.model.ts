@@ -1,10 +1,7 @@
 import { ThreeDObject } from "./threeobject.model";
-import { Position } from "../model-objects/3dtypes";
+import { Position } from "../modeller-objects/3dtypes";
 import * as THREE from 'three';
-import { AxisOrientation, Size } from "../model-objects/3dobjects-utils";
-import { HttpClient } from "@angular/common/http";
-import { AssetMetadata, AssetTexture } from "../../../interfaces";
-import { TextureHandler } from "../../../services/models-parse.service";
+import { AxisOrientation, Size } from "../utils/3dobjects-utils";
 
 export class Floor extends ThreeDObject {
     
@@ -64,30 +61,4 @@ export class Floor extends ThreeDObject {
             })
         }
     }
-
-    // public static async createFromModel(
-    //     width: number,
-    //     height: number,
-    //     token: string,
-    //     floorid: number,
-    //     position: Position,
-    //     http: HttpClient,
-    //     sides: AxisOrientation = { front: new THREE.Vector3(0, 0, 1), right: new THREE.Vector3(1, 0, 0), top: new THREE.Vector3(0, 1, 0) }) : Promise<Floor> {
-    //     const model: AssetMetadata = await TextureHandler.getTextureMetadata(token, floorid, http);
-    //      const chair: Blob = await TextureHandler.loadTextureBlob(token, model.modelTexturePath, http);
-        
-    //      const chairTexture = await TextureHandler.parseTextureBlob(chair);
-
-    //     const modelMesh = new THREE.Mesh(
-    //         new THREE.PlaneGeometry(width, height),
-    //         new THREE.MeshPhongMaterial({ map: chairTexture })
-    //     );
-
-    //     modelMesh.receiveShadow = true;
-
-    //     const newchair = new Floor(width, height, position, model.modelPath, sides, modelMesh);
-    //     //newchair.resize();
-
-    //     return newchair;
-    // }
 }

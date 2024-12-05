@@ -1,7 +1,7 @@
 import { firstValueFrom } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import * as THREE from 'three';
-import { ModelThreeDObject } from "../components/evenmodeller3d/model-objects/3dobjects-utils";
+import { ModelThreeDObject } from "../components/evenmodeller3d/utils/3dobjects-utils";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { AssetMetadata, AssetTexture } from "../interfaces";
 

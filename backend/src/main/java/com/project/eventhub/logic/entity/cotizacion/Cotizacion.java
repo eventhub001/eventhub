@@ -1,6 +1,6 @@
 package com.project.eventhub.logic.entity.cotizacion;
 
-import com.project.eventhub.logic.entity.VendorService.Vendor_service;
+import com.project.eventhub.logic.entity.vendorservice.Vendor_service;
 import com.project.eventhub.logic.entity.event.Event;
 import com.project.eventhub.logic.entity.user.User;
 import jakarta.persistence.*;

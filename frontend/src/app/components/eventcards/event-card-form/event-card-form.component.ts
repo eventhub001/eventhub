@@ -5,7 +5,7 @@ import { IEvent, IEventForm, IEventFormQuestion, IEventType } from '../../../int
 import { AuthService } from '../../../services/auth.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import {  DateTimeCustomPickerComponent } from "../../material-custom/datetime-custom-picker/datetime-custom-picker.component";
-import { TaskFormAIComponent } from "../../task/task-form-AI/task-formai.component";
+import { TaskFormAIComponent } from "../../task/task-form-ai/task-form-ai.component";
 
 @Component({
   selector: 'app-card-events-form',

@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../components/modal/modal.component';
 import { ModalService } from '../../services/modal.service';
 import { TaskDetailsComponent } from "../../components/task/task-details/task-details.component";
-import { EventcarddetailsComponent } from '../../components/eventcards/eventcarddetails/eventcarddetails.component';
+import { EventcarddetailsComponent } from '../../components/eventcards/eventcard-details/eventcarddetails.component';
 
 @Component({
   selector: 'app-dashboard',

@@ -363,37 +363,50 @@ showVendorSuggestions() {
         const time24 = this.convertTo24HourFormat(formattedTime);
         this.eventData.eventEndDate = `${this.eventData.eventStartDate?.split('T')[0]}T${time24}:00`;
         this.saveEvent();
-        setTimeout(() => {
-          dfMessenger.renderCustomText('Generando Evento...');
-        }, 1000);
-        setTimeout(() => {
-          dfMessenger.renderCustomText('Listo! Tu evento se ha creado.');
-        }, 2000);
 
-        setTimeout(() => {
-          const infoResponse = [
-            {
-              "type": "info",
-              "title": "Tu evento ha sido creado!",
-              "subtitle": `Nombre del Evento: ${this.eventData.eventName}\nDescripcion: ${this.eventData.eventDescription} \nFecha: ${this.convertFromISOToMMDDYYYY(this.eventData.eventStartDate!)}`,
-              "actionLink": "http://localhost:4200/app/events"
+        if (!this.eventData.eventType) {
+          setTimeout(() => {
+            dfMessenger.renderCustomText('No se pudo encontrar el tipo de evento. Intentalo nuevamente iniciando la conversación para crear eventos.');
+          })
+          setTimeout(() => {
+            dfMessenger.renderCustomText(this.defaultWelcomeMessage());
+          }, 4000);
+        }
+
+        else {
+
+          setTimeout(() => {
+            dfMessenger.renderCustomText('Generando Evento...');
+          }, 1000);
+          setTimeout(() => {
+            dfMessenger.renderCustomText('Listo! Tu evento se ha creado.');
+          }, 2000);
+  
+          setTimeout(() => {
+            const infoResponse = [
+              {
+                "type": "info",
+                "title": "Tu evento ha sido creado!",
+                "subtitle": `Nombre del Evento: ${this.eventData.eventName}\nDescripcion: ${this.eventData.eventDescription} \nFecha: ${this.convertFromISOToMMDDYYYY(this.eventData.eventStartDate!)}`,
+                "actionLink": "http://localhost:4200/app/events"
+              }
+            ];
+            console.log('Rendering custom card with infoResponse:', infoResponse);
+            if (dfMessenger && typeof dfMessenger.renderCustomCard === 'function') {
+              dfMessenger.renderCustomCard(infoResponse);
+            } else {
+              console.error('dfMessenger.renderCustomCard is not a function or dfMessenger is not found');
             }
-          ];
-          console.log('Rendering custom card with infoResponse:', infoResponse);
-          if (dfMessenger && typeof dfMessenger.renderCustomCard === 'function') {
-            dfMessenger.renderCustomCard(infoResponse);
-          } else {
-            console.error('dfMessenger.renderCustomCard is not a function or dfMessenger is not found');
-          }
-        }, 4000);
-
-        setTimeout(() => {
-          dfMessenger.renderCustomText('Puedes acceder a tu lista de eventos dándole click sobre la tarjeta anterior.');
-        }, 4000);
-
-        setTimeout(() => {
-          dfMessenger.renderCustomText(this.defaultWelcomeMessage());
-        }, 4000);
+          }, 4000);
+  
+          setTimeout(() => {
+            dfMessenger.renderCustomText('Puedes acceder a tu lista de eventos dándole click sobre la tarjeta anterior.');
+          }, 4000);
+  
+          setTimeout(() => {
+            dfMessenger.renderCustomText(this.defaultWelcomeMessage());
+          }, 4000);
+        }
 
       }
       return;

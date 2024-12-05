@@ -1,10 +1,8 @@
 package com.project.eventhub.rest.vendor;
 
 
-import com.project.eventhub.logic.entity.VendorService.VendorServiceRepository;
-import com.project.eventhub.logic.entity.VendorService.Vendor_service;
-import com.project.eventhub.logic.entity.event.Event;
-import com.project.eventhub.logic.entity.task.Task;
+import com.project.eventhub.logic.entity.vendorservice.VendorServiceRepository;
+import com.project.eventhub.logic.entity.vendorservice.Vendor_service;
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
 import com.project.eventhub.logic.entity.vendor.Vendor;

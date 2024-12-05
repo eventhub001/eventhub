@@ -11,7 +11,7 @@ registerLocaleData(localeEs, 'es');
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
-    imports: [RouterOutlet, CommonModule],
+    imports: [RouterOutlet, CommonModule, ChatbotComponent],
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {

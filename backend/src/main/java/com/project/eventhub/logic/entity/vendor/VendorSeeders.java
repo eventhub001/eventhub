@@ -2,10 +2,10 @@ package com.project.eventhub.logic.entity.vendor;
 
 import com.project.eventhub.logic.entity.user.User;
 import com.project.eventhub.logic.entity.user.UserRepository;
-import com.project.eventhub.logic.entity.VendorCategory.VendorCategory;
-import com.project.eventhub.logic.entity.VendorCategory.VendorCategoryRepository;
-import com.project.eventhub.logic.entity.VendorService.Vendor_service;
-import com.project.eventhub.logic.entity.VendorService.VendorServiceRepository;
+import com.project.eventhub.logic.entity.vendorCategory.VendorCategory;
+import com.project.eventhub.logic.entity.vendorCategory.VendorCategoryRepository;
+import com.project.eventhub.logic.entity.vendorservice.Vendor_service;
+import com.project.eventhub.logic.entity.vendorservice.VendorServiceRepository;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.project.eventhub.rest.vendorservice;
 
-import com.project.eventhub.logic.entity.VendorService.Vendor_service;
-import com.project.eventhub.logic.entity.VendorService.VendorServiceRepository;
+import com.project.eventhub.logic.entity.vendorservice.Vendor_service;
+import com.project.eventhub.logic.entity.vendorservice.VendorServiceRepository;
 import com.project.eventhub.logic.entity.vendor.Vendor;
 import com.project.eventhub.logic.entity.vendor.VendorRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Size } from '../components/evenmodeller3d/model-objects/3dobjects-utils';
+import { Size } from '../components/evenmodeller3d/utils/3dobjects-utils';
 import * as zim from 'zimjs';
 
 export interface ILoginResponse {

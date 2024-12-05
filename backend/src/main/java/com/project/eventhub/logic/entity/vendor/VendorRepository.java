@@ -1,7 +1,7 @@
 
 
 package com.project.eventhub.logic.entity.vendor;
-import com.project.eventhub.logic.entity.VendorCategory.VendorCategory;
+import com.project.eventhub.logic.entity.vendorCategory.VendorCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,3 @@
-import { Direction } from "../../evenmodeller3d/model-objects/event3dmanager"
 import { SELECTIONTYPE } from "../menus/arrows"
 
 export type addtion = {

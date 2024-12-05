@@ -3,12 +3,12 @@ import * as THREE from 'three';
 import { getWindow } from 'ssr-window';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { DebuggingUtils, getLastParentBefore } from './model-objects/3dobjects-utils';
-import { Side } from './model-objects/3dtypes';
-import { MetricType, EventGrid } from './model-objects/grid';
+import { DebuggingUtils, getLastParentBefore } from './utils/3dobjects-utils';
+import { Side } from './modeller-objects/3dtypes';
+import { MetricType, EventGrid } from './modeller-objects/grid';
 import { Floor } from './models/floor.model';
 import { DefaultThreeDObject } from './models/default.model';
-import { ChairSet, Event3DManager, Direction, Set } from './model-objects/event3dmanager';
+import { Event3DManager } from './modeller-objects/event3dmanager';
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { Asset, AssetImg, AssetMetadata, AssetModel, AssetTexture, ISceneSnapshot3D, IScene3DSetting, IScene3D } from '../../interfaces';
 import { AuthService } from '../../services/auth.service';
@@ -21,14 +21,15 @@ import { SELECTIONTYPE } from '../ui3d/menus/arrows';
 import { arrowToAxis, isSameArrowsToAxis } from './input-projections/movement';
 import { arrowsToRotation, isSameArrowsToRotation } from './input-projections/rotation';
 import { ThreeDObject } from './models/threeobject.model';
-import { GridAdditionError } from './model-objects/exceptions';
+import { GridAdditionError } from './exceptions/exceptions';
 import { AlertService } from '../../services/alert.service';
 import { ModelHandler, TextureHandler } from '../../services/models-parse.service';
 import { TextureService } from '../../services/texture.service';
 import { SettingService } from '../../services/setting.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SaveDialogComponent } from './save-dialog/save-dialog/save-dialog.component';
-import { SceneLoader } from './model-objects/scene-loader';
+import { SceneLoader } from './models/scene-loader';
+import { Set } from './modeller-objects/sets';
 
 @Injectable({
   providedIn: 'root'
@@ -37,8 +38,7 @@ import { SceneLoader } from './model-objects/scene-loader';
 @Component({
   selector: 'app-3dsimulator',
   standalone: true,
-  imports: [HttpClientModule, Ui3DComponent, CommonModule],
-  providers: [HttpClientModule],
+  imports: [Ui3DComponent, CommonModule],
   templateUrl: './3dsimulator.component.html',
   styleUrl: './3dsimulator.component.scss'
 })
@@ -90,7 +90,7 @@ export class Simulator3DComponent {
 
   eventManager!: Event3DManager;
   authService: AuthService = inject(AuthService);
-  set!: ChairSet;
+  set!: Set;
 
   mousePosition: {x: number, y: number} = {x: 0, y: 0};
 
@@ -196,7 +196,6 @@ export class Simulator3DComponent {
   }
 
   addRenderingHelpers() {
-    // add rendering helpers here
     this.orbitCamera = new OrbitControls(this.camera, this.renderer.domElement);
   }
 
@@ -272,8 +271,6 @@ export class Simulator3DComponent {
     const floorTexture = await TextureHandler.parseTextureBlob(this.textures[0].blob!);
 
     const floor = new Floor(this.sceneSettings.width, this.sceneSettings.depth, {x: 0, y: 0, z: 0}, "", undefined, undefined, floorTexture);
-
-    DebuggingUtils.showSide(floor, Side.TOP, this.scene);
 
     this.modelsMenu = await this.sceneLoader.createThreeDObjects(this.modelMetadata, this.models);
 
