@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { IUser } from '../../../interfaces';
+import { IRole, IUser } from '../../../interfaces';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { RoleService } from '../../../services/role.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink,MatFormFieldModule, MatSelectModule, MatInputModule, FormsModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
@@ -19,15 +23,27 @@ export class SigUpComponent {
   @ViewChild('lastname') lastnameModel!: NgModel;
   @ViewChild('email') emailModel!: NgModel;
   @ViewChild('password') passwordModel!: NgModel;
+  @ViewChild('rol') rolModel!: NgModel;
+  roleSelected: number = 0;
 
+  public RolService: RoleService = inject(RoleService);
   public user: IUser = {};
 
-  constructor(private router: Router, 
+  constructor(private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+    this.RolService.getAll();
+  }
+
+  selectrol(arg0: any) {
+    console.log(arg0);
+    this.roleSelected = arg0;
+  }
 
   public handleSignup(event: Event) {
     event.preventDefault();
+    window.location.href = '/app/dashboard';
+    this.user.role = { id: this.roleSelected } as IRole;
     if (!this.nameModel.valid) {
       this.nameModel.control.markAsTouched();
     }

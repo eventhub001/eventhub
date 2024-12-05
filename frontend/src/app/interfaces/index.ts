@@ -176,7 +176,9 @@ export interface ILoginResponse {
   export enum IRoleType {
     admin = "ROLE_ADMIN",
     user = "ROLE_USER",
-    superAdmin = 'ROLE_SUPER_ADMIN'
+    superAdmin = 'ROLE_SUPER_ADMIN',
+    Supplier = 'ROLE_Supplier',
+    Producer = 'ROLE_Producer'
   }
 
 export interface AssetMetadata {
@@ -352,4 +354,37 @@ export interface IEventFormQuestion {
   id: number;
   question: string;
   nnControlName: string;
+}
+
+export interface IQuote {
+  id?: number;
+  vendor_service?: IVendorService;
+  vendor_service_id?: IVendorService;
+  event?: IEvent;
+  event_id?: IEvent;
+  user?: IUser;
+  quoted_amount?: number;
+  quantityResource?: number;
+  status?: IStatus;
+  status_id?: IStatus;
+}
+
+export interface IRequestResource {
+  id?: number;
+  vendor_service?: IVendorService;
+  vendor_service_id?: IVendorService;
+  event?: IEvent;
+  event_id?: IEvent;
+  user?: IUser;
+  user_id?: IUser;
+  status?: IStatus;
+  dateRequest?: Date;
+  requested_quantity?: number;
+
+}
+
+export interface IStatus {
+  id?: number;
+  status: string;
+  description: string;
 }

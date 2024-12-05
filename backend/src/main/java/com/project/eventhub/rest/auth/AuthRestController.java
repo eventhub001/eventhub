@@ -3,6 +3,7 @@ package com.project.eventhub.rest.auth;
 import com.project.eventhub.logic.entity.auth.AuthenticationService;
 import com.project.eventhub.logic.entity.auth.JwtService;
 import com.project.eventhub.logic.entity.auth.SecurityConfiguration;
+import com.project.eventhub.logic.entity.email.EmailService;
 import com.project.eventhub.logic.entity.rol.Role;
 import com.project.eventhub.logic.entity.rol.RoleEnum;
 import com.project.eventhub.logic.entity.rol.RoleRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping("/auth")
@@ -40,10 +42,12 @@ public class AuthRestController {
 
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
-    public AuthRestController(JwtService jwtService, AuthenticationService authenticationService) {
+    public AuthRestController(JwtService jwtService, AuthenticationService authenticationService, EmailService emailService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.emailService = emailService;
     }
 
     @GetMapping("isauthenticated")
@@ -113,6 +117,42 @@ public class AuthRestController {
         }
 
         return null;
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        String token = authenticationService.generateResetPasswordToken(userOptional.get());
+
+        // Construir el enlace de restablecimiento de contraseña
+        String resetLink = "http://localhost:4200/reset-password?token=" + token;
+        String subject = "Password Reset Request";
+        String text = "Please click the following link to reset your password: " + resetLink;
+
+        // Enviar el correo con el token
+        emailService.sendEmail(email, subject, text);
+
+        return ResponseEntity.ok("Password reset email sent.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String newPassword = request.get("newPassword");
+
+        try {
+            String email = authenticationService.validateResetPasswordToken(token);
+            authenticationService.resetPassword(email, newPassword);
+            return ResponseEntity.ok("Password successfully updated");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 }
