@@ -8,7 +8,7 @@ import { AlertService } from './alert.service';
 })
 export class RequestResourceService extends BaseService<IRequestResource> {
 
-  protected override source: string = 'api/request';
+  protected override source: string = 'api/solicitudes';
   private requestResourceListSignal = signal<IRequestResource[]>([]);
   private alertService = inject(AlertService);
 

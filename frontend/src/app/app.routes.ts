@@ -19,6 +19,9 @@ import { AboutComponent } from './pages/members/about/about.component';
 import { ContactComponent } from './pages/members/contact/contact.component';
 import { forgotComponent } from './pages/auth/forgot-password/forgot.component';
 import { resetComponent } from './pages/auth/reset-password/reset.component';
+import { RequestResourceFormComponent } from './components/request-resource/request-resource-form/request-resource-form.component';
+import { QuoteComponent } from './pages/quote/quote.component';
+import { SolicitudesComponent } from './pages/request-resource/recuest-resource.component';
 
 export const routes: Routes = [
   { path: '',
@@ -79,8 +82,11 @@ export const routes: Routes = [
       component: EventmanagerComponent,
       data: {
         authorities: [
-          IRoleType.user,
+          IRoleType.admin,
           IRoleType.superAdmin,
+          IRoleType.user,
+          IRoleType.Supplier,
+          IRoleType.Producer
           ],
           name: 'Eventos',
           showInSidebar: true
@@ -174,6 +180,36 @@ export const routes: Routes = [
             IRoleType.Supplier,
             IRoleType.Producer
           ]
+        }
+      },
+      {
+        path: 'request',
+        component: SolicitudesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Mis Solicitudes',
+          showInSidebar: true
+        }
+      },
+      {
+        path: 'quote',
+        component: QuoteComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Cotizaciones',
+          showInSidebar: true
         }
       },
     ],

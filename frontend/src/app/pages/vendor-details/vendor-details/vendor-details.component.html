@@ -41,7 +41,7 @@
     <app-modal [hideFooter]="true">
       <div>
         <app-quote-form
-          [quoteForm]="quoteForm"
+          [cotizacionForm]="quoteForm"
           (callSaveMethod)="saveQuote($event)"
           (callUpdateMethod)="updateQuote($event)"
           [vendorId]="selectedVendor?.id ?? 0"

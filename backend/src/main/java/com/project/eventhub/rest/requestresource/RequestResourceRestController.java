@@ -65,7 +65,7 @@ public class RequestResourceRestController {
                 solicitudPage.getContent(), HttpStatus.OK, meta);
     }
 
-    @GetMapping("/user/{userId}/solicitudes")
+    @GetMapping("/user/{userId}/request")
     public ResponseEntity<?> getAllbyUserSolicitudes(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,

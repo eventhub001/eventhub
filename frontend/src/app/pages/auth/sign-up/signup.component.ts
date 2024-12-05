@@ -42,7 +42,6 @@ export class SigUpComponent {
 
   public handleSignup(event: Event) {
     event.preventDefault();
-    window.location.href = '/app/dashboard';
     this.user.role = { id: this.roleSelected } as IRole;
     if (!this.nameModel.valid) {
       this.nameModel.control.markAsTouched();
@@ -58,7 +57,9 @@ export class SigUpComponent {
     }
     if (this.emailModel.valid && this.passwordModel.valid) {
       this.authService.signup(this.user).subscribe({
-        next: () => this.validSignup = true,
+        next: () =>{
+          this.validSignup = true
+          this.router.navigate(['/login']);},
         error: (err: any) => (this.signUpError = err.description),
       });
     }

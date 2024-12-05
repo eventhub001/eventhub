@@ -46,7 +46,7 @@ export class VendorListComponent {
   public VendorService: VendorService = inject(VendorService);
   public quoteService: QuoteService = inject(QuoteService);
   private fb: FormBuilder = inject(FormBuilder);
-  public displayedColumns: string[] = ['id', 'name', 'description', 'location', 'rating', 'category', 'actions'];
+  public displayedColumns: string[] = ['name', 'description', 'location', 'rating', 'category', 'actions'];
   @Input() servicios: IVendorService[] = [];
 
 

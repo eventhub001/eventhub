@@ -65,4 +65,39 @@
       }
     }
   }
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1rem;
+
+    .mat-form-field-label {
+      color: #80A2A6;
+      font-weight: 600;
+    }
+
+    .mat-select {
+      border: 1px solid #80A2A6;
+      border-radius: 4px;
+
+      .mat-select-value {
+        padding: 0.5rem;
+      }
+
+      &.mat-focused {
+        .mat-select-arrow {
+          color: #94F2F2;
+        }
+      }
+    }
+
+    .mat-option {
+      &.mat-selected {
+        background-color: #94F2F2 !important;
+        color: #ffffff;
+      }
+
+      &:hover {
+        background-color: lighten(#94F2F2, 20%) !important;
+      }
+    }
+  }
 }

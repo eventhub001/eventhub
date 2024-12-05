@@ -64,7 +64,7 @@ public class QuoteRestController {
                 cotizacionPage.getContent(), HttpStatus.OK, meta);
     }
 
-    @GetMapping("/user/{userId}/cotizaciones")
+    @GetMapping("/user/{userId}/quotes")
     public ResponseEntity<?> getAllbyUserCotizaciones(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,

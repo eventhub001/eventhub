@@ -22,7 +22,7 @@ public class EventTypeRestController {
     private EventTypeRepository eventTypeRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAllEventTypes(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -45,7 +45,7 @@ public class EventTypeRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public EventType addEventType(@RequestBody EventType eventType) {
         return eventTypeRepository.save(eventType);
     }
@@ -69,7 +69,7 @@ public class EventTypeRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public void deleteEventType(@PathVariable Long id) {
         eventTypeRepository.deleteById(id);
     }

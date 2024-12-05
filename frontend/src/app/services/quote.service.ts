@@ -8,7 +8,7 @@ import { AlertService } from './alert.service';
 })
 export class QuoteService extends BaseService<IQuote> {
 
-  protected override source: string = 'api/quotes';
+  protected override source: string = 'api/cotizaciones';
   private quoteListSignal = signal<IQuote[]>([]);
   private alertService = inject(AlertService);
 
