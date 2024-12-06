@@ -28,7 +28,6 @@ export class QuoteListComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.AuthService.getUser();
-    console.log("user", this.user);
   }
 
 }
