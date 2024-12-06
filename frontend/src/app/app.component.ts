@@ -15,5 +15,5 @@ registerLocaleData(localeEs, 'es');
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
+    
 }

@@ -1,30 +1,36 @@
 <mat-form-field>
-  <mat-label>Filtra por categoría</mat-label>
+  <mat-label>Filtrar</mat-label>
   <input matInput (keyup)="applyFilter($event)"  #input>
 </mat-form-field>
 
 <div class="mat-elevation-z8">
   <table mat-table [dataSource]="dataSource" matSort>
 
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> # </th>
+      <td mat-cell *matCellDef="let item"> {{item.id}} </td>
+    </ng-container>
 
-
+    <!-- Vendor Name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del Proveedor </th>
       <td mat-cell *matCellDef="let item"> {{item.name}} </td>
     </ng-container>
 
+    <!-- Description Column -->
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
       <td mat-cell *matCellDef="let item"> {{item.description}} </td>
     </ng-container>
 
+    <!-- Location Column -->
     <ng-container matColumnDef="location">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Ubicación </th>
       <td mat-cell *matCellDef="let item">{{item.location}}</td>
     </ng-container>
 
-
-
+    <!-- Rating Column -->
     <ng-container matColumnDef="rating">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Rating </th>
       <td mat-cell *matCellDef="let item">
@@ -32,16 +38,18 @@
       </td>
     </ng-container>
 
+     <!-- Category Column -->
     <ng-container matColumnDef="category">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Categoría </th>
-      <td mat-cell *matCellDef="let item">{{ item.vendorCategory?.categoryName}}</td>
+      <td mat-cell *matCellDef="let item">{{ item.vendorCategory?.category_name}}</td>
     </ng-container>
 
 
+ <!-- Actions Column -->
 <ng-container matColumnDef="actions">
   <th mat-header-cell *matHeaderCellDef> Acciones </th>
   <td mat-cell *matCellDef="let item">
-    <button mat-icon-button color="primary" (click)="navigateToDetails(item.id)">
+    <button mat-icon-button color="primary" (click)="navigateToDetails(item.user.id)">
       <mat-icon>visibility</mat-icon>
     </button>
   </td>
@@ -50,8 +58,10 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
+    <!-- Row shown when there is no matching data. -->
     <tr class="mat-row" *matNoDataRow>
       <td class="mat-cell" colspan="8" style="text-align: center;">No hay proveedores.</td>
     </tr>
   </table>
+
 </div>
