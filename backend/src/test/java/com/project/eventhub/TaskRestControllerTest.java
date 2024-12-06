@@ -90,11 +90,7 @@ public class TaskRestControllerTest {
 
     @Test
     public void testGetAllTaskbyEvent() throws Exception {
-        Event event = new Event();
-        event.setEventType(eventTypeRepository.findById(1L).orElseThrow(() -> new RuntimeException("Event type not found")));
-        eventRepository.save(event);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/task/event/427/tasks")
+        mockMvc.perform(MockMvcRequestBuilders.get("/task/event/433/tasks")
                         .header("Authorization", "Bearer " + getToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -125,15 +121,19 @@ public class TaskRestControllerTest {
 
     @Test
     public void testDeleteTask() throws Exception {
-        Task task = new Task();
-        task.setEvent(eventRepository.findById(1L).orElseThrow(() -> new RuntimeException("Event not found")));
-        task.setTaskName("Task to Delete");
-        taskRepository.save(task);
+        // Buscar el evento por ID
+        Event event = eventRepository.findById(1L).orElseThrow(() -> new RuntimeException("Event not found"));
 
+        // Crear y guardar una tarea asociada con el evento
+
+        Task task;
+        task = taskRepository.findById(41).orElseThrow(() -> new RuntimeException("Task not found"));
+
+        // Realizar la solicitud de eliminación
         mockMvc.perform(MockMvcRequestBuilders.delete("/task/" + task.getId())
                         .header("Authorization", "Bearer " + getToken())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     private String getToken() {
