@@ -27,6 +27,7 @@ export class DashboardComponent {
 
   constructor() {
     this.eventService.search.size = 1000;
+    this.taskService.search.size = 1000;
     this.eventService.getAll();
     this.taskService.getAll();
   }

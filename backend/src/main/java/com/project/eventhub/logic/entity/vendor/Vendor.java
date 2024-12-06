@@ -2,7 +2,7 @@ package com.project.eventhub.logic.entity.vendor;
 
 
 import com.project.eventhub.logic.entity.user.User;
-import com.project.eventhub.logic.entity.vendorCategory.VendorCategory;
+import com.project.eventhub.logic.entity.vendorcategory.VendorCategory;
 import jakarta.persistence.*;
 
 @Entity

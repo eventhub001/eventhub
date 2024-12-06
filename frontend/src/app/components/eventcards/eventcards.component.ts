@@ -83,10 +83,6 @@ export class EventcardsComponent {
 
   constructor(private router: Router) {
     this.eventTypeService.getAll();
-    this.machineLearningService.computeEventForm({new_user_answers: "Pregunta: ¿Qué necesitas para tu evento? Decoración, globos... ¿Qué rango de personas? 5-20"}).subscribe(
-      (response: any) => {
-        console.log(response);
-    });
     this.eventFormQuestionService.getAll();
     this.taskTemplateService.getAll();
   }

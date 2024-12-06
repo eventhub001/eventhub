@@ -1,7 +1,7 @@
 package com.project.eventhub.rest.vendorcategory;
 
-import com.project.eventhub.logic.entity.vendorCategory.VendorCategory;
-import com.project.eventhub.logic.entity.vendorCategory.VendorCategoryRepository;
+import com.project.eventhub.logic.entity.vendorcategory.VendorCategory;
+import com.project.eventhub.logic.entity.vendorcategory.VendorCategoryRepository;
 import com.project.eventhub.logic.http.GlobalResponseHandler;
 import com.project.eventhub.logic.http.Meta;
 import jakarta.servlet.http.HttpServletRequest;

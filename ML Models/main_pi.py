@@ -4,7 +4,6 @@ import requests
 from events_scoring_model import CosineRecommendationSystem
 from database_connector import select_table
 import pandas as pd
-import json
 
 app = Flask(__name__)
 CORS(app, resources={r"/ml-model/*": {"origins": "http://localhost:4200"}})
@@ -97,9 +96,6 @@ def get_templates(events: list):
     frequency = event_task['task_template_id'].value_counts().sort_values(ascending=False)
     # get top 10
     return (frequency / total_events).reset_index()
-
-
-
 
 
 def flat_vendor_info(vendor: pd.DataFrame, vendor_category: pd.DataFrame, vendor_service: pd.DataFrame):
@@ -294,11 +290,11 @@ def compute_suggestions():
         return jsonify({"status": "Internal Server Error", "message": "'suggestions' column not found in suggestions_template"}), 500
 
     
-    suggestions_training_data = flat_suggestions_info(suggestions_template) # porque filtramos antes del entrenamiento, no hace falta hacer esto.
+    suggestions_training_data = flat_suggestions_info(suggestions_template)
     print("expected output", suggestions_training_data)
     model = CosineRecommendationSystem(suggestions_training_data)
     
-    model.tokenize("suggestions_info")
+    model.tokenize("labels")
 
     model.transform(request_data["suggestions_answers"])
 
@@ -337,5 +333,3 @@ def compute_suggestions():
 # Run the Flask app
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
-    # response = requests.get("http://localhost:3306/auth/login")
-    # print(response.json())

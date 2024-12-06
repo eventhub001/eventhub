@@ -513,6 +513,7 @@ eventSuggestions() {
   const dfMessenger = document.querySelector('df-messenger') as any;
   const suggestions_answers = this.userResponses.labels || '';
   this.machineLearningService.computeEventSuggestionsData({ suggestions_answers }).subscribe(response => {
+    console.log(response);
     const suggestions = response.data.suggestions;
     const uniqueSuggestions = new Map();
     suggestions.forEach((suggestion: string, index: number) => {

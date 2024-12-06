@@ -57,6 +57,8 @@ export class TaskComponent {
   })
 
 constructor() {
+  this.taskService.search.pageSize = 10;
+
   this.taskTemplateService.getAll();
   this.eventFormService.getAll();
   this.eventService.search.size = 1000;

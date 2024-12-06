@@ -11,7 +11,7 @@
 </style>
 <div class="container">
     <canvas class="main-three" #mainThreeCv (click)="selectAsset($event)" (mousedown)="mouseDown($event)"></canvas>
-    <div *ngIf="isUILoading">Loading...</div>
+    <app-loader size="full" />
     <div *ngIf="!isUILoading" style="position: absolute; right: 0px; top: 0px">
         <app-ui3d
         (AdditionAction)="addComponent($event)"

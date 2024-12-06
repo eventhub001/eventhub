@@ -7,6 +7,9 @@
         <mat-datepicker #picker></mat-datepicker>
         <mat-hint>MM/dd/yyyy</mat-hint>
       </mat-form-field>
+      @if (dateTimeForm.controls['dateInput'].invalid && (dateTimeForm.controls['dateInput'].dirty || dateTimeForm.controls['dateInput'].touched)) {
+        <p class="text-danger my-1">El calendario es requerido (verifica si la fecha es mayor a la actual)</p>
+      }
     </div>
   </div>
   <div class="mb-2">

@@ -18,26 +18,15 @@ import {MatInputModule} from '@angular/material/input';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateTimeCustomPickerComponent {
+  [x: string]: any;
 
   @Input() dateTimeForm!: FormGroup;
   @Output() isValidInput: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-
-
-
-
 
   dateFilter = (date: Date | null): boolean => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Ignorar la hora
     return date ? date >= today : false;
   };
-
-
-
-
-
-
-
 
 }

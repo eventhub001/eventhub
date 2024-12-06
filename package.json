@@ -2,6 +2,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@fullcalendar/timegrid": "^6.1.15",
     "@mui/material": "^6.1.6",
     "@stomp/stompjs": "^7.0.0",
     "@types/sockjs-client": "^1.5.4",

@@ -1,47 +1,51 @@
-<div [ngStyle]="createEvent ? {'width': '700px'} : {}" class="p-4" >
+<div [ngStyle]="createEvent ? {'width': '100%'} : {}" class="p-4" >
   <form [formGroup]="eventForm" class="row">
-    <div *ngIf="createEvent">
-      <div>
-        <h4 class="mb-4">Crear un nuevo evento</h4>
+    <div class="d-flex flex-row justify-content-end">
+      <div class="w-50 m-3">
+        <div *ngIf="createEvent">
+          <div>
+            <h4 class="mb-4">Crear un nuevo evento</h4>
+          </div>
+        </div>
+        <div *ngIf="!createEvent">
+          <div>
+            <h2 class="mb-0"></h2>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="mb-1" for="eventName" >Nombre del evento*</label>
+          <input id="eventName" formControlName="eventName" type="text" class="form-control" >
+          <div *ngIf="eventForm.controls['eventName'].invalid && (eventForm.controls['eventName'].dirty || eventForm.controls['eventName'].touched)">
+            <p class="text-danger my-1">El nombre del evento es requerido</p>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="mb-1" for="eventDescription">Descripción del evento</label>
+          <textarea id="eventDescription" formControlName="eventDescription" class="form-control"></textarea>
+          <div *ngIf="eventForm.controls['eventDescription'].invalid && (eventForm.controls['eventDescription'].dirty || eventForm.controls['eventDescription'].touched)">
+            <p class="text-danger my-1">El nombre del evento es requerido</p>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="mb-1" for="eventTypeNme">Tipo de evento*</label>
+          <select id="eventType" formControlName="eventType" class="form-control">
+            <option value="" disabled>Elige una categoría para tu evento</option> <!-- Placeholder -->
+            <option *ngFor="let type of eventTypes" [value]="type.eventTypeId">{{type.eventTypeName}}</option>
+          </select>
+          <div *ngIf="eventForm.controls['eventType'].invalid && (eventForm.controls['eventType'].dirty || eventForm.controls['eventType'].touched)">
+            <p class="text-danger my-1">La categoría es requerida</p>
+          </div>
+        </div>
+        <div class="mb-2">
+          <datetime-custom-picker [dateTimeForm]="dateTimeForm" (isValidInput)="isDateTimeValid($event)"></datetime-custom-picker>
+        </div>
       </div>
+      @if (createEvent) {
+        <div class="mb-2 w-50">
+          <task-form-ai [taskForm]="taskAIForm" [eventFormQuestion]="eventFormQuestion" ></task-form-ai>
+        </div>
+      }
     </div>
-    <div *ngIf="!createEvent">
-      <div>
-        <h2 class="mb-0"></h2>
-      </div>
-    </div>
-    <div class="mb-2">
-      <label class="mb-1" for="eventName" >Nombre del evento*</label>
-      <input id="eventName" formControlName="eventName" type="text" class="form-control" >
-      <div *ngIf="eventForm.controls['eventName'].invalid && (eventForm.controls['eventName'].dirty || eventForm.controls['eventName'].touched)">
-        <p class="text-danger my-1">El nombre del evento es requerido</p>
-      </div>
-    </div>
-    <div class="mb-2">
-      <label class="mb-1" for="eventDescription">Descripción del evento</label>
-      <textarea id="eventDescription" formControlName="eventDescription" class="form-control"></textarea>
-      <div *ngIf="eventForm.controls['eventDescription'].invalid && (eventForm.controls['eventDescription'].dirty || eventForm.controls['eventDescription'].touched)">
-        <p class="text-danger my-1">El nombre del evento es requerido</p>
-      </div>
-    </div>
-    <div class="mb-2">
-      <label class="mb-1" for="eventTypeNme">Tipo de evento*</label>
-      <select id="eventType" formControlName="eventType" class="form-control">
-        <option value="" disabled>Elige una categoría para tu evento</option> <!-- Placeholder -->
-        <option *ngFor="let type of eventTypes" [value]="type.eventTypeId">{{type.eventTypeName}}</option>
-      </select>
-      <div *ngIf="eventForm.controls['eventType'].invalid && (eventForm.controls['eventType'].dirty || eventForm.controls['eventType'].touched)">
-        <p class="text-danger my-1">La categoría es requerida</p>
-      </div>
-    </div>
-    <div class="mb-2">
-      <datetime-custom-picker [dateTimeForm]="dateTimeForm" (isValidInput)="isDateTimeValid($event)"></datetime-custom-picker>
-    </div>
-    @if (createEvent) {
-      <div class="mb-2">
-        <task-form-ai [taskForm]="taskAIForm" [eventFormQuestion]="eventFormQuestion" ></task-form-ai>
-      </div>
-    }
     <div class="mb-2">
 
     </div>

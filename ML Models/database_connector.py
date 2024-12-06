@@ -54,12 +54,13 @@ class MariaDBConnection:
 # Main function
 db = MariaDBConnection(
     user="root",
-    password=os.getenv("PASSWORD"),
+    password="admin",
     host="localhost",
     port=3306,
     database="proyecto3"
 )
 
+print("connecting using password:");
 print(os.environ.get("PASSWORD"))
 
 db.connect()

@@ -63,8 +63,6 @@ export class PersistenceHandler {
             this.scenesnapshot3D.push(scene3D);
         });
 
-        console.log("scene snapshots result", this.scenesnapshot3D);
-
         this.settings = this.parseSceneSettingToSetting(this.sceneSettings);
     }
 
@@ -127,7 +125,7 @@ export class PersistenceHandler {
                 }
                 break;
                 default:
-                transformedValue = setting.value; // Default to string
+                transformedValue = setting.value;
                 break;
             }
     

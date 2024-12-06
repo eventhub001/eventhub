@@ -75,6 +75,13 @@ export class EventModellerComponent {
         this.textureService.getTextures(textures);
       }
     })
+
+    effect(() => {
+      if (this.scene3DService.scene3D$().length > 0 && this.scene3DService.scene3D$().length === this.scene3DService.search.totalElements) {
+        console.log("scene3D loaded");
+        console.log(this.scene3DService.scene3D$());
+      }
+    })
   }
 
   saveScene(sceneDetails: {scene3D: IScene3D, assets: Asset[], settings: IScene3DSetting}) {

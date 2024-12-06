@@ -39,7 +39,6 @@ export class SceneSelectionComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: {scene3D: ISceneSnapshot3D[]}, public dialogRef: MatDialogRef<SceneSelectionComponent>) {
     this.dataSource = new MatTableDataSource(data.scene3D);
   }
-
   openScene(scene3D: IScene3D) {
     this.openedSceneSelected.emit(scene3D);
   }

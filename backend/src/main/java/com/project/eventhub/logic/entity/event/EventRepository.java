@@ -23,9 +23,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e WHERE e.userId = :userId AND e.eventName LIKE %:name%")
     Page<Event> findByUserIdAndNameContaining(@Param("userId") Long userId, @Param("name") String name, Pageable pageable);
 
-
     List<Event> findByEventStartDateBetween(LocalDateTime startDate, LocalDateTime endDate);
-    List<Event> findByEventStartDate(LocalDateTime date);
 
 
 }

@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CalendarOptions, EventSourceInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import { ICalendarEvent, IEvent, ITask, ITaskProgress } from '../../interfaces';
 import { EventCalendarBuilder } from './event-calendar.builder';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import timeGridPlugin from '@fullcalendar/timegrid'
 
 @Component({
   selector: 'app-calendario-eventos',
@@ -17,9 +18,10 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./calendario-eventos.component.scss']
 })
 export class CalendarioEventosComponent {
+  @ViewChild(FullCalendarComponent) fullCalendarComponent!: FullCalendarComponent;
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
-    plugins: [dayGridPlugin, interactionPlugin],
+    plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
     selectable: true,
     locale: esLocale,
     eventDisplay: 'block',
@@ -36,8 +38,8 @@ export class CalendarioEventosComponent {
       start: new Date().toISOString().split('T')[0]
     },
     eventClick: (info) => {
-      console.log(info.event.title);
       if (info.event.extendedProps['type'] === 'Event') {
+        console.log(info.event as ICalendarEvent);
         this.showEventDetails.emit(this.calendarEventBuilder.parseToEvent(info.event as ICalendarEvent));
       }
       if (info.event.extendedProps['type'] === 'Task') {
@@ -58,7 +60,7 @@ export class CalendarioEventosComponent {
           this.saveTask.emit(this.calendarEventBuilder.parseToTask(info.event as ICalendarEvent));
         }
       }
-    },
+    }
   };
 
   @Input() events: IEvent[] = [];
@@ -79,7 +81,7 @@ export class CalendarioEventosComponent {
     this.addEvent = this.addEvent.bind(this);
   }
 
-  ngOnChanges() {
+  ngOnChanges(simpleChanges: SimpleChanges) {
     this.updateCalendarEvents();
   }
 
@@ -101,14 +103,14 @@ export class CalendarioEventosComponent {
     }
 
     if (this.selectedTaskType) {
-      console.log(this.selectedTaskType);
       filteredTasks = filteredTasks.filter(task => task.status === this.selectedTaskType);
     }
 
     this.calendarEventBuilder.parseEvents(filteredEvents);
     this.calendarEventBuilder.parseTasks(filteredTasks);
-
     this.calendarEvents = [...this.calendarEventBuilder.build()];
+
+
     this.calendarOptions.events = this.calendarEvents as EventSourceInput;
   }
 

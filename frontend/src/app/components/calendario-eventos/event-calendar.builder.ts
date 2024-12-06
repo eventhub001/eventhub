@@ -60,6 +60,10 @@ export class EventCalendarBuilder {
     }
 
     parseToEvent(event: ICalendarEvent) {
+        console.log(event.end);
+        console.log(this.asDate(event.end as string));
+        console.log(event.start);
+        console.log(this.asDate(event.start as string));
         const eventObj: IEvent = {
             eventId: Number(event.id),
             userId: Number(event.extendedProps?.["userId"]),

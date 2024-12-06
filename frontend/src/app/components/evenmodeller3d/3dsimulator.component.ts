@@ -30,6 +30,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SaveDialogComponent } from './save-dialog/save-dialog/save-dialog.component';
 import { SceneLoader } from './models/scene-loader';
 import { Set } from './modeller-objects/sets';
+import { LoaderComponent } from '../loader/loader.component';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ import { Set } from './modeller-objects/sets';
 @Component({
   selector: 'app-3dsimulator',
   standalone: true,
-  imports: [Ui3DComponent, CommonModule],
+  imports: [Ui3DComponent, CommonModule, LoaderComponent],
   templateUrl: './3dsimulator.component.html',
   styleUrl: './3dsimulator.component.scss'
 })

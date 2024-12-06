@@ -29,6 +29,12 @@ export class EventcarddetailsComponent {
     return `${hours}:${minutes}`;
   }
 
+  ngOnChanges() {
+    if (this.event) {
+      console.log(this.event);
+    }
+  }
+
   asDate(arg0: string) {
     return new DatePipe('en-US').transform(arg0, 'MM/dd/yyyy');
   }

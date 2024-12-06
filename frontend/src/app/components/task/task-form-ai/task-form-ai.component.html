@@ -6,6 +6,9 @@
       <mat-icon matTooltip="El formulario se llena solo una vez">info</mat-icon>
       Se recomienda seleccionar un máximo de 4 opciones por pregunta
     </p>
+    <p>
+      solo se puede usar el siguiente formulario en el momento de la creación de la tarea, una vez creada no se puede editar.
+    </p>
   </div>
   <div *ngFor="let question of eventFormQuestion" class="mb-2">
     <label class="m-4" [for]="question.id">{{ question.question }}</label>
