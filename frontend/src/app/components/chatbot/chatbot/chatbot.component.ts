@@ -547,7 +547,6 @@ defaultWelcomeMessage() {
     'Puedo darte sugerencias de proveedores de nuestra base de datos. 🛠️\n\n' +
     'Puedo decirte si tienes un evento agendado para esta semana o para mañana. 📅\n\n' +
     'Puedo darte sugerencias de planes para tu evento. 💡\n\n' +
-    '¿Tienes alguna pregunta o necesitas ayuda? No dudes en preguntar. 🤔\n\n' +
     '¡Estoy aquí para ayudarte! 😊');
 }
 
