@@ -17,6 +17,12 @@ import { LandingPageComponent } from './pages/lading-pages/ladingpage.component'
 import { IndexComponent } from './pages/members/index/index.component';
 import { AboutComponent } from './pages/members/about/about.component';
 import { ContactComponent } from './pages/members/contact/contact.component';
+import { forgotComponent } from './pages/auth/forgot-password/forgot.component';
+import { resetComponent } from './pages/auth/reset-password/reset.component';
+import { RequestResourceFormComponent } from './components/request-resource/request-resource-form/request-resource-form.component';
+import { QuoteComponent } from './pages/quote/quote.component';
+import { SolicitudesComponent } from './pages/request-resource/recuest-resource.component';
+import { ProductosComponent } from './pages/members/productos/productos.component';
 
 export const routes: Routes = [
   { path: '',
@@ -33,6 +39,15 @@ export const routes: Routes = [
     component: SigUpComponent,
     canActivate: [GuestGuard],
   },
+  {
+    path: 'forgot-password',
+    component: forgotComponent,
+  },
+  {
+    path: 'reset-password',
+    component: resetComponent,
+    canActivate: [GuestGuard],
+  },
   { path: 'index',
     component: IndexComponent,
   },
@@ -42,6 +57,10 @@ export const routes: Routes = [
   { path: 'contact',
     component: ContactComponent,
   },
+  { path: 'productos',
+    component: ProductosComponent,
+  },
+
 
 
   {
@@ -69,8 +88,11 @@ export const routes: Routes = [
       component: EventmanagerComponent,
       data: {
         authorities: [
-          IRoleType.user,
+          IRoleType.admin,
           IRoleType.superAdmin,
+          IRoleType.user,
+          IRoleType.Supplier,
+          IRoleType.Producer
           ],
           name: 'Eventos',
           showInSidebar: true
@@ -83,7 +105,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Calendario',
           showInSidebar: true
@@ -96,7 +120,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Task',
           showInSidebar: false
@@ -109,7 +135,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Proveedores',
           showInSidebar: true
@@ -122,7 +150,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Detalles del Proveedor',
           showInSidebar: false
@@ -135,7 +165,9 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ],
           name: 'Chat',
           showInSidebar: false
@@ -150,8 +182,40 @@ export const routes: Routes = [
           authorities: [
             IRoleType.admin,
             IRoleType.superAdmin,
-            IRoleType.user
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
           ]
+        }
+      },
+      {
+        path: 'request',
+        component: SolicitudesComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Mis Solicitudes',
+          showInSidebar: true
+        }
+      },
+      {
+        path: 'quote',
+        component: QuoteComponent,
+        data: {
+          authorities: [
+            IRoleType.admin,
+            IRoleType.superAdmin,
+            IRoleType.user,
+            IRoleType.Supplier,
+            IRoleType.Producer
+          ],
+          name: 'Cotizaciones',
+          showInSidebar: true
         }
       },
     ],

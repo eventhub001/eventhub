@@ -1,4 +1,6 @@
+import { QuoteService } from './../../../../services/quote.service';
 import { Component, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
@@ -7,12 +9,13 @@ import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatButtonModule} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IVendor} from '../../../../interfaces';
+import { IQuote, IVendor, IVendorService} from '../../../../interfaces';
 import { AuthService } from '../../../../services/auth.service';
 import { VendorcategoryService } from '../../../../services/vendorcategory.service';
 import { IVendorCategory } from '../../../../interfaces';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../services/user.service';
+import { VendorService } from '../../../../services/vendor.service';
 
 @Component({
   selector: 'app-vendor-list',
@@ -39,20 +42,94 @@ export class VendorListComponent {
   public categories: IVendorCategory[] = [];
   public vendorCategoryService: VendorcategoryService = inject(VendorcategoryService);
   public dataSource: MatTableDataSource<IVendor>;
-  public displayedColumns: string[] = [ 'name', 'description', 'location', 'rating', 'category', 'actions'];
   public userService: UserService = inject(UserService);
+  public VendorService: VendorService = inject(VendorService);
+  public quoteService: QuoteService = inject(QuoteService);
+  private fb: FormBuilder = inject(FormBuilder);
+  public displayedColumns: string[] = ['name', 'description', 'location', 'rating', 'category', 'actions'];
+  @Input() servicios: IVendorService[] = [];
 
 
   selectedVendor: IVendor| null = null;
-
+  vendors: IVendor | undefined;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('addQuoteModal') public addQuoteModal: any;
+  modalService: any;
 
   constructor(  private router: Router ) {
     this.dataSource = new MatTableDataSource(this.vendor);
     this.loadCategories();
   }
+  quoteForm = this.fb.group({
+    id: [''],
+    event_id: ['', Validators.required],
+    vendor_service_id: ['', Validators.required],
+    montoCotizado: ['', Validators.required],
+    cantidadRecurso: ['', Validators.required],
+    user: ['', Validators.required],
+    estado: ['', Validators.required],
+    service: ['']
+  });
+
+  openAddQuotesModal(vendor: IVendor) {
+    this.selectedVendor = vendor;
+    console.log('Selected Vendor ID:', vendor.id);
+    this.modalService.displayModal('md', this.addQuoteModal);
+    this.VendorService.getVendorByUserId(vendor!.id!).subscribe({
+      next: (vendor_service_id : IVendorService[]) => {
+        if (vendor_service_id.length > 0) {
+          this.servicios = vendor_service_id;
+          this.vendors = vendor_service_id[0].vendor;
+
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching vendor details', err);
+      }
+    });
+  }
+
+  navigateToQuote(quoteId: number) {
+    this.router.navigate(['app/quote', quoteId]);
+  }
+
+  saveCotizacion(quote: IQuote) {
+    quote.quoted_amount = this.quoteForm.controls['montoCotizado'].value ? Number(this.quoteForm.controls['montoCotizado'].value) : undefined;
+    quote.quantityResource = this.quoteForm.controls['cantidadRecurso'].value ? Number(this.quoteForm.controls['cantidadRecurso'].value) : undefined;
+    quote.status = { id: 1, status: 'Pending', description: 'Pending approval' };
+
+    this.quoteService.save(quote);
+    this.modalService.closeAll();
+
+  }
+
+  callEdition(cotizacion: IQuote) {
+    console.log('Abriendo el formulario de edición para:', cotizacion);
+    this.quoteForm.controls['id'].setValue(cotizacion.id ? cotizacion.id.toString() : '');
+    this.quoteForm.controls['event_id'].setValue(cotizacion.event_id && cotizacion.event_id ? cotizacion.event_id.toString() : null);
+    this.quoteForm.controls['vendor_service_id'].setValue(cotizacion.vendor_service_id && cotizacion.vendor_service_id ? cotizacion.vendor_service_id.toString() : null);
+    this.quoteForm.controls['montoCotizado'].setValue(cotizacion.quoted_amount ? cotizacion.quoted_amount.toString() : '');
+    this.quoteForm.controls['cantidadRecurso'].setValue(cotizacion.quantityResource ? cotizacion.quantityResource.toString() : '');
+    this.quoteForm.controls['user'].setValue(cotizacion.user?.id ? cotizacion.user.id.toString() : null);
+    this.quoteForm.controls['estado'].setValue(cotizacion.status ? cotizacion.status.toString() : '');
+
+    console.log('Formulario de edición preparado:', this.quoteForm.value);
+    this.modalService.displayModal('md', this.addQuoteModal);
+  }
+
+
+  updateCotizacion(cotizacion: IQuote) {
+    cotizacion.quoted_amount = this.quoteForm.controls['montoCotizado'].value ? Number(this.quoteForm.controls['montoCotizado'].value) : undefined;
+    cotizacion.quantityResource = this.quoteForm.controls['cantidadRecurso'].value ? Number(this.quoteForm.controls['cantidadRecurso'].value) : undefined;
+
+    this.quoteService.update(cotizacion);
+    this.modalService.closeAll();
+  }
+
+
+
 
 
   navigateToDetails(vendorId: number) {

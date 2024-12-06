@@ -51,7 +51,8 @@ ngOnInit(): void {
 }
 
 getVendors(): void {
-  if (this.authService.isSuperAdmin()) {
+  let user = this.authService.getUser();
+  if (this.authService.isSuperAdmin() || user?.role?.id == 3) {
     this.vendorService.getAll().subscribe({
       next: (vendors: IVendor[]) => {
         console.log('Vendors fetched:', vendors);

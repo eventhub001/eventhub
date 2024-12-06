@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { CalendarioEventosComponent } from '../../components/calendario-eventos/calendario-eventos.component';
 import { EventsService } from '../../services/event.service';
 import { TaskService } from '../../services/task.service';
@@ -16,7 +16,7 @@ import { EventcarddetailsComponent } from '../../components/eventcards/eventcard
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   eventService: EventsService = inject(EventsService);
   taskService: TaskService = inject(TaskService);
   eventSelected: IEvent | undefined = undefined;
@@ -26,9 +26,7 @@ export class DashboardComponent {
   @ViewChild('showTaskModal') showTaskModal: any;
 
   constructor() {
-    this.eventService.search.size = 1000;
-    this.eventService.getAll();
-    this.taskService.getAll();
+
   }
 
   saveEvent(event: IEvent) {
@@ -49,5 +47,11 @@ export class DashboardComponent {
   showtaskDetails(task: ITask) {
     this.taskSelected = task;
     this.modalService.displayModal('md', this.showTaskModal);
+  }
+
+  ngOnInit(){
+   this.eventService.search.size = 1000;
+   this.eventService.getAll();
+   this.taskService.getAll();
   }
 }

@@ -39,7 +39,7 @@ export class ChatbotComponent{
   ];
 
   constructor() {
-    this.eventTypesService.getAll();
+   //this.eventTypesService.getAll();
   }
 
   ngAfterViewInit() {
@@ -381,7 +381,7 @@ showVendorSuggestions() {
           setTimeout(() => {
             dfMessenger.renderCustomText('Listo! Tu evento se ha creado.');
           }, 2000);
-  
+
           setTimeout(() => {
             const infoResponse = [
               {
@@ -398,11 +398,11 @@ showVendorSuggestions() {
               console.error('dfMessenger.renderCustomCard is not a function or dfMessenger is not found');
             }
           }, 4000);
-  
+
           setTimeout(() => {
             dfMessenger.renderCustomText('Puedes acceder a tu lista de eventos dándole click sobre la tarjeta anterior.');
           }, 4000);
-  
+
           setTimeout(() => {
             dfMessenger.renderCustomText(this.defaultWelcomeMessage());
           }, 4000);

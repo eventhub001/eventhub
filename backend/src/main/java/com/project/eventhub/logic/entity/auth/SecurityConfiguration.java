@@ -37,6 +37,7 @@ public class SecurityConfiguration {
 
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
                         .requestMatchers(HttpMethod.GET, "/roles").permitAll()
                         .requestMatchers("/chat/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "http://127.0.0.1:5000/**").permitAll()

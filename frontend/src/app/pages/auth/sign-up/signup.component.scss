@@ -30,6 +30,23 @@
     position: absolute;
     margin-top: 0px;
   }
+  .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #80A2A6;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    &.is-invalid {
+      border-color: #D94625;
+    }
+    &.is-valid {
+      border-color: #94F2F2;
+    }
+    &:focus {
+      outline: none;
+      border-color: #94F2F2;
+    }
+  }
   @media screen and (min-width: 801px) and (max-width: 1500px) {
     padding: 20px 5%;
     .login-card {
@@ -45,6 +62,41 @@
       width: 100%;
       .login-main {
         padding: 0px;
+      }
+    }
+  }
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1rem;
+
+    .mat-form-field-label {
+      color: #80A2A6;
+      font-weight: 600;
+    }
+
+    .mat-select {
+      border: 1px solid #80A2A6;
+      border-radius: 4px;
+
+      .mat-select-value {
+        padding: 0.5rem;
+      }
+
+      &.mat-focused {
+        .mat-select-arrow {
+          color: #94F2F2;
+        }
+      }
+    }
+
+    .mat-option {
+      &.mat-selected {
+        background-color: #94F2F2 !important;
+        color: #ffffff;
+      }
+
+      &:hover {
+        background-color: lighten(#94F2F2, 20%) !important;
       }
     }
   }

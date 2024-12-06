@@ -83,6 +83,17 @@ export class AuthService {
     return roles.some(role => this.hasRole(role));
   }
 
+  public forgotPassword(email: string): Observable<{ resetToken: string }> {
+    return this.http.post<{ resetToken: string }>('auth/forgot-password', { email });
+  }
+
+  public resetPassword(token: string, newPassword: string | null): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>('auth/reset-password', {
+      token,
+      newPassword,
+    });
+  }
+
   public getPermittedRoutes(routes: any[]): any[] {
     let permittedRoutes: any[] = [];
     for (const route of routes) {

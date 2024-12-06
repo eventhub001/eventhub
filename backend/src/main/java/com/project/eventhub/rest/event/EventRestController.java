@@ -58,7 +58,7 @@ public class EventRestController {
     @Autowired
     private UserRepository userRepository;
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAllEvents(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestParam(defaultValue = "0") int page,
@@ -102,7 +102,7 @@ public class EventRestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public Event addEvent(@RequestBody Event event) {
         return eventRepository.save(event);
     }
@@ -128,7 +128,7 @@ public class EventRestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         eventFormRepository.deleteEventFormByEvent_EventId(id);
         taskRepository.deleteTaskByEvent_EventId(id);
@@ -138,7 +138,7 @@ public class EventRestController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> searchByName(
             @RequestParam String search,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
@@ -185,7 +185,7 @@ public class EventRestController {
 
 
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{userId}/events")
     public ResponseEntity<?> getEventsByUserId(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @PathVariable Long userId,
@@ -228,7 +228,7 @@ public class EventRestController {
 
 
     @GetMapping("/week")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getEventsForCurrentWeek(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             HttpServletRequest request) throws AuthenticationException {
@@ -256,7 +256,7 @@ public class EventRestController {
     }
 
     @GetMapping("/tomorrow")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getEventsForTomorrow(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             HttpServletRequest request) throws AuthenticationException {
