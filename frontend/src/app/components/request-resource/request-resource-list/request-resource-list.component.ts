@@ -22,4 +22,10 @@ export class RequestResourceListComponent {
   @Output() callEditStatusAction: EventEmitter<IRequestResource> = new EventEmitter<IRequestResource>();
   public AuthService: AuthService = inject(AuthService);
 
+  user: any;
+
+  ngOnInit(): void {
+    this.user = this.AuthService.getUser();
+  }
+
 }

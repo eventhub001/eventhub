@@ -20,9 +20,13 @@
       <td>{{item.status?.status}}</td>
       <td>{{item.vendor_service?.service_name}}</td>
       <td>
-        <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2 cursor-pointer" type="button"><i class="fas fa-pen"></i></button>
+        @if(user.role.id == 1 || user.role.id == 3) {
+        <button (click)="callModalAction.emit(item);" class="btn btn-warning me-2 cursor-pointer" type="button"> <i class="fas fa-pen"></i></button>
         <button (click)="callDeleteAction.emit(item)" class="btn btn-danger cursor-pointer" type="button"><i class="fas fa-trash"></i></button>
-        <button (click)="callEditStatusAction.emit(item)" class="btn btn-primary cursor-pointer" type="button"><i class="fas fa-edit"></i></button>
+        }
+        @if(user.role.id == 1 || user.role.id == 2) {
+          <button (click)="callEditStatusAction.emit(item)" class="btn btn-primary cursor-pointer" type="button"><i class="fas fa-edit"></i></button>
+        }
       </td>
     </tr>
   } @empty {

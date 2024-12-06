@@ -38,7 +38,7 @@ export class resetComponent implements OnInit{
     this.RolService.getAll();
   }
   ngOnInit(): void {
-
+    console.log("reset component");
   }
 
 
